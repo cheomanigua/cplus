@@ -19,7 +19,8 @@ private:
 public:
     EntityRegistry(std::vector<ItemData> itemDatabase);
     ItemData* GetItem(int32_t id);
-    EntityStats& GetStats(int32_t entityId);
+    EntityStats& GetStats(int32_t entityId); // The fast path
+    EntityStats* GetEntityStats(int entityId); // The safe path
     void RegisterStats(int32_t entityId, const EntityStats& data);
     void ProcessCombat();
 };

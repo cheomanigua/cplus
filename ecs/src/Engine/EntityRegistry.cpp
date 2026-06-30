@@ -15,8 +15,22 @@ ItemData* EntityRegistry::GetItem(int32_t id) {
     return nullptr;
 }
 
+// 1. The "Fast Path" (Reference)
+// Assumes you know the entity exists. Throws/Crashes if index is invalid.
 EntityStats& EntityRegistry::GetStats(int32_t entityId) {
-    return _stats[entityId];
+    return _stats.at(entityId); // Use .at() for bounds checking, or [] if speed is critical
+}
+
+// 2. The "Safe Path" (Pointer)
+// Use this in EngineDriver for command processing.
+EntityStats* EntityRegistry::GetEntityStats(int32_t entityId) {
+    // Check if the ID exists in your collection. 
+    // Assuming you have a way to check existence (e.g., _stats.count(entityId) or bounds check)
+    if (entityId < 0 || entityId >= _stats.size()) {
+        return nullptr;
+    }
+    
+    return &GetStats(entityId);
 }
 
 void EntityRegistry::RegisterStats(int32_t entityId, const EntityStats& data) {

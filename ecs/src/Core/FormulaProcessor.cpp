@@ -21,16 +21,29 @@ float FormulaProcessor::ResolveSource(const std::string& source) {
     return (it != _sourceMap.end()) ? it->second() : 0.0f;
 }
 
-float FormulaProcessor::Execute(const std::string& formulaName, std::vector<float>& stats) {
-    if (_formulas.find(formulaName) == _formulas.end()) return 0.0f;
-    
+
+float FormulaProcessor::Execute(const std::string& formulaName, const std::string& targetStat) {
     float result = 0.0f;
+    
+    // Only process operations that match the target stat we want to calculate
     for (const auto& op : _formulas[formulaName].Operations) {
+        if (op.Target != targetStat) continue; 
+
         float input = !op.Source.empty() ? ResolveSource(op.Source) : op.Value;
         
-        if (op.Type == "Add") result += input;
+        if (op.Type == "Set") result = input;
+        else if (op.Type == "Add") result += input;
         else if (op.Type == "Multiply") result *= input;
-        else if (op.Type == "Set") result = input;
     }
     return result;
+}
+
+void from_json(const nlohmann::json& j, Operation& op) {
+    j.at("Type").get_to(op.Type);
+    
+    // Use .value() to provide defaults if the key is missing
+    op.Stat = j.value("Stat", "");
+    op.Target = j.value("Target", "");
+    op.Source = j.value("Source", "");
+    op.Value = j.value("Value", 0.0f);
 }

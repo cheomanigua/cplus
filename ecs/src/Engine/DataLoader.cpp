@@ -11,6 +11,14 @@ DataLoader::DataLoader(const std::string& dataDirectory)
     _items.reserve(EngineConfig::MaxItemCapacity);
 }
 
+const NPCBlueprint* DataLoader::GetBlueprintById(int id) const {
+    for (const auto& npc : _npcs) {
+        if (npc.EntityId == id) return &npc;
+    }
+    return nullptr;
+}
+
+
 bool DataLoader::LoadManifest(const std::string& manifestFilename) {
     std::ifstream file(_dataDirectory + "/" + manifestFilename);
     if (!file.is_open()) return false;
@@ -55,13 +63,32 @@ void DataLoader::LoadItemFile(const std::string& filename) {
 void DataLoader::LoadCharacterFile(const std::string& filename) {
     std::ifstream file(_dataDirectory + "/" + filename);
     if (!file.is_open()) {
-        std::cout << "Failed to open file!" << std::endl;
+        std::cout << "Failed to open file: " << filename << std::endl;
         return;
     }
 
     json data = json::parse(file);
+
     if (filename.find("npc_blueprint.json") != std::string::npos) {
         _npcs = data.get<std::vector<NPCBlueprint>>();
-        std::cout << "Loaded " << _npcs.size() << " NPCs from " << filename << std::endl;
+        std::cout << "Loaded " << _npcs.size() << " NPCs." << std::endl;
+    } 
+    else if (filename.find("classes.json") != std::string::npos) {
+        // Populates the map for GetClassData lookups
+        _classes = data.get<std::unordered_map<std::string, ClassData>>();
+    } 
+    else if (filename.find("races.json") != std::string::npos) {
+        // Populates the map for GetRaceData lookups
+        _races = data.get<std::unordered_map<std::string, RaceData>>();
     }
+}
+
+const ClassData& DataLoader::GetClassData(const std::string& className) const {
+    // If your data isn't loaded, this will throw an exception. 
+    // Ensure these maps are populated during LoadManifest!
+    return _classes.at(className);
+}
+
+const RaceData& DataLoader::GetRaceData(const std::string& raceName) const {
+    return _races.at(raceName);
 }

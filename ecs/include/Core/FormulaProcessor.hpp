@@ -10,9 +10,10 @@ struct Operation {
     std::string Stat;
     std::string Target;
     std::string Source;
-    float Value;
+    float Value = 0.0f;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Operation, Type, Stat, Target, Source, Value)
+
+void from_json(const nlohmann::json& j, Operation& op);
 
 struct Formula {
     std::vector<Operation> Operations;
@@ -26,7 +27,7 @@ public:
     // Bind entity-specific data to string names for the formula to read
     static void RegisterSource(const std::string& name, std::function<float()> getter);
     
-    static float Execute(const std::string& formulaName, std::vector<float>& stats);
+    static float Execute(const std::string& formulaName, const std::string& targetStat);
 
 private:
     static float ResolveSource(const std::string& source);
