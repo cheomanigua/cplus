@@ -1,0 +1,34 @@
+#pragma once
+#include <string>
+#include <iostream>
+
+struct Transform2D;
+
+class IEngineFacade {
+public:
+    virtual ~IEngineFacade() = default;
+    virtual bool IsActionPressed(const std::string& actionName) = 0;
+    virtual void DrawMesh(int32_t id, const Transform2D& transform) = 0;
+};
+
+namespace EngineFacade {
+    inline IEngineFacade* Implementation = nullptr;
+}
+
+namespace EngineService {
+    inline bool IsActionPressed(const std::string& actionName) {
+        if (!EngineFacade::Implementation) {
+            std::cerr << "[CRITICAL] EngineFacade::Implementation is NULL!" << std::endl;
+            return false;
+        }
+        return EngineFacade::Implementation->IsActionPressed(actionName);
+    }
+
+    inline void DrawMesh(int32_t id, const Transform2D& transform) {
+        if (!EngineFacade::Implementation) {
+            std::cerr << "[CRITICAL] EngineFacade::Implementation is NULL!" << std::endl;
+            return;
+        }
+        EngineFacade::Implementation->DrawMesh(id, transform);
+    }
+}

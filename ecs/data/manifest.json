@@ -1,0 +1,15 @@
+{
+  "ConfigModules": [
+    "npc_blueprint.json",
+    "system/action_mappings.json",
+    "system/formulas.json",
+    "character/races.json",
+    "character/classes.json",
+    "character/skills.json",
+    "items/weapons.json",
+    "items/armor.json",
+    "items/potions.json",
+    "items/scrolls.json",
+    "items/accessories.json"
+  ]
+}

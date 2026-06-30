@@ -1,0 +1,17 @@
+{
+  "30": { 
+    "Name": "Ring of Strength", 
+    "Categories": { "Type": "Accessory", "Execution": "Immediate" },
+    "GrantedComponents": [
+      { "Tag": "AttributeComponent", "Properties": { "Target": "Strength", "Value": "3.0" } }
+    ]
+  },
+  "31": { 
+    "Name": "Ring of Intelligence", 
+    "Categories": { "Type": "Accessory", "Execution": "Immediate" },
+    "GrantedComponents": [
+      { "Tag": "AttributeComponent", "Properties": { "Target": "Intelligence", "Value": "3.0" } },
+      { "Tag": "AttributeComponent", "Properties": { "Target": "Strength", "Value": "10.0" } }
+    ]
+  }
+}

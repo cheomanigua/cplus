@@ -1,0 +1,10 @@
+{
+  "40": { 
+    "Name": "Potion of Healing", 
+    "Categories": { "Type": "Potion", "Execution": "Immediate" },
+    "GrantedComponents": [
+      { "Tag": "ConsumableComponent", "Properties": { "Charges": "1" } },
+      { "Tag": "MagicComponent", "Properties": { "Trigger": "OnUse", "Effect": "Restore", "Stat": "Health", "Value": "50.0" } }
+    ]
+  }
+}

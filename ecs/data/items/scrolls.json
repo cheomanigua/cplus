@@ -1,0 +1,10 @@
+{
+  "50": { 
+    "Name": "Scroll of Frost Bolt", 
+    "Categories": { "Type": "Scroll", "Execution": "Immediate" },
+    "GrantedComponents": [
+      { "Tag": "ConsumableComponent", "Properties": { "Charges": "1" } },
+      { "Tag": "MagicComponent", "Properties": { "Trigger": "OnUse", "Effect": "Damage", "Value": "25.0", "DamageType": "Frost", "SecondaryEffect": "Slow" } }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "UpdateStats": {
+    "Operations": [
+      { "Type": "Set", "Target": "Strength", "Source": "ClassStr" },
+      { "Type": "Add", "Target": "Strength", "Source": "RaceStr" },
+      { "Type": "Set", "Target": "Intelligence", "Source": "ClassInt" },
+      { "Type": "Add", "Target": "Intelligence", "Source": "RaceInt" },
+
+      { "Type": "Set", "Target": "Health", "Source": "Strength" },
+      { "Type": "Multiply", "Target": "Health", "Value": 5.0 },
+
+      { "Type": "Set", "Target": "Mana", "Source": "Intelligence" },
+      { "Type": "Multiply", "Target": "Mana", "Value": 10.0 }
+    ]
+  },
+  "BaseAttack": {
+    "Operations": [
+      { "Type": "Multiply", "Stat": "Strength", "Value": 0.5 },
+      { "Type": "Add", "Value": 10.0 }
+    ]
+  },
+  "MagicAttack": {
+    "Operations": [
+      { "Type": "Multiply", "Stat": "Intelligence", "Value": 0.8 },
+      { "Type": "Add", "Value": 5.0 }
+    ]
+  },
+  "MeleeStrike": {
+    "Operations": [
+      { "Type": "Add", "Stat": "BaseWeaponDamage", "Value": 0.0 },
+      { "Type": "Add", "Stat": "WeaponBonus", "Value": 0.0 },
+      { "Type": "Multiply", "Stat": "Strength", "Value": 1.5 },
+      { "Type": "Multiply", "Stat": "GearStrengthBonus", "Value": 1.5 },
+      { "Type": "Multiply", "Stat": "TemporaryStrengthBonus", "Value": 1.5 },
+      { "Type": "Multiply", "Stat": "SkillBonus", "Value": 2.0 },
+      { "Type": "Multiply", "Stat": "TemporarySkillBonus", "Value": 2.0 }
+    ]
+  },
+  "RangedShot": {
+    "Operations": [
+      { "Type": "Add", "Stat": "BaseWeaponDamage", "Value": 0.0 },
+      { "Type": "Add", "Stat": "WeaponBonus", "Value": 0.0 },
+      { "Type": "Multiply", "Stat": "Strength", "Value": 0.8 },
+      { "Type": "Multiply", "Stat": "GearStrengthBonus", "Value": 0.8 },
+      { "Type": "Multiply", "Stat": "TemporaryStrengthBonus", "Value": 0.8 },
+      { "Type": "Multiply", "Stat": "SkillBonus", "Value": 2.5 },
+      { "Type": "Multiply", "Stat": "TemporarySkillBonus", "Value": 2.5 }
+    ]
+  },
+  "SpellInvocation": {
+    "Operations": [
+      { "Type": "Multiply", "Stat": "Intelligence", "Value": 2.5 },
+      { "Type": "Multiply", "Stat": "GearIntelligenceBonus", "Value": 2.5 },
+      { "Type": "Multiply", "Stat": "TemporaryIntelligenceBonus", "Value": 2.5 },
+      { "Type": "Multiply", "Stat": "BaseWeaponDamage", "Value": 0.5 },
+      { "Type": "Multiply", "Stat": "WeaponBonus", "Value": 0.5 }
+    ]
+  }
+}

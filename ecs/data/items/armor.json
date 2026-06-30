@@ -1,0 +1,9 @@
+{
+  "20": { 
+    "Name": "Leather Armor", 
+    "Categories": { "Type": "Armor", "Execution": "Immediate" },
+    "GrantedComponents": [
+      { "Tag": "AttributeComponent", "Properties": { "Target": "Armor", "Value": "5.0" } }
+    ]
+  }
+}

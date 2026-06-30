@@ -1,0 +1,5 @@
+{
+  "OneHandedWeapons": { "AttributeScale": "Strength" },
+  "Archery": { "AttributeScale": "Strength" },
+  "Illusion": { "AttributeScale": "Intelligence" }
+}

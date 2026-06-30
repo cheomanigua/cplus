@@ -1,0 +1,18 @@
+[
+  {
+  "EntityId": 1,
+  "Name": "Thrall",
+  "Race": "Orc",
+  "Class": "Warrior",
+  "EquippedItemId": 100,
+  "SpawnPosition": { "X": 10.0, "Y": 20.0 }
+  },
+  {
+  "EntityId": 2,
+  "Name": "Sergio",
+  "Race": "Human",
+  "Class": "Wizard",
+  "EquippedItemId": 101,
+  "SpawnPosition": { "X": 50.0, "Y": 50.0 }
+  }
+]

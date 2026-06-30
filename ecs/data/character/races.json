@@ -1,0 +1,4 @@
+{
+  "Human": { "RaceStr": 2, "RaceInt": 5 },
+  "Orc": { "RaceStr": 10, "RaceInt": 1 }
+}

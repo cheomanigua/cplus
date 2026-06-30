@@ -1,0 +1,8 @@
+{
+  "Warrior": { 
+      "ClassHealth": 150, "ClassMana": 20, "ClassStr": 10, "ClassInt": 5, "PrimarySkill": "OneHandedWeapons" 
+  },
+  "Wizard": { 
+      "ClassHealth": 80, "ClassMana": 120, "ClassStr": 5, "ClassInt": 15, "PrimarySkill": "Illusion" 
+  }
+}
