@@ -17,8 +17,6 @@ void EngineDriver::Tick(float deltaTime) {
     MovementSystem::Update(_movementBuffers, deltaTime);
 
     // 3. Process Other Commands (Stats/Combat)
-    std::cout << "[DEBUG] Starting command processing." << std::endl;
-    
     while (_commandQueue.HasCommands()) {
         GameCommand cmd = _commandQueue.Dequeue();
 

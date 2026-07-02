@@ -18,6 +18,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # 1. Define include directories
 # This allows you to include headers like #include "Engine/EntityRegistry.hpp"
 include_directories(include)
+include_directories(include/Core)
+include_directories(include/Engine)
 include_directories(external)
 
 # 2. Gather all source files recursively from the src folder
@@ -26,6 +28,14 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 # 3. Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# 4. Optional: Add Raylib if you are using it (Uncomment these if needed)
-# find_package(raylib REQUIRED)
-# target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
+# 4. Link Raylib
+# This assumes Raylib is installed on your system.
+# If you built Raylib manually, you may need to use target_link_libraries 
+# with the path to the library file.
+find_package(raylib REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
+
+#  # On Linux, you often need these extra system libraries to support Raylib
+#  if(UNIX AND NOT APPLE)
+#      target_link_libraries(${PROJECT_NAME} PRIVATE m pthread dl rt X11)
+#  endif()

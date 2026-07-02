@@ -1,14 +1,15 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include "raylib.h"
 
-struct Transform2D;
+struct Vector2;
 
 class IEngineFacade {
 public:
     virtual ~IEngineFacade() = default;
     virtual bool IsActionPressed(const std::string& actionName) = 0;
-    virtual void DrawMesh(int32_t id, const Transform2D& transform) = 0;
+    virtual void DrawMesh(int32_t id, const Vector2& transform) = 0;
 };
 
 namespace EngineFacade {
@@ -24,7 +25,7 @@ namespace EngineService {
         return EngineFacade::Implementation->IsActionPressed(actionName);
     }
 
-    inline void DrawMesh(int32_t id, const Transform2D& transform) {
+    inline void DrawMesh(int32_t id, const Vector2& transform) {
         if (!EngineFacade::Implementation) {
             std::cerr << "[CRITICAL] EngineFacade::Implementation is NULL!" << std::endl;
             return;

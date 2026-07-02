@@ -2,13 +2,13 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "Engine/EntityRegistry.hpp"
 #include "Core/Commands/GameCommand.hpp"
-#include "Core/Commands/CommandQueue.hpp" // New
-#include "Engine/MovementBuffers.hpp"     // New
+#include "Core/Commands/CommandQueue.hpp"
 #include "Core/Interfaces/IEngineFacade.hpp"
-#include "Engine/DataLoader.hpp"
 #include "Core/FormulaProcessor.hpp"
+#include "Engine/EntityRegistry.hpp"
+#include "Engine/MovementBuffers.hpp"
+#include "Engine/DataLoader.hpp"
 
 class EngineDriver {
 private:
@@ -16,8 +16,8 @@ private:
     DataLoader& _dataLoader;
     
     // Engine State
-    CommandQueue _commandQueue;           // Replaced std::queue
-    MovementBuffers _movementBuffers;     // Added
+    CommandQueue _commandQueue;
+    MovementBuffers _movementBuffers;
     
     IEngineFacade* _view;
     std::string _dataDirectory;

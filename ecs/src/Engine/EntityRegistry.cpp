@@ -2,7 +2,11 @@
 #include <algorithm>
 
 EntityRegistry::EntityRegistry(std::vector<ItemData> itemDatabase) 
-    : _itemDatabase(std::move(itemDatabase)) {}
+    : _itemDatabase(std::move(itemDatabase)) {
+
+        // Initialize all positions to 0,0
+    _positions.fill({0.0f, 0.0f});
+}
 
 ItemData* EntityRegistry::GetItem(int32_t id) {
     // 1. Bitwise Type Check

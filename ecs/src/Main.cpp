@@ -2,9 +2,11 @@
 #include "Engine/EntityRegistry.hpp"
 #include "Engine/DataLoader.hpp"
 #include "Core/ConsoleGameView.hpp"
+#include "Core/RaylibGameView.hpp"
 #include "Core/PathResolver.hpp"
 #include "Core/FormulaProcessor.hpp"
 #include "Tests/TestRunner.hpp"
+#include "raylib.h"
 #include <iostream>
 
 int main() {
@@ -33,12 +35,12 @@ int main() {
         std::cout << "Warrior data missing from map!" << std::endl;
     }
 
-    // 4. Setup View and Engine
-    ConsoleGameView view; 
+    // 4. Setup View and Engine for initial processing
+    ConsoleGameView consoleView; 
     
     // Inject the loader reference so the EngineDriver can perform 
     // blueprint lookups during command execution
-    EngineDriver engine(&view, loader, loader.GetItems(), "data");
+    EngineDriver engine(&consoleView, loader, loader.GetItems(), "data");
 
     // 5. Retrieve NPCs from the loader and Queue UpdateStats commands
     const auto& npcs = loader.GetNPCs();
@@ -53,29 +55,56 @@ int main() {
     engine.Tick(0.0f);
 
     // 7. Print results (Comparing Blueprint definition vs. Computed State)
-    std::cout << "\n--- Final Computed NPC Stats ---" << std::endl;
-    for (const auto& npc : npcs) {
-        // Retrieve the mutable stats from the registry
-        EntityStats* stats = engine.GetRegistry()->GetEntityStats(npc.EntityId);
-        
-        std::cout << "---------------------------" << std::endl;
-        std::cout << "ID:    " << npc.EntityId << std::endl;
-        std::cout << "Name:  " << npc.Name << std::endl;
-        std::cout << "Class: " << npc.Class << std::endl;
-        std::cout << "Race:  " << npc.Race << std::endl;
-        std::cout << "Spawn: (" << npc.SpawnPosition.x << ", " 
-          << npc.SpawnPosition.y << ")" << std::endl;
-        
-        if (stats) {
-            std::cout << "Computed Stats:" << std::endl;
-            std::cout << "  Strength:     " << stats->Strength << std::endl;
-            std::cout << "  Intelligence: " << stats->Intelligence << std::endl;
-            std::cout << "  Health:       " << stats->Health << std::endl;
-            std::cout << "  Mana:         " << stats->Mana << std::endl;
-        } else {
-            std::cout << "  [!] Error: Stats not found for ID " << npc.EntityId << std::endl;
-        }
+    consoleView.RenderNPCStats(loader.GetNPCs(), engine);
+
+    // 8. Initialize Raylib window for Graphical Mode
+    InitWindow(800, 600, "Data Driven Engine");
+    SetTargetFPS(60);
+
+    // Use RaylibView for the main game loop
+    RaylibGameView raylibView;
+    // Note: Re-binding the engine to the new graphical view
+    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "data");
+
+    // !!! CRITICAL: REGISTER YOUR NPCS SO THEY EXIST IN THE REGISTRY !!!
+auto* registry = graphicsEngine.GetRegistry();
+for (const auto& npc : loader.GetNPCs()) {
+    // Manually register these so the drawing loop sees them
+    registry->RegisterStats(npc.EntityId, { /* initial stats */ });
+    
+    // Set their starting position from your blueprint
+    Vector2* pos = registry->GetPosition(npc.EntityId);
+    if (pos) {
+        *pos = npc.SpawnPosition;
     }
+}
+
+    // 9. Main Loop
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        
+        // Engine Tick processes logic
+        graphicsEngine.Tick(GetFrameTime());
+
+        auto* registry = graphicsEngine.GetRegistry();
+        int32_t count = registry->GetActiveCount();
+        const auto& activeIds = registry->GetActiveEntities();
+        
+        // Draw loop
+        for (int i = 0; i < count; i++) {
+            int32_t id = activeIds[i];
+            Vector2* pos = graphicsEngine.GetRegistry()->GetPosition(id);
+            
+            if (pos) {
+                // This triggers your Raylib rendering logic using the updated Vector2 position
+                raylibView.DrawMesh(id, *pos); 
+            }
+        }
+        
+        EndDrawing();
+    }
+    CloseWindow();
 
     return 0;
 }
