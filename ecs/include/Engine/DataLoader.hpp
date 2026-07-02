@@ -20,6 +20,8 @@ public:
     const ClassData& GetClassData(const std::string& className) const;
     const RaceData& GetRaceData(const std::string& raceName) const;
 
+    EntityStats GetStatsForEntity(int entityId);
+
 private:
     // Removed _dataDirectory member variable
     std::vector<ItemData> _items;

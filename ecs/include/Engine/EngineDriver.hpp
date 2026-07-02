@@ -12,7 +12,7 @@
 
 class EngineDriver {
 private:
-    std::unique_ptr<EntityRegistry> _registry;
+    EntityRegistry* _registry; 
     DataLoader& _dataLoader;
     
     // Engine State
@@ -23,8 +23,14 @@ private:
     std::string _dataDirectory;
 
 public:
-    EngineDriver(IEngineFacade* view, DataLoader& loader, std::vector<ItemData> items, std::string dir);
+    EngineDriver(IEngineFacade* view, DataLoader& loader, std::vector<ItemData> items, 
+                 std::string dir, EntityRegistry* sharedRegistry);
+    
     void Tick(float deltaTime);
     void AddCommand(GameCommand cmd);
-    EntityRegistry* GetRegistry() { return _registry.get(); }
+    
+    // Update GetRegistry to return the raw pointer directly
+    EntityRegistry* GetRegistry() { return _registry; }
+    
+    void InitializeEntities(DataLoader& loader);
 };

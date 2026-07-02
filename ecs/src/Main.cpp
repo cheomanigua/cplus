@@ -10,94 +10,78 @@
 #include <iostream>
 
 int main() {
-
     TestRunner::RunAll();
-    // 1. Initialize the DataLoader with the path to your data directory
-    DataLoader loader;
 
-    // 2. Load the manifest
+    // 1. Initialize the DataLoader
+    DataLoader loader;
     if (!loader.LoadManifest("manifest.json")) {
         std::cerr << "Failed to load manifest!" << std::endl;
         return -1;
     }
     std::cout << "Successfully loaded " << loader.GetItems().size() << " items." << std::endl;
     
-    // 3. Initialize the FormulaProcessor 
-    // This loads the math logic from formulas.json into memory
+    // 2. Initialize FormulaProcessor
     FormulaProcessor::Initialize(Engine::GetDataPath("system/formulas.json"));
 
-    // Add debug print here
-    std::cout << "DEBUG: Checking Class lookup..." << std::endl;
-    try {
-        const auto& warrior = loader.GetClassData("Warrior");
-        std::cout << "Found Warrior: Str=" << warrior.ClassStr << std::endl;
-    } catch (...) {
-        std::cout << "Warrior data missing from map!" << std::endl;
-    }
+    // 3. Create the SHARED Registry (Passing items to constructor)
+    EntityRegistry sharedRegistry(loader.GetItems());
 
-    // 4. Setup View and Engine for initial processing
+    // 4. Setup Views
     ConsoleGameView consoleView; 
     
-    // Inject the loader reference so the EngineDriver can perform 
-    // blueprint lookups during command execution
-    EngineDriver engine(&consoleView, loader, loader.GetItems(), "data");
-
-    // 5. Retrieve NPCs from the loader and Queue UpdateStats commands
-    const auto& npcs = loader.GetNPCs();
-    std::cout << "Queueing UpdateStats for " << npcs.size() << " NPCs..." << std::endl;
+    // 5. Initialize both Engines with the SHARED Registry
+    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "data", &sharedRegistry);
     
-    for (const auto& npc : npcs) {
-        engine.AddCommand(GameCommand{ CommandType::UpdateStats, npc.EntityId });
-    }
-
-    // 6. Run the engine tick to process queued commands
-    // This will trigger the FormulaProcessor logic for each queued entity
-    engine.Tick(0.0f);
-
-    // 7. Print results (Comparing Blueprint definition vs. Computed State)
-    consoleView.RenderNPCStats(loader.GetNPCs(), engine);
-
-    // 8. Initialize Raylib window for Graphical Mode
+    // 6. Initialize Raylib and the Graphics Engine
     InitWindow(800, 600, "Data Driven Engine");
     SetTargetFPS(60);
-
-    // Use RaylibView for the main game loop
     RaylibGameView raylibView;
-    // Note: Re-binding the engine to the new graphical view
-    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "data");
+    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "data", &sharedRegistry);
 
-    // !!! CRITICAL: REGISTER YOUR NPCS SO THEY EXIST IN THE REGISTRY !!!
-auto* registry = graphicsEngine.GetRegistry();
-for (const auto& npc : loader.GetNPCs()) {
-    // Manually register these so the drawing loop sees them
-    registry->RegisterStats(npc.EntityId, { /* initial stats */ });
+    // 7. Retrieve NPCs and Queue Commands
+    const auto& npcs = loader.GetNPCs();
+    std::cout << "Queueing UpdateStats for " << npcs.size() << " NPCs..." << std::endl;
+
+    consoleEngine.InitializeEntities(loader);
     
-    // Set their starting position from your blueprint
-    Vector2* pos = registry->GetPosition(npc.EntityId);
-    if (pos) {
-        *pos = npc.SpawnPosition;
+    for (const auto& npc : npcs) {
+        // Prepare stats for registration
+        EntityStats stats; 
+        stats.IsDirty = true;
+        
+        // Register entities into the shared registry
+        sharedRegistry.RegisterStats(npc.EntityId, stats);
+        
+        // Command the console engine to perform the heavy math logic
+        consoleEngine.AddCommand(GameCommand{ CommandType::UpdateStats, npc.EntityId });
     }
-}
 
-    // 9. Main Loop
+    // 8. Run the engine tick on the console engine to process calculations
+    consoleEngine.Tick(0.0f);
+
+    // 9. Print results via console
+    consoleView.RenderNPCStats(loader.GetNPCs(), consoleEngine);
+
+    // 10. Main Loop
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
         
-        // Engine Tick processes logic
+        // Engine Tick processes logic (uses shared registry internally)
         graphicsEngine.Tick(GetFrameTime());
 
+        // Draw loop using the shared registry via the graphicsEngine
         auto* registry = graphicsEngine.GetRegistry();
         int32_t count = registry->GetActiveCount();
         const auto& activeIds = registry->GetActiveEntities();
         
-        // Draw loop
         for (int i = 0; i < count; i++) {
             int32_t id = activeIds[i];
-            Vector2* pos = graphicsEngine.GetRegistry()->GetPosition(id);
+            Vector2* pos = registry->GetPosition(id);
             
             if (pos) {
-                // This triggers your Raylib rendering logic using the updated Vector2 position
+                // Now that registry is shared, graphicsEngine finds the positions
+                // calculated by the consoleEngine's tick
                 raylibView.DrawMesh(id, *pos); 
             }
         }

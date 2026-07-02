@@ -27,6 +27,17 @@ struct EntityStats {
     float Strength;
     float Intelligence;
     bool IsDirty;
+
+    // Add this method to expose your stats for the FormulaProcessor
+    std::unordered_map<std::string, float> GetDynamicAttributes() const {
+        return {
+            {"Strength", Strength},
+            {"Intelligence", Intelligence},
+            {"Health", Health},
+            {"Mana", Mana}
+            // Add any other stats you need to register
+        };
+    }
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityStats, Health, Mana, Strength, Intelligence, IsDirty)
 

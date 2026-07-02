@@ -1,49 +1,74 @@
 #include "Core/FormulaProcessor.hpp"
 #include <fstream>
+#include <iostream>
 
-std::unordered_map<std::string, Formula> FormulaProcessor::_formulas;
-std::unordered_map<std::string, std::function<float()>> FormulaProcessor::_sourceMap;
+std::unordered_map<std::string, nlohmann::json> FormulaProcessor::_formulas;
 
 void FormulaProcessor::Initialize(const std::string& jsonFilePath) {
     std::ifstream file(jsonFilePath);
-    if (!file.is_open()) return;
     nlohmann::json j;
     file >> j;
-    _formulas = j.get<std::unordered_map<std::string, Formula>>();
-}
-
-void FormulaProcessor::RegisterSource(const std::string& name, std::function<float()> getter) {
-    _sourceMap[name] = getter;
-}
-
-float FormulaProcessor::ResolveSource(const std::string& source) {
-    auto it = _sourceMap.find(source);
-    return (it != _sourceMap.end()) ? it->second() : 0.0f;
-}
-
-
-float FormulaProcessor::Execute(const std::string& formulaName, const std::string& targetStat) {
-    float result = 0.0f;
-    
-    // Only process operations that match the target stat we want to calculate
-    for (const auto& op : _formulas[formulaName].Operations) {
-        if (op.Target != targetStat) continue; 
-
-        float input = !op.Source.empty() ? ResolveSource(op.Source) : op.Value;
-        
-        if (op.Type == "Set") result = input;
-        else if (op.Type == "Add") result += input;
-        else if (op.Type == "Multiply") result *= input;
+    for (auto& [name, formula] : j.items()) {
+        _formulas[name] = formula;
     }
-    return result;
 }
 
-void from_json(const nlohmann::json& j, Operation& op) {
-    j.at("Type").get_to(op.Type);
+float FormulaProcessor::GetStatRef(const std::string& name, EntityStats& stats, 
+                                    const ClassData& cls, const RaceData& race) {
+    // 1. Entity Stats
+    if (name == "Strength")     return stats.Strength;
+    if (name == "Intelligence") return stats.Intelligence;
+    if (name == "Health")       return stats.Health;
+    if (name == "Mana")         return stats.Mana;
     
-    // Use .value() to provide defaults if the key is missing
-    op.Stat = j.value("Stat", "");
-    op.Target = j.value("Target", "");
-    op.Source = j.value("Source", "");
-    op.Value = j.value("Value", 0.0f);
+    // 2. Class Data (No cast needed, return by value)
+    if (name == "ClassStr")     return static_cast<float>(cls.ClassStr);
+    if (name == "ClassInt")     return static_cast<float>(cls.ClassInt);
+    
+    // 3. Race Data (No cast needed, return by value)
+    if (name == "RaceStr")      return static_cast<float>(race.RaceStr);
+    if (name == "RaceInt")      return static_cast<float>(race.RaceInt);
+    
+    return 0.0f;
+}
+
+
+void FormulaProcessor::Execute(const std::string& formulaName, EntityStats& stats, 
+                               const ClassData& cls, const RaceData& race) {
+    // Log the initiation of the formula execution
+
+    // Check if the requested formula exists; return early if invalid to avoid runtime crashes
+    if (_formulas.find(formulaName) == _formulas.end()) {
+        return;
+    }
+
+    // Iterate through the operations defined in the JSON for this specific formula
+    for (auto& op : _formulas[formulaName]["Operations"]) {
+        std::string targetName = op["Target"];
+        
+        // 1. Retrieve the current value of the target attribute
+        float currentVal = GetStatRef(targetName, stats, cls, race);
+        
+        // 2. Resolve the operand value (either fixed or looked up from a Source)
+        float value = op.value("Value", 0.0f);
+        if (op.contains("Source")) {
+            std::string sourceName = op["Source"];
+            value = GetStatRef(sourceName, stats, cls, race);
+        }
+
+        // 3. Perform the math operation
+        std::string type = op["Type"];
+        if      (type == "Set")      currentVal = value;
+        else if (type == "Add")      currentVal += value;
+        else if (type == "Multiply") currentVal *= value;
+
+        // 4. Persistence: Write the result back to the specific EntityStats member
+        // This acts as the "One Point of Truth" for updating the state
+        if      (targetName == "Strength")     stats.Strength = currentVal;
+        else if (targetName == "Intelligence") stats.Intelligence = currentVal;
+        else if (targetName == "Health")       stats.Health = currentVal;
+        else if (targetName == "Mana")         stats.Mana = currentVal;
+        else {
+        }
+    }
 }
