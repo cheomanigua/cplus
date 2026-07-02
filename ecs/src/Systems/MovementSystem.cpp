@@ -4,24 +4,26 @@
 #include "Core/Constants.hpp"
 
 void MovementSystem::ProcessCommands(CommandQueue& queue, MovementBuffers& buffers) {
-    while (queue.HasCommands()) {
+    // Get the current number of commands so we only cycle through the original set
+    size_t commandCount = queue.GetCount(); 
+
+    for (size_t i = 0; i < commandCount; ++i) {
         GameCommand cmd = queue.Dequeue();
         
-        // Safety Check: Validate EntityId before accessing buffers
-        // MaxEntities is defined in Core/Constants.hpp
-        if (cmd.EntityId >= 0 && cmd.EntityId < EngineConfig::MaxEntities) {
-            
-            if (cmd.Type == CommandType::Move) {
-                buffers.Velocities[cmd.EntityId] = cmd.Velocity;
-                buffers.Speeds[cmd.EntityId] = cmd.Speed;
-                buffers.Active[cmd.EntityId] = true;
-                
-                // If you need to store the target position from the command:
-                // buffers.Positions[cmd.EntityId] = cmd.MoveParams.Position;
-            } 
-            else if (cmd.Type == CommandType::Stop) {
-                buffers.Active[cmd.EntityId] = false;
+        if (cmd.Type == CommandType::Move || cmd.Type == CommandType::Stop) {
+            // Process movement-specific commands
+            if (cmd.EntityId >= 0 && cmd.EntityId < EngineConfig::MaxEntities) {
+                if (cmd.Type == CommandType::Move) {
+                    buffers.Velocities[cmd.EntityId] = cmd.Velocity;
+                    buffers.Speeds[cmd.EntityId] = cmd.Speed;
+                    buffers.Active[cmd.EntityId] = true;
+                } else if (cmd.Type == CommandType::Stop) {
+                    buffers.Active[cmd.EntityId] = false;
+                }
             }
+        } else {
+            // Re-enqueue non-movement commands immediately
+            queue.Enqueue(cmd);
         }
     }
 }

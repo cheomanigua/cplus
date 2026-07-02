@@ -11,26 +11,35 @@ EngineDriver::EngineDriver(IEngineFacade* view, DataLoader& loader, std::vector<
 
 void EngineDriver::Tick(float deltaTime) {
     // 1. Process Movement "Intent"
-    // This moves commands from the queue into the MovementBuffers
     MovementSystem::ProcessCommands(_commandQueue, _movementBuffers);
 
     // 2. Perform Movement "Execution"
-    // This updates positions based on velocity and delta time
     MovementSystem::Update(_movementBuffers, deltaTime);
 
     // 3. Process Other Commands (Stats/Combat)
+    std::cout << "[DEBUG] Starting command processing." << std::endl;
+    
     while (_commandQueue.HasCommands()) {
         GameCommand cmd = _commandQueue.Dequeue();
+
+        std::cout << "[DEBUG] Processing command type: " << (int)cmd.Type << " for Entity: " << cmd.EntityId << std::endl;
 
         switch (cmd.Type) {
             case CommandType::UpdateStats: {
                 const auto* bp = _dataLoader.GetBlueprintById(cmd.EntityId);
                 EntityStats* stats = _registry->GetEntityStats(cmd.EntityId);
-                if (!bp || !stats) break;
+                if (!bp || !stats) {
+                    std::cout << "[DEBUG] UpdateStats failed: Blueprint or Stats not found for ID " << cmd.EntityId << std::endl;
+                    break;
+                }
           
                 // Bind data sources for the formula processor
                 const auto& classData = _dataLoader.GetClassData(bp->Class);
                 const auto& raceData = _dataLoader.GetRaceData(bp->Race);
+                
+                std::cout << "[DEBUG] Binding Data for ID " << cmd.EntityId 
+                          << " | ClassStr: " << classData.ClassStr 
+                          << " | RaceStr: " << raceData.RaceStr << std::endl;
                 
                 FormulaProcessor::RegisterSource("ClassStr", [&classData]() { return static_cast<float>(classData.ClassStr); });
                 FormulaProcessor::RegisterSource("RaceStr", [&raceData]() { return static_cast<float>(raceData.RaceStr); });
@@ -45,7 +54,7 @@ void EngineDriver::Tick(float deltaTime) {
                 stats->Intelligence = FormulaProcessor::Execute("UpdateStats", "Intelligence");
                 stats->Mana         = FormulaProcessor::Execute("UpdateStats", "Mana");
 
-                std::cout << "DEBUG: Formula results for ID " << cmd.EntityId 
+                std::cout << "[DEBUG] Formula results for ID " << cmd.EntityId 
                           << " | Str: " << stats->Strength 
                           << " | Health: " << stats->Health << std::endl;
 
@@ -53,9 +62,9 @@ void EngineDriver::Tick(float deltaTime) {
                 break;
             }
             case CommandType::EquipItem:
-                // Equipment system logic would go here
                 break;
             default:
+                std::cout << "[DEBUG] Unrecognized command type received: " << (int)cmd.Type << std::endl;
                 break;
         }
     }
@@ -65,5 +74,6 @@ void EngineDriver::Tick(float deltaTime) {
 }
 
 void EngineDriver::AddCommand(GameCommand cmd) {
+  std::cout << "[DEBUG] Enqueueing command for Entity: " << cmd.EntityId << std::endl;
     _commandQueue.Enqueue(cmd);
 }

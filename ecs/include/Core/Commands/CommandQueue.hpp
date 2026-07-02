@@ -37,4 +37,9 @@ public:
     void Clear() { 
         while(!_queue.empty()) _queue.pop(); 
     }
+
+
+    size_t GetCount() const {
+        return _queue.size(); 
+    }
 };

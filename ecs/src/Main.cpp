@@ -3,9 +3,12 @@
 #include "Core/ConsoleGameView.hpp"
 #include "Engine/DataLoader.hpp"
 #include "Core/FormulaProcessor.hpp"
+#include "Tests/TestRunner.hpp"
 #include <iostream>
 
 int main() {
+
+    TestRunner::RunAll();
     // 1. Initialize the DataLoader with the path to your data directory
     DataLoader loader("data"); 
 
