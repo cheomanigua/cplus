@@ -59,8 +59,8 @@ int main() {
         std::cout << "Name:  " << npc.Name << std::endl;
         std::cout << "Class: " << npc.Class << std::endl;
         std::cout << "Race:  " << npc.Race << std::endl;
-        std::cout << "Spawn: (" << npc.SpawnPosition.X << ", " 
-                  << npc.SpawnPosition.Y << ")" << std::endl;
+        std::cout << "Spawn: (" << npc.SpawnPosition.x << ", " 
+          << npc.SpawnPosition.y << ")" << std::endl;
         
         if (stats) {
             std::cout << "Computed Stats:" << std::endl;

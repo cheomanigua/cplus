@@ -3,13 +3,10 @@
 
 #include <string>
 #include <nlohmann/json.hpp>
+#include "raylib.h" // Raylib provides the native Vector2
 
-// Define Vector2 to match System.Numerics.Vector2
-struct Vector2 { 
-    float X; 
-    float Y; 
-};
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vector2, X, Y)
+// You no longer define struct Vector2 here. 
+// Raylib provides it for you!
 
 struct NPCBlueprint {
     int EntityId;
@@ -17,10 +14,21 @@ struct NPCBlueprint {
     std::string Race;
     std::string Class;
     int EquippedItemId;
-    Vector2 SpawnPosition;
+    Vector2 SpawnPosition; // Uses Raylib's Vector2
 };
 
-// The macro MUST contain every field you want to load from JSON
+// nlohmann::json needs to know how to handle Raylib's Vector2.
+// Since it's a POD struct (float x, y), you can define a simple mapping:
+namespace nlohmann {
+    template <>
+    struct adl_serializer<Vector2> {
+        static void from_json(const json& j, Vector2& v) {
+            v.x = j.at("X").get<float>();
+            v.y = j.at("Y").get<float>();
+        }
+    };
+}
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NPCBlueprint, EntityId, Name, Race, Class, EquippedItemId, SpawnPosition)
 
 #endif

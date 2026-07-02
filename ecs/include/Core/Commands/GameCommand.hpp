@@ -1,20 +1,21 @@
 #pragma once
 #include <cstdint>
+#include <raylib.h> // Provides Vector2
 
-enum class CommandType : int32_t { Move, Attack, UpdateStats, EquipItem };
+enum class CommandType : int32_t { Move, Stop, Attack, UpdateStats, EquipItem };
 
 struct GameCommand {
     CommandType Type;
     int32_t EntityId;
     
-    float VelocityX;
-    float VelocityY;
+    // Use Vector2 for velocity and speed properties
+    Vector2 Velocity; 
     float Speed;
 
+    // Use a union to keep the struct size small and efficient
     union {
         struct {
-            float PosX;
-            float PosY;
+            Vector2 Position;
         } MoveParams;
 
         struct {
