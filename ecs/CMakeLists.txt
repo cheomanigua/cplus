@@ -7,6 +7,14 @@ project(DataDrivenEngine VERSION 1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+#  # Optimization Flags for Performance
+#  if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+#      # -O3: Enables aggressive optimization
+#      # -march=native: Optimizes for your specific CPU
+#      # -fopt-info-vec-optimized: Triggers reports on vectorization
+#      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -fopt-info-vec-optimized")
+#  endif()
+
 # 1. Define include directories
 # This allows you to include headers like #include "Engine/EntityRegistry.hpp"
 include_directories(include)
