@@ -1,7 +1,8 @@
 #include "Engine/EngineDriver.hpp"
 #include "Engine/EntityRegistry.hpp"
-#include "Core/ConsoleGameView.hpp"
 #include "Engine/DataLoader.hpp"
+#include "Core/ConsoleGameView.hpp"
+#include "Core/PathResolver.hpp"
 #include "Core/FormulaProcessor.hpp"
 #include "Tests/TestRunner.hpp"
 #include <iostream>
@@ -10,7 +11,7 @@ int main() {
 
     TestRunner::RunAll();
     // 1. Initialize the DataLoader with the path to your data directory
-    DataLoader loader("data"); 
+    DataLoader loader;
 
     // 2. Load the manifest
     if (!loader.LoadManifest("manifest.json")) {
@@ -21,7 +22,7 @@ int main() {
     
     // 3. Initialize the FormulaProcessor 
     // This loads the math logic from formulas.json into memory
-    FormulaProcessor::Initialize("data/system/formulas.json");
+    FormulaProcessor::Initialize(Engine::GetDataPath("system/formulas.json"));
 
     // Add debug print here
     std::cout << "DEBUG: Checking Class lookup..." << std::endl;

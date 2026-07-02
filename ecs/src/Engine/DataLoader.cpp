@@ -1,15 +1,11 @@
 #include "Engine/DataLoader.hpp"
 #include "Core/Constants.hpp"
+#include "Core/PathResolver.hpp"
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
-
-DataLoader::DataLoader(const std::string& dataDirectory) 
-    : _dataDirectory(dataDirectory) {
-    _items.reserve(EngineConfig::MaxItemCapacity);
-}
 
 const NPCBlueprint* DataLoader::GetBlueprintById(int id) const {
     for (const auto& npc : _npcs) {
@@ -19,9 +15,14 @@ const NPCBlueprint* DataLoader::GetBlueprintById(int id) const {
 }
 
 
-bool DataLoader::LoadManifest(const std::string& manifestFilename) {
-    std::ifstream file(_dataDirectory + "/" + manifestFilename);
-    if (!file.is_open()) return false;
+bool DataLoader::LoadManifest(const std::string& filename) {
+    std::string fullPath = Engine::GetDataPath(filename);
+    std::ifstream file(fullPath);
+    
+    if (!file.is_open()) {
+        std::cerr << "Failed to open manifest: " << fullPath << std::endl;
+        return false;
+    }
 
     json manifest = json::parse(file);
     for (const auto& modulePath : manifest["ConfigModules"]) {
@@ -36,9 +37,13 @@ bool DataLoader::LoadManifest(const std::string& manifestFilename) {
 }
 
 void DataLoader::LoadItemFile(const std::string& filename) {
-    std::ifstream file(_dataDirectory + "/" + filename);
-    if (!file.is_open()) return;
+    std::string fullPath = Engine::GetDataPath(filename);
+    std::ifstream file(fullPath);
     
+    if (!file.is_open()) {
+        std::cerr << "Failed to open items filename: " << fullPath << std::endl;
+        return;
+    } 
     json data = json::parse(file);
 
     for (auto it = data.begin(); it != data.end(); ++it) {
@@ -61,9 +66,11 @@ void DataLoader::LoadItemFile(const std::string& filename) {
 }
 
 void DataLoader::LoadCharacterFile(const std::string& filename) {
-    std::ifstream file(_dataDirectory + "/" + filename);
+    std::string fullPath = Engine::GetDataPath(filename);
+    std::ifstream file(fullPath);
+    
     if (!file.is_open()) {
-        std::cout << "Failed to open file: " << filename << std::endl;
+        std::cerr << "Failed to characters file: " << fullPath << std::endl;
         return;
     }
 
