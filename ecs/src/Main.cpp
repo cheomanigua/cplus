@@ -5,9 +5,12 @@
 #include "Core/RaylibGameView.hpp"
 #include "Core/PathResolver.hpp"
 #include "Core/FormulaProcessor.hpp"
+#include "Systems/InputSystem.hpp"
 #include "Tests/TestRunner.hpp"
 #include "raylib.h"
 #include <iostream>
+
+constexpr int32_t PLAYER_ID = 1;
 
 int main() {
     TestRunner::RunAll();
@@ -34,6 +37,7 @@ int main() {
     InitWindow(800, 600, "Data Driven Engine");
     SetTargetFPS(60);
     RaylibGameView raylibView;
+    EngineFacade::Implementation = &raylibView;
     EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry);
 
     // 6. SPAWN NPCs (Factory Pattern)
@@ -56,6 +60,7 @@ int main() {
 
     // 8. Main Loop
     while (!WindowShouldClose()) {
+        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), PLAYER_ID);
         BeginDrawing();
         ClearBackground(RAYWHITE);
         

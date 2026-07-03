@@ -10,11 +10,24 @@ void RaylibGameView::DrawMesh(int32_t id, const Vector2& transform) {
     } else if (id == 2) {
         DrawRectangleV(position, { 20.0f, 20.0f }, RED);
     }
+
+    // Draw the debug click marker
+    if (_clickPosition.x >= 0) {
+        DrawCircleV(_clickPosition, 5.0f, GREEN); // Small green circle at click
+    }
 }
 
 bool RaylibGameView::IsActionPressed(const std::string& actionName) {
+    // if (actionName == "Move") {
+    //     return IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    // }
+    // return false;
+
     if (actionName == "Move") {
-        return IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            _clickPosition = GetMousePosition(); // Store the click
+            return true;
+        }
     }
     return false;
 }

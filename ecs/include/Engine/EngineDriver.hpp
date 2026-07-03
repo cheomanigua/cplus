@@ -33,4 +33,6 @@ public:
     EntityRegistry* GetRegistry() { return _registry; }
     
     void InitializeEntities(DataLoader& loader);
+
+    CommandQueue& GetCommandQueue() { return _commandQueue; }
 };
