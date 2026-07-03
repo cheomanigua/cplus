@@ -9,8 +9,10 @@
 struct NPCBlueprint;
 
 struct EntityMetadata {
+    std::string Name;
     std::string Class;
     std::string Race;
+    Vector2 SpawnPosition;
 };
 
 class EntityRegistry {

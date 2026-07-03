@@ -7,7 +7,7 @@ int32_t EntityRegistry::SpawnNPC(const NPCBlueprint& bp) {
     int32_t newId = _nextId++;
     
     // Store metadata so EngineDriver can retrieve Class/Race later
-    _metadataMap[newId] = { bp.Class, bp.Race }; 
+    _metadataMap[newId] = { bp.Name, bp.Class, bp.Race, bp.SpawnPosition }; 
     
     // Initialize stats
     EntityStats stats;

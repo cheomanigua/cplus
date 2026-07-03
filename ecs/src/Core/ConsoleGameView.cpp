@@ -5,28 +5,31 @@
 void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const DataLoader& loader) {
     const auto& activeEntities = registry.GetActiveEntities();
     
-    // Header
+    // Header - Added "Name" column
     std::cout << "\n" << std::left 
               << std::setw(5)  << "ID" 
+              << std::setw(12) << "Name"  // Added Name
               << std::setw(12) << "Class" 
               << std::setw(10) << "Race" 
+              << std::setw(15) << "Pos (X,Y)"
               << std::setw(8)  << "HP" 
               << std::setw(8)  << "Mana" 
               << std::setw(8)  << "Str" 
               << std::setw(8)  << "Int" << std::endl;
-    std::cout << std::string(65, '-') << std::endl;
+    std::cout << std::string(81, '-') << std::endl;
 
-    // Data rows
     for (int32_t id : activeEntities) {
         EntityStats* stats = registry.GetEntityStats(id);
-        
-        // Metadata is retrieved via our new accessor
         const auto& meta = registry.GetMetadata(id); 
         
         if (stats != nullptr) {
             std::cout << std::left << std::setw(5)  << id 
+                      << std::setw(12) << meta.Name   // Added Name
                       << std::setw(12) << meta.Class 
                       << std::setw(10) << meta.Race 
+                      << "(" << (int)meta.SpawnPosition.x << "," 
+                             << (int)meta.SpawnPosition.y << ")"
+                      << std::setw(6) << "" // Spacer for column alignment
                       << std::setw(8)  << (int)stats->Health 
                       << std::setw(8)  << (int)stats->Mana 
                       << std::setw(8)  << (int)stats->Strength 
