@@ -9,7 +9,6 @@
 // Raylib provides it for you!
 
 struct NPCBlueprint {
-    int EntityId;
     std::string Name;
     std::string Race;
     std::string Class;
@@ -29,6 +28,6 @@ namespace nlohmann {
     };
 }
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NPCBlueprint, EntityId, Name, Race, Class, EquippedItemId, SpawnPosition)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NPCBlueprint, Name, Race, Class, EquippedItemId, SpawnPosition)
 
 #endif

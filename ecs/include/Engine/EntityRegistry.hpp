@@ -1,41 +1,39 @@
 #pragma once
+#include <cstdint>
 #include <vector>
-#include <array>
-#include <memory>
-#include "Core/Constants.hpp"
-#include "Core/Model.hpp"
+#include <unordered_map>
+#include <string>
+#include "Model.hpp"
 #include "raylib.h"
 
-// Assuming ItemData exists in a Model.hpp file
-struct ItemData; 
-struct EntityStats;
+struct NPCBlueprint;
+
+struct EntityMetadata {
+    std::string Class;
+    std::string Race;
+};
 
 class EntityRegistry {
-private:
-    std::vector<ItemData> _itemDatabase;
-    std::array<EntityStats, EngineConfig::MaxEntities> _stats;
-    std::array<int32_t, EngineConfig::MaxEntities> _activeEntities;
-    int32_t _activeCount = 0;
-    std::array<Vector2, EngineConfig::MaxEntities> _positions;
-
 public:
-    EntityRegistry(std::vector<ItemData> itemDatabase);
+    EntityRegistry(const std::vector<ItemData>& items);
+    
+    int32_t SpawnNPC(const NPCBlueprint& bp);
+    
+    void RegisterStats(int32_t entityId, const EntityStats& stats);
+    EntityStats* GetEntityStats(int32_t entityId);
+    Vector2* GetPosition(int32_t entityId);
+    const EntityMetadata& GetMetadata(int32_t entityId) const; // New Accessor
+    
+    int32_t GetActiveCount() const;
+    const std::vector<int32_t>& GetActiveEntities() const;
 
-    int32_t GetActiveCount() const { return _activeCount; }
-    const std::array<int32_t, EngineConfig::MaxEntities>& GetActiveEntities() const { 
-        return _activeEntities; 
-    }
-
-    ItemData* GetItem(int32_t id);
-    EntityStats& GetStats(int32_t entityId); // The fast path
-    EntityStats* GetEntityStats(int entityId); // The safe path
-    void RegisterStats(int32_t entityId, const EntityStats& data);
-    void ProcessCombat();
-
-    Vector2* GetPosition(int32_t entityId) {
-        if (entityId >= 0 && entityId < EngineConfig::MaxEntities) {
-            return &_positions[entityId];
-        }
-        return nullptr;
-    }
+private:
+    int32_t _nextId = 1; 
+    int32_t _activeCount = 0;
+    
+    std::vector<int32_t> _activeEntities;
+    std::unordered_map<int32_t, EntityStats> _statsMap;
+    std::unordered_map<int32_t, Vector2> _positionMap;
+    std::unordered_map<int32_t, EntityMetadata> _metadataMap; // New Storage
+    std::vector<ItemData> _items;
 };

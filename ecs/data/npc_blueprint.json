@@ -1,6 +1,5 @@
 [
   {
-  "EntityId": 1,
   "Name": "Thrall",
   "Race": "Orc",
   "Class": "Warrior",
@@ -8,7 +7,6 @@
   "SpawnPosition": { "X": 210.0, "Y": 220.0 }
   },
   {
-  "EntityId": 2,
   "Name": "Sergio",
   "Race": "Human",
   "Class": "Wizard",

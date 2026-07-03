@@ -1,55 +1,66 @@
 #include "Engine/EntityRegistry.hpp"
-#include <algorithm>
+#include "Engine/NPCBlueprint.hpp"
 
-EntityRegistry::EntityRegistry(std::vector<ItemData> itemDatabase) 
-    : _itemDatabase(std::move(itemDatabase)) {
+EntityRegistry::EntityRegistry(const std::vector<ItemData>& items) : _items(items) {}
 
-        // Initialize all positions to 0,0
-    _positions.fill({0.0f, 0.0f});
+int32_t EntityRegistry::SpawnNPC(const NPCBlueprint& bp) {
+    int32_t newId = _nextId++;
+    
+    // Store metadata so EngineDriver can retrieve Class/Race later
+    _metadataMap[newId] = { bp.Class, bp.Race }; 
+    
+    // Initialize stats
+    EntityStats stats;
+    stats.IsDirty = true;
+    stats.Health = 100.0f;
+    stats.Mana = 50.0f;
+    stats.Strength = 10.0f;
+    stats.Intelligence = 10.0f;
+    
+    // This is the method that was failing to link
+    RegisterStats(newId, stats);
+    
+    // Initialize position
+    _positionMap[newId] = bp.SpawnPosition;
+    
+    _activeEntities.push_back(newId);
+    _activeCount++;
+    
+    return newId;
 }
 
-ItemData* EntityRegistry::GetItem(int32_t id) {
-    // 1. Bitwise Type Check
-    if ((id & EntityMasks::TYPE_MASK) != EntityMasks::ITEM_MASK) return nullptr;
+void EntityRegistry::RegisterStats(int32_t entityId, const EntityStats& stats) {
+    _statsMap[entityId] = stats;
+}
 
-    // 2. Bounds Check
-    if (id >= 0 && id < static_cast<int32_t>(_itemDatabase.size())) 
-        return &_itemDatabase[id];
-
+EntityStats* EntityRegistry::GetEntityStats(int32_t entityId) {
+    // 1. We look into the map (the container where stats are stored)
+    auto it = _statsMap.find(entityId);
+    
+    // 2. If the ID exists, return the address of the stats
+    if (it != _statsMap.end()) {
+        return &it->second;
+    }
+    
+    // 3. If the ID doesn't exist, return nullptr (safe to check in your View)
     return nullptr;
 }
 
-// 1. The "Fast Path" (Reference)
-// Assumes you know the entity exists. Throws/Crashes if index is invalid.
-EntityStats& EntityRegistry::GetStats(int32_t entityId) {
-    return _stats.at(entityId); // Use .at() for bounds checking, or [] if speed is critical
-}
-
-// 2. The "Safe Path" (Pointer)
-// Use this in EngineDriver for command processing.
-EntityStats* EntityRegistry::GetEntityStats(int32_t entityId) {
-    // Check if the ID exists in your collection. 
-    // Assuming you have a way to check existence (e.g., _stats.count(entityId) or bounds check)
-    if (entityId < 0 || entityId >= _stats.size()) {
-        return nullptr;
+Vector2* EntityRegistry::GetPosition(int32_t entityId) {
+    if (_positionMap.find(entityId) != _positionMap.end()) {
+        return &_positionMap[entityId];
     }
-    
-    return &GetStats(entityId);
+    return nullptr;
 }
 
-void EntityRegistry::RegisterStats(int32_t entityId, const EntityStats& data) {
-    _stats[entityId] = data;
-    _activeEntities[_activeCount++] = entityId;
+const EntityMetadata& EntityRegistry::GetMetadata(int32_t entityId) const {
+    return _metadataMap.at(entityId);
 }
 
-void EntityRegistry::ProcessCombat() {
-    for (int i = 0; i < _activeCount; i++) {
-        int32_t eid = _activeEntities[i];
-        EntityStats& data = _stats[eid];
+int32_t EntityRegistry::GetActiveCount() const {
+    return _activeCount;
+}
 
-        if (!data.IsDirty) continue;
-
-        // Logic for combat iteration goes here...
-        data.IsDirty = false;
-    }
+const std::vector<int32_t>& EntityRegistry::GetActiveEntities() const {
+    return _activeEntities;
 }

@@ -7,14 +7,6 @@
 
 using json = nlohmann::json;
 
-const NPCBlueprint* DataLoader::GetBlueprintById(int id) const {
-    for (const auto& npc : _npcs) {
-        if (npc.EntityId == id) return &npc;
-    }
-    return nullptr;
-}
-
-
 bool DataLoader::LoadManifest(const std::string& filename) {
     std::string fullPath = Engine::GetDataPath(filename);
     std::ifstream file(fullPath);
@@ -70,7 +62,7 @@ void DataLoader::LoadCharacterFile(const std::string& filename) {
     std::ifstream file(fullPath);
     
     if (!file.is_open()) {
-        std::cerr << "Failed to characters file: " << fullPath << std::endl;
+        std::cerr << "Failed to open characters file: " << fullPath << std::endl;
         return;
     }
 
@@ -78,21 +70,17 @@ void DataLoader::LoadCharacterFile(const std::string& filename) {
 
     if (filename.find("npc_blueprint.json") != std::string::npos) {
         _npcs = data.get<std::vector<NPCBlueprint>>();
-        std::cout << "Loaded " << _npcs.size() << " NPCs." << std::endl;
+        std::cout << "Loaded " << _npcs.size() << " NPC templates." << std::endl;
     } 
     else if (filename.find("classes.json") != std::string::npos) {
-        // Populates the map for GetClassData lookups
         _classes = data.get<std::unordered_map<std::string, ClassData>>();
     } 
     else if (filename.find("races.json") != std::string::npos) {
-        // Populates the map for GetRaceData lookups
         _races = data.get<std::unordered_map<std::string, RaceData>>();
     }
 }
 
 const ClassData& DataLoader::GetClassData(const std::string& className) const {
-    // If your data isn't loaded, this will throw an exception. 
-    // Ensure these maps are populated during LoadManifest!
     return _classes.at(className);
 }
 

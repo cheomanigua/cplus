@@ -16,6 +16,6 @@ public:
     // Logic moved from Main.cpp
     void RenderNPCStats(const std::vector<NPCBlueprint>& npcs, EngineDriver& engine);
     
-    // Existing functionality
+    void DisplayFullCharacterSheet(EntityRegistry& registry, const DataLoader& loader);
     void Render(const CharacterSheetDto& data);
 };
