@@ -6,5 +6,5 @@
 class InputSystem {
 public:
     // Update this signature to match your .cpp file
-    static void PollInput(CommandQueue& queue, int32_t playerId, EntityRegistry& registry);
+    static void PollInput(CommandQueue& queue, EntityRegistry& registry);
 };

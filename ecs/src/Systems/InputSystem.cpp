@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "raymath.h"
 
-void InputSystem::PollInput(CommandQueue& queue, int32_t playerId, EntityRegistry& registry) {
+void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mousePos = GetMousePosition();
         int32_t clickedId = -1;

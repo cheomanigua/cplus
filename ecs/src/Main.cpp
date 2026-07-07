@@ -13,8 +13,6 @@
 #include "raylib.h"
 #include "raymath.h"
 
-constexpr int32_t PLAYER_ID = 1;
-
 int main() {
     TestRunner::RunAll();
 
@@ -71,7 +69,7 @@ int main() {
         }
 
         // Pass the pointer to sharedRegistry explicitly
-        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), PLAYER_ID, sharedRegistry);
+        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), sharedRegistry);
         
         BeginDrawing();
         ClearBackground(RAYWHITE);
