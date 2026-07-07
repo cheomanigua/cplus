@@ -8,6 +8,8 @@ struct MovementBuffers {
     std::vector<Vector2> Velocities;
     std::vector<float> Speeds;
     std::vector<bool> Active;
+    Vector2 TargetPositions[EngineConfig::MaxEntities];
+    bool IsMoving[EngineConfig::MaxEntities];
 
     MovementBuffers() {
         Positions.resize(EngineConfig::MaxEntities);

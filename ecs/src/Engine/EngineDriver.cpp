@@ -14,7 +14,7 @@ void EngineDriver::Tick(float deltaTime) {
     MovementSystem::ProcessCommands(_commandQueue, _movementBuffers);
 
     // 2. Perform Movement "Execution"
-    MovementSystem::Update(_movementBuffers, deltaTime);
+    MovementSystem::Update(_movementBuffers, deltaTime, *_registry);
 
     // 3. Process Other Commands (Stats/Combat)
     while (_commandQueue.HasCommands()) {

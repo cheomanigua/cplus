@@ -16,6 +16,7 @@ struct GameCommand {
     union {
         struct {
             Vector2 Position;
+            Vector2 TargetPosition;
         } MoveParams;
 
         struct {

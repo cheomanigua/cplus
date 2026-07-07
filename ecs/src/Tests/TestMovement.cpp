@@ -6,8 +6,10 @@
 
 // Ensure this matches the declaration in TestRunner.cpp
 void TestMovementSystem() {
+    std::vector<ItemData> items;
     CommandQueue queue;
     MovementBuffers buffers;
+    EntityRegistry registry(items);
     float deltaTime = 1.0f;
     int32_t testEntity = 0;
 
@@ -21,7 +23,7 @@ void TestMovementSystem() {
     queue.Enqueue(moveCmd);
 
     MovementSystem::ProcessCommands(queue, buffers);
-    MovementSystem::Update(buffers, deltaTime);
+    MovementSystem::Update(buffers, deltaTime, registry);
 
     Vector2 actual = buffers.Positions[testEntity];
     if (actual.x == 20.0f && actual.y == 10.0f) {

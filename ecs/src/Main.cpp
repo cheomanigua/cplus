@@ -7,8 +7,11 @@
 #include "Core/FormulaProcessor.hpp"
 #include "Systems/InputSystem.hpp"
 #include "Tests/TestRunner.hpp"
-#include "raylib.h"
 #include <iostream>
+
+#define RAYMATH_IMPLEMENTATION
+#include "raylib.h"
+#include "raymath.h"
 
 constexpr int32_t PLAYER_ID = 1;
 
