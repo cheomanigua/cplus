@@ -11,10 +11,10 @@ EngineDriver::EngineDriver(IEngineFacade* view, DataLoader& loader, std::vector<
 
 void EngineDriver::Tick(float deltaTime) {
     // 1. Process Movement "Intent"
-    MovementSystem::ProcessCommands(_commandQueue, _movementBuffers);
+    MovementSystem::ProcessCommands(_commandQueue, _movementComponent);
 
     // 2. Perform Movement "Execution"
-    MovementSystem::Update(_movementBuffers, deltaTime, *_registry);
+    MovementSystem::Update(_movementComponent, deltaTime, *_registry);
 
     // 3. Process Other Commands (Stats/Combat)
     while (_commandQueue.HasCommands()) {

@@ -5,7 +5,7 @@
 #include "raylib.h"
 #include "raymath.h"
 
-void MovementSystem::ProcessCommands(CommandQueue& queue, MovementBuffers& buffers) {
+void MovementSystem::ProcessCommands(CommandQueue& queue, MovementComponent& buffers) {
     // Get the current number of commands so we only cycle through the original set
     size_t commandCount = queue.GetCount(); 
 
@@ -32,7 +32,7 @@ void MovementSystem::ProcessCommands(CommandQueue& queue, MovementBuffers& buffe
     }
 }
 
-void MovementSystem::Update(MovementBuffers& buffers, float deltaTime, EntityRegistry& registry) {
+void MovementSystem::Update(MovementComponent& buffers, float deltaTime, EntityRegistry& registry) {
     for (size_t i = 0; i < EngineConfig::MaxEntities; ++i) {
         if (!buffers.IsMoving[i]) continue;
 

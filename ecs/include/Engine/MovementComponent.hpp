@@ -3,7 +3,7 @@
 #include <raylib.h>
 #include "Core/Constants.hpp"
 
-struct MovementBuffers {
+struct MovementComponent {
     std::vector<Vector2> Positions;
     std::vector<Vector2> Velocities;
     std::vector<float> Speeds;
@@ -11,7 +11,7 @@ struct MovementBuffers {
     Vector2 TargetPositions[EngineConfig::MaxEntities];
     bool IsMoving[EngineConfig::MaxEntities];
 
-    MovementBuffers() {
+    MovementComponent() {
         Positions.resize(EngineConfig::MaxEntities);
         Velocities.resize(EngineConfig::MaxEntities);
         Speeds.resize(EngineConfig::MaxEntities);

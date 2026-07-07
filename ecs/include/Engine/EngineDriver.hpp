@@ -7,7 +7,7 @@
 #include "Core/Interfaces/IEngineFacade.hpp"
 #include "Core/FormulaProcessor.hpp"
 #include "Engine/EntityRegistry.hpp"
-#include "Engine/MovementBuffers.hpp"
+#include "Engine/MovementComponent.hpp"
 #include "Engine/DataLoader.hpp"
 
 class EngineDriver {
@@ -17,7 +17,7 @@ private:
     
     // Engine State
     CommandQueue _commandQueue;
-    MovementBuffers _movementBuffers;
+    MovementComponent _movementComponent;
     
     IEngineFacade* _view;
     std::string _dataDirectory;

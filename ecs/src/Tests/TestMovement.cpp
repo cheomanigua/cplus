@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Core/Commands/CommandQueue.hpp"
-#include "Engine/MovementBuffers.hpp"
+#include "Engine/MovementComponent.hpp"
 #include "Systems/MovementSystem.hpp"
 #include "Core/Constants.hpp"
 
@@ -8,7 +8,7 @@
 void TestMovementSystem() {
     std::vector<ItemData> items;
     CommandQueue queue;
-    MovementBuffers buffers;
+    MovementComponent buffers;
     EntityRegistry registry(items);
     float deltaTime = 1.0f;
     int32_t testEntity = 0;
