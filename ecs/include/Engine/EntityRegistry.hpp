@@ -29,9 +29,13 @@ public:
     int32_t GetActiveCount() const;
     const std::vector<int32_t>& GetActiveEntities() const;
 
+    void SetSelectedEntity(int32_t id) { _selectedEntityId = id; }
+    int32_t GetSelectedEntity() const { return _selectedEntityId; }
+
 private:
     int32_t _nextId = 1; 
     int32_t _activeCount = 0;
+    int32_t _selectedEntityId = -1;
     
     std::vector<int32_t> _activeEntities;
     std::unordered_map<int32_t, EntityStats> _statsMap;

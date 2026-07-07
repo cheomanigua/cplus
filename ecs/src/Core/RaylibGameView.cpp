@@ -1,6 +1,7 @@
 #include "RaylibGameView.hpp"
 
 void RaylibGameView::DrawMesh(int32_t id, const Vector2& transform) {
+    bool isSelected = (_registry && _registry->GetSelectedEntity() == id);
     Vector2 position = { transform.x, transform.y };
     
     // Example logic: Entity 1 is a Circle (Thrall), Entity 2 is a Rectangle (Sergio)
@@ -14,6 +15,11 @@ void RaylibGameView::DrawMesh(int32_t id, const Vector2& transform) {
     // Draw the debug click marker
     if (_clickPosition.x >= 0) {
         DrawCircleV(_clickPosition, 5.0f, GREEN); // Small green circle at click
+    }
+
+    // Highlight if selected
+    if (isSelected) {
+        DrawCircleLinesV(position, 15.0f, BLACK);
     }
 }
 

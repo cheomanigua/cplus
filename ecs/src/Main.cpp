@@ -37,6 +37,7 @@ int main() {
     InitWindow(800, 600, "Data Driven Engine");
     SetTargetFPS(60);
     RaylibGameView raylibView;
+    raylibView.SetRegistry(&sharedRegistry);
     EngineFacade::Implementation = &raylibView;
     EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry);
 
@@ -60,7 +61,7 @@ int main() {
 
     // 8. Main Loop
     while (!WindowShouldClose()) {
-        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), PLAYER_ID);
+        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), PLAYER_ID, sharedRegistry);
         BeginDrawing();
         ClearBackground(RAYWHITE);
         
