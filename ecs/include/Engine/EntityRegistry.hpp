@@ -5,6 +5,7 @@
 #include <string>
 #include "Model.hpp"
 #include "raylib.h"
+#include "Core/Constants.hpp"
 
 struct NPCBlueprint;
 
@@ -14,6 +15,8 @@ struct EntityMetadata {
     std::string Race;
     Vector2 SpawnPosition;
 };
+
+
 
 class EntityRegistry {
 public:
@@ -32,6 +35,11 @@ public:
     void SetSelectedEntity(int32_t id) { _selectedEntityId = id; }
     int32_t GetSelectedEntity() const { return _selectedEntityId; }
 
+    void UpdateEntityCell(int32_t entityId, Vector2 pos);
+    const std::vector<int32_t>& GetEntitiesInCell(int x, int y) const;
+
+    void ClearGrid();
+
 private:
     int32_t _nextId = 1; 
     int32_t _activeCount = 0;
@@ -42,4 +50,5 @@ private:
     std::unordered_map<int32_t, Vector2> _positionMap;
     std::unordered_map<int32_t, EntityMetadata> _metadataMap; // New Storage
     std::vector<ItemData> _items;
+    std::vector<int32_t> _grid[EngineConfig::GridWidth][EngineConfig::GridHeight];
 };

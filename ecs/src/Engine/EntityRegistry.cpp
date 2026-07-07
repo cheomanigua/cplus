@@ -46,11 +46,39 @@ EntityStats* EntityRegistry::GetEntityStats(int32_t entityId) {
     return nullptr;
 }
 
+void EntityRegistry::UpdateEntityCell(int32_t entityId, Vector2 pos) {
+    int x = (int)pos.x / EngineConfig::CellSize;
+    int y = (int)pos.y / EngineConfig::CellSize;
+    
+    // Safety check: ignore if out of bounds
+    if (x >= 0 && x < EngineConfig::GridWidth && y >= 0 && y < EngineConfig::GridHeight) {
+        _grid[x][y].push_back(entityId);
+    }
+}
+
+void EntityRegistry::ClearGrid() {
+    for (int x = 0; x < EngineConfig::GridWidth; ++x) {
+        for (int y = 0; y < EngineConfig::GridHeight; ++y) {
+            _grid[x][y].clear();
+        }
+    }
+}
+
 Vector2* EntityRegistry::GetPosition(int32_t entityId) {
     if (_positionMap.find(entityId) != _positionMap.end()) {
         return &_positionMap[entityId];
     }
     return nullptr;
+}
+
+const std::vector<int32_t>& EntityRegistry::GetEntitiesInCell(int x, int y) const {
+    // Add a bounds check to prevent crashes
+    if (x >= 0 && x < EngineConfig::GridWidth && y >= 0 && y < EngineConfig::GridHeight) {
+        return _grid[x][y];
+    }
+    // Return an empty static vector if out of bounds
+    static const std::vector<int32_t> empty;
+    return empty;
 }
 
 const EntityMetadata& EntityRegistry::GetMetadata(int32_t entityId) const {

@@ -61,14 +61,23 @@ int main() {
 
     // 8. Main Loop
     while (!WindowShouldClose()) {
+        sharedRegistry.ClearGrid(); 
+        for(int32_t id : sharedRegistry.GetActiveEntities()) {
+            Vector2* pos = sharedRegistry.GetPosition(id);
+            if(pos) sharedRegistry.UpdateEntityCell(id, *pos);
+        }
+
+        // Pass the pointer to sharedRegistry explicitly
         InputSystem::PollInput(graphicsEngine.GetCommandQueue(), PLAYER_ID, sharedRegistry);
+        
         BeginDrawing();
         ClearBackground(RAYWHITE);
         
         graphicsEngine.Tick(GetFrameTime());
-
-        // Draw loop using the shared registry
-        auto* registry = graphicsEngine.GetRegistry();
+    
+        // Use the pointer to the shared registry directly
+        // Do not rely on graphicsEngine.GetRegistry() if it returns a copy
+        EntityRegistry* registry = &sharedRegistry; 
         const auto& activeIds = registry->GetActiveEntities();
         
         for (int i = 0; i < registry->GetActiveCount(); i++) {
@@ -76,6 +85,8 @@ int main() {
             Vector2* pos = registry->GetPosition(id);
             
             if (pos) {
+                // This now uses the sharedRegistry pointer, 
+                // so selection state will be consistent.
                 raylibView.DrawMesh(id, *pos); 
             }
         }
