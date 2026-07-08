@@ -26,6 +26,7 @@ struct EntityStats {
     float Mana;
     float Strength;
     float Intelligence;
+    float Dexterity;
     bool IsDirty;
 
     // Add this method to expose your stats for the FormulaProcessor
@@ -33,29 +34,32 @@ struct EntityStats {
         return {
             {"Strength", Strength},
             {"Intelligence", Intelligence},
+            {"Dexterity", Dexterity},
             {"Health", Health},
             {"Mana", Mana}
             // Add any other stats you need to register
         };
     }
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityStats, Health, Mana, Strength, Intelligence, IsDirty)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityStats, Health, Mana, Strength, Intelligence, Dexterity, IsDirty)
 
 // --- 1. Character Data Records ---
 struct RaceData {
     int RaceStr;
     int RaceInt;
+    int RaceDex;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RaceData, RaceStr, RaceInt)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RaceData, RaceStr, RaceInt, RaceDex)
 
 struct ClassData {
     int ClassHealth;
     int ClassMana;
     int ClassStr;
     int ClassInt;
+    int ClassDex;
     std::string PrimarySkill;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ClassData, ClassHealth, ClassMana, ClassStr, ClassInt, PrimarySkill)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ClassData, ClassHealth, ClassMana, ClassStr, ClassInt, ClassDex, PrimarySkill)
 
 struct SkillData {
     std::string AttributeScale;

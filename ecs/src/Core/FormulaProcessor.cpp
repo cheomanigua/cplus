@@ -18,16 +18,21 @@ float FormulaProcessor::GetStatRef(const std::string& name, EntityStats& stats,
     // 1. Entity Stats
     if (name == "Strength")     return stats.Strength;
     if (name == "Intelligence") return stats.Intelligence;
+    if (name == "Dexterity")    return stats.Dexterity;
     if (name == "Health")       return stats.Health;
     if (name == "Mana")         return stats.Mana;
     
     // 2. Class Data (No cast needed, return by value)
+    if (name == "ClassHealth")  return static_cast<float>(cls.ClassHealth);
+    if (name == "ClassMana")    return static_cast<float>(cls.ClassMana);
     if (name == "ClassStr")     return static_cast<float>(cls.ClassStr);
     if (name == "ClassInt")     return static_cast<float>(cls.ClassInt);
+    if (name == "ClassDex")     return static_cast<float>(cls.ClassDex);
     
     // 3. Race Data (No cast needed, return by value)
     if (name == "RaceStr")      return static_cast<float>(race.RaceStr);
     if (name == "RaceInt")      return static_cast<float>(race.RaceInt);
+    if (name == "RaceDex")      return static_cast<float>(race.RaceDex);
     
     return 0.0f;
 }
@@ -66,6 +71,7 @@ void FormulaProcessor::Execute(const std::string& formulaName, EntityStats& stat
         // This acts as the "One Point of Truth" for updating the state
         if      (targetName == "Strength")     stats.Strength = currentVal;
         else if (targetName == "Intelligence") stats.Intelligence = currentVal;
+        else if (targetName == "Dexterity")    stats.Dexterity = currentVal;
         else if (targetName == "Health")       stats.Health = currentVal;
         else if (targetName == "Mana")         stats.Mana = currentVal;
         else {

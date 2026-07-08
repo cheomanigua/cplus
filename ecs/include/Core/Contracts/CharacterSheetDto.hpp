@@ -9,14 +9,16 @@ struct CharacterSheetDto {
     int Mana;
     int Strength;
     int Intelligence;
+    int Dexterity;
 
     CharacterSheetDto(std::string name, std::string weapon, std::string skill, 
-                      int health, int mana, int strength, int intelligence)
+                      int health, int mana, int strength, int intelligence, int dexterity)
         : Name(std::move(name)), 
           Weapon(std::move(weapon)), 
           Skill(std::move(skill)), 
           Health(health), 
           Mana(mana), 
           Strength(strength), 
-          Intelligence(intelligence) {}
+          Intelligence(intelligence),
+          Dexterity(dexterity) {}
 };

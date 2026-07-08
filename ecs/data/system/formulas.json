@@ -5,12 +5,16 @@
       { "Type": "Add", "Stat": "Strength", "Source": "RaceStr" },
       { "Type": "Set", "Stat": "Intelligence", "Source": "ClassInt" },
       { "Type": "Add", "Stat": "Intelligence", "Source": "RaceInt" },
+      { "Type": "Set", "Stat": "Dexterity", "Source": "ClassDex" },
+      { "Type": "Add", "Stat": "Dexterity", "Source": "RaceDex" },
 
       { "Type": "Set", "Stat": "Health", "Source": "Strength" },
       { "Type": "Multiply", "Stat": "Health", "Value": 10.0 },
+      { "Type": "Add", "Stat": "Health", "Source": "ClassHealth" },
 
       { "Type": "Set", "Stat": "Mana", "Source": "Intelligence" },
-      { "Type": "Multiply", "Stat": "Mana", "Value": 10.0 }
+      { "Type": "Multiply", "Stat": "Mana", "Value": 10.0 },
+      { "Type": "Add", "Stat": "Mana", "Source": "ClassMana" }
     ]
   },
   "BaseAttack": {
@@ -40,9 +44,9 @@
     "Operations": [
       { "Type": "Add", "Stat": "BaseWeaponDamage", "Value": 0.0 },
       { "Type": "Add", "Stat": "WeaponBonus", "Value": 0.0 },
-      { "Type": "Multiply", "Stat": "Strength", "Value": 0.8 },
-      { "Type": "Multiply", "Stat": "GearStrengthBonus", "Value": 0.8 },
-      { "Type": "Multiply", "Stat": "TemporaryStrengthBonus", "Value": 0.8 },
+      { "Type": "Multiply", "Stat": "Dexterity", "Value": 0.8 },
+      { "Type": "Multiply", "Stat": "GearDexterityBonus", "Value": 0.8 },
+      { "Type": "Multiply", "Stat": "TemporaryDexterityBonus", "Value": 0.8 },
       { "Type": "Multiply", "Stat": "SkillBonus", "Value": 2.5 },
       { "Type": "Multiply", "Stat": "TemporarySkillBonus", "Value": 2.5 }
     ]

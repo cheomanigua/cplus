@@ -15,8 +15,9 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const 
               << std::setw(8)  << "HP" 
               << std::setw(8)  << "Mana" 
               << std::setw(8)  << "Str" 
-              << std::setw(8)  << "Int" << std::endl;
-    std::cout << std::string(81, '-') << std::endl;
+              << std::setw(8)  << "Int" 
+              << std::setw(8)  << "Dex" << std::endl;
+    std::cout << std::string(89, '-') << std::endl;
 
     for (int32_t id : activeEntities) {
         EntityStats* stats = registry.GetEntityStats(id);
@@ -34,6 +35,7 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const 
                       << std::setw(8)  << (int)stats->Mana 
                       << std::setw(8)  << (int)stats->Strength 
                       << std::setw(8)  << (int)stats->Intelligence 
+                      << std::setw(8)  << (int)stats->Dexterity 
                       << std::endl;
         }
     }
