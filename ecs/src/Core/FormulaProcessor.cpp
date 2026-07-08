@@ -44,7 +44,7 @@ void FormulaProcessor::Execute(const std::string& formulaName, EntityStats& stat
 
     // Iterate through the operations defined in the JSON for this specific formula
     for (auto& op : _formulas[formulaName]["Operations"]) {
-        std::string targetName = op["Target"];
+        std::string targetName = op["Stat"];
         
         // 1. Retrieve the current value of the target attribute
         float currentVal = GetStatRef(targetName, stats, cls, race);

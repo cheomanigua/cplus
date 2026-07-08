@@ -1,16 +1,16 @@
 {
   "UpdateStats": {
     "Operations": [
-      { "Type": "Set", "Target": "Strength", "Source": "ClassStr" },
-      { "Type": "Add", "Target": "Strength", "Source": "RaceStr" },
-      { "Type": "Set", "Target": "Intelligence", "Source": "ClassInt" },
-      { "Type": "Add", "Target": "Intelligence", "Source": "RaceInt" },
+      { "Type": "Set", "Stat": "Strength", "Source": "ClassStr" },
+      { "Type": "Add", "Stat": "Strength", "Source": "RaceStr" },
+      { "Type": "Set", "Stat": "Intelligence", "Source": "ClassInt" },
+      { "Type": "Add", "Stat": "Intelligence", "Source": "RaceInt" },
 
-      { "Type": "Set", "Target": "Health", "Source": "Strength" },
-      { "Type": "Multiply", "Target": "Health", "Value": 5.0 },
+      { "Type": "Set", "Stat": "Health", "Source": "Strength" },
+      { "Type": "Multiply", "Stat": "Health", "Value": 10.0 },
 
-      { "Type": "Set", "Target": "Mana", "Source": "Intelligence" },
-      { "Type": "Multiply", "Target": "Mana", "Value": 10.0 }
+      { "Type": "Set", "Stat": "Mana", "Source": "Intelligence" },
+      { "Type": "Multiply", "Stat": "Mana", "Value": 10.0 }
     ]
   },
   "BaseAttack": {
