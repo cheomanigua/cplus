@@ -5,6 +5,7 @@
 #include "Core/RaylibGameView.hpp"
 #include "Core/PathResolver.hpp"
 #include "Core/FormulaProcessor.hpp"
+#include "Core/Commands/GameCommand.hpp"
 #include "Systems/InputSystem.hpp"
 #include "Tests/TestRunner.hpp"
 #include <iostream>
@@ -65,33 +66,34 @@ int main() {
 
     // 8. Main Loop
     while (!WindowShouldClose()) {
+        // 1. Maintain Spatial State (Required for InputSystem to find clicks)
         sharedRegistry.ClearGrid(); 
         for(int32_t id : sharedRegistry.GetActiveEntities()) {
             Vector2* pos = sharedRegistry.GetPosition(id);
             if(pos) sharedRegistry.UpdateEntityCell(id, *pos);
         }
-
-        // Pass the pointer to sharedRegistry explicitly
+    
+        // 2. InputSystem handles Selection AND Movement Commands
+        // No longer calling raylibView.GetNextCommand() here!
         InputSystem::PollInput(graphicsEngine.GetCommandQueue(), sharedRegistry);
         
+        // 3. Engine updates logic
+        graphicsEngine.Tick(GetFrameTime());
+        
+        // 4. Render
         BeginDrawing();
         ClearBackground(RAYWHITE);
         
-        graphicsEngine.Tick(GetFrameTime());
-    
-        // Use the pointer to the shared registry directly
-        // Do not rely on graphicsEngine.GetRegistry() if it returns a copy
-        EntityRegistry* registry = &sharedRegistry; 
-        const auto& activeIds = registry->GetActiveEntities();
+        // Access movement component from the engine to pass to DrawMesh
+        const auto& moveComp = graphicsEngine.GetMovementComponent();
         
-        for (int i = 0; i < registry->GetActiveCount(); i++) {
-            int32_t id = activeIds[i];
-            Vector2* pos = registry->GetPosition(id);
+        for (int i = 0; i < sharedRegistry.GetActiveCount(); i++) {
+            int32_t id = sharedRegistry.GetActiveEntities()[i];
+            Vector2* pos = sharedRegistry.GetPosition(id);
             
             if (pos) {
-                // This now uses the sharedRegistry pointer, 
-                // so selection state will be consistent.
-                raylibView.DrawMesh(id, *pos); 
+                // View reads from Registry AND the MovementComponent
+                raylibView.DrawMesh(id, *pos, moveComp);
             }
         }
         EndDrawing();

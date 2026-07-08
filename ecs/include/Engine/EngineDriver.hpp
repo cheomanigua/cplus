@@ -39,4 +39,6 @@ public:
     void InitializeEntities(DataLoader& loader);
 
     CommandQueue& GetCommandQueue() { return _commandQueue; }
+
+    const MovementComponent& GetMovementComponent() const { return _movementComponent; }
 };

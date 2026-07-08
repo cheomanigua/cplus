@@ -1,39 +1,34 @@
-#include "RaylibGameView.hpp"
+#include "Core/RaylibGameView.hpp"
+#include "Engine/EntityRegistry.hpp"
+#include "Engine/MovementComponent.hpp"
+#include <raylib.h>
 
-void RaylibGameView::DrawMesh(int32_t id, const Vector2& transform) {
+void RaylibGameView::DrawMesh(int32_t id, const Vector2& transform, const MovementComponent& moveComp) {
+    // 1. Determine selection state
     bool isSelected = (_registry && _registry->GetSelectedEntity() == id);
-    Vector2 position = { transform.x, transform.y };
-    
-    // Example logic: Entity 1 is a Circle (Thrall), Entity 2 is a Rectangle (Sergio)
+
+    // 2. Render the entity based on its ID
     if (id == 1) {
-        DrawCircleV(position, 10.0f, BLUE);
-        DrawCircleLinesV(position, 50.0f, DARKBLUE);
+        DrawCircleV(transform, 10.0f, BLUE);
+        DrawCircleLinesV(transform, 50.0f, DARKBLUE);
     } else if (id == 2) {
-        DrawRectangleV(position, { 20.0f, 20.0f }, RED);
+        DrawRectangleV(transform, { 20.0f, 20.0f }, RED);
     }
 
-    // Draw the debug click marker
-    if (_clickPosition.x >= 0) {
-        DrawCircleV(_clickPosition, 5.0f, GREEN); // Small green circle at click
+    // 3. Render the target marker ONLY if the MovementSystem has marked this entity as moving
+    // This reads state directly from the component rather than storing it locally
+    if (moveComp.IsMoving[id]) {
+        DrawCircleV(moveComp.TargetPositions[id], 5.0f, GREEN);
+        DrawLineV(transform, moveComp.TargetPositions[id], GREEN);
     }
 
-    // Highlight if selected
+    // 4. Render selection highlight
     if (isSelected) {
-        DrawCircleLinesV(position, 15.0f, BLACK);
+        DrawCircleLinesV(transform, 15.0f, BLACK);
     }
 }
 
-bool RaylibGameView::IsActionPressed(const std::string& actionName) {
-    // if (actionName == "Move") {
-    //     return IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-    // }
-    // return false;
 
-    if (actionName == "Move") {
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            _clickPosition = GetMousePosition(); // Store the click
-            return true;
-        }
-    }
-    return false;
+bool RaylibGameView::IsActionPressed(const std::string& actionName) {
+    return false; // Or implement your input logic here
 }

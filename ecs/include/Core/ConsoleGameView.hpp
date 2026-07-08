@@ -1,6 +1,7 @@
 #pragma once
-#include "Core/Interfaces/IEngineFacade.hpp"
 #include "Engine/EngineDriver.hpp"
+#include "Engine/MovementComponent.hpp"
+#include "Core/Interfaces/IEngineFacade.hpp"
 #include "Core/Contracts/CharacterSheetDto.hpp"
 #include <iostream>
 #include <vector>
@@ -10,8 +11,8 @@ class ConsoleGameView : public IEngineFacade {
 public:
     // Stub implementations: fulfill the IEngineFacade contract
     // They are empty because we are not using them in ConsoleGameView
-    void DrawMesh(int32_t id, const Vector2& transform) override;
-    bool IsActionPressed(const std::string& actionName) override { return false; }
+    void DrawMesh(int32_t id, const Vector2& transform, const MovementComponent& moveComp) override;
+    bool IsActionPressed(const std::string& actionName) override;
 
     // Logic moved from Main.cpp
     void RenderNPCStats(const std::vector<NPCBlueprint>& npcs, EngineDriver& engine);

@@ -44,7 +44,11 @@ void ConsoleGameView::Render(const CharacterSheetDto& data) {
     std::cout << "Health: " << data.Health << " | Mana: " << data.Mana << std::endl;
 }
 
-void ConsoleGameView::DrawMesh(int32_t id, const Vector2& position) {
+void ConsoleGameView::DrawMesh(int32_t id, const Vector2& transform, const MovementComponent& moveComp) {
     // Background render notification
-    std::cout << "[Render] Entity " << id << " at (" << position.x << ", " << position.y << ")" << std::endl;
+    std::cout << "[Render] Entity " << id << " at (" << transform.x << ", " << transform.y << ")" << std::endl;
+}
+
+bool ConsoleGameView::IsActionPressed(const std::string& actionName) {
+    return false;
 }
