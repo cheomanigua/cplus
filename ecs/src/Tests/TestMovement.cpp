@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unordered_map>
 #include "Core/Commands/CommandQueue.hpp"
 #include "Engine/MovementComponent.hpp"
 #include "Systems/MovementSystem.hpp"
@@ -6,10 +7,10 @@
 
 // Ensure this matches the declaration in TestRunner.cpp
 void TestMovementSystem() {
-    std::vector<ItemData> items;
+    std::unordered_map<int32_t, ItemData> itemMap;
     CommandQueue queue;
     MovementComponent buffers;
-    EntityRegistry registry(items);
+    EntityRegistry registry(itemMap);
     float deltaTime = 1.0f;
     int32_t testEntity = 0;
 

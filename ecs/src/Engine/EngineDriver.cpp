@@ -4,9 +4,18 @@
 #include "Engine/EngineDriver.hpp"
 #include "Systems/MovementSystem.hpp"
 
-EngineDriver::EngineDriver(IEngineFacade* view, DataLoader& loader, std::vector<ItemData> items, 
-                           std::string dir, EntityRegistry* sharedRegistry)
-    : _view(view), _dataLoader(loader), _dataDirectory(std::move(dir)), _registry(sharedRegistry) {
+EngineDriver::EngineDriver(IEngineFacade* view, 
+                           DataLoader& loader, 
+                           const std::unordered_map<int32_t, ItemData>& items, 
+                           std::string dataPath, 
+                           EntityRegistry* registry)
+    : _registry(registry), 
+      _dataLoader(loader), 
+      _items(items), 
+      _dataDirectory(dataPath), 
+      _view(view) 
+{
+    // Constructor body must be opened with {
 }
 
 void EngineDriver::Tick(float deltaTime) {
@@ -21,28 +30,28 @@ void EngineDriver::Tick(float deltaTime) {
         GameCommand cmd = _commandQueue.Dequeue();
         switch (cmd.Type) {
           // Inside EngineDriver::Tick(float deltaTime) -> case CommandType::UpdateStats:
-case CommandType::UpdateStats: {
-    EntityStats* stats = _registry->GetEntityStats(cmd.EntityId);
-    
-    // Retrieve metadata directly from the registry
-    const auto& meta = _registry->GetMetadata(cmd.EntityId);
-    
-    // Retrieve template data from the loader
-    const auto& cls = _dataLoader.GetClassData(meta.Class);
-    const auto& race = _dataLoader.GetRaceData(meta.Race);
-    
-    if (stats) {
-        stats->IsDirty = true; // Flag for formula processing
-        
-        // Execute formulas using the metadata
-        FormulaProcessor::Execute("UpdateStats", *stats, cls, race);
-        
-        stats->IsDirty = false;
-        std::cout << "[DEBUG] Processed stats for " << cmd.EntityId 
-                  << " (" << meta.Class << "/" << meta.Race << ")" << std::endl;
-    }
-    break;
-}
+            case CommandType::UpdateStats: {
+                EntityStats* stats = _registry->GetEntityStats(cmd.EntityId);
+                
+                // Retrieve metadata directly from the registry
+                const auto& meta = _registry->GetMetadata(cmd.EntityId);
+                
+                // Retrieve template data from the loader
+                const auto& cls = _dataLoader.GetClassData(meta.Class);
+                const auto& race = _dataLoader.GetRaceData(meta.Race);
+                
+                if (stats) {
+                    stats->IsDirty = true; // Flag for formula processing
+                    
+                    // Execute formulas using the metadata
+                    FormulaProcessor::Execute("UpdateStats", *stats, cls, race);
+                    
+                    stats->IsDirty = false;
+                    std::cout << "[DEBUG] Processed stats for " << cmd.EntityId 
+                              << " (" << meta.Class << "/" << meta.Race << ")" << std::endl;
+                }
+                break;
+            }
             case CommandType::EquipItem:
                 break;
             default:

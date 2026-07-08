@@ -14,6 +14,7 @@ class EngineDriver {
 private:
     EntityRegistry* _registry; 
     DataLoader& _dataLoader;
+    std::unordered_map<int32_t, ItemData> _items;
     
     // Engine State
     CommandQueue _commandQueue;
@@ -23,9 +24,12 @@ private:
     std::string _dataDirectory;
 
 public:
-    EngineDriver(IEngineFacade* view, DataLoader& loader, std::vector<ItemData> items, 
-                 std::string dir, EntityRegistry* sharedRegistry);
-    
+    EngineDriver(IEngineFacade* view, 
+             DataLoader& loader, 
+             const std::unordered_map<int32_t, ItemData>& items,
+             std::string dataPath, 
+             EntityRegistry* registry);
+
     void Tick(float deltaTime);
     void AddCommand(GameCommand cmd);
     

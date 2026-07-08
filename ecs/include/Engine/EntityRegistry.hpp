@@ -20,14 +20,14 @@ struct EntityMetadata {
 
 class EntityRegistry {
 public:
-    EntityRegistry(const std::vector<ItemData>& items);
+    EntityRegistry(const std::unordered_map<int32_t, ItemData>& items);
     
     int32_t SpawnNPC(const NPCBlueprint& bp);
     
     void RegisterStats(int32_t entityId, const EntityStats& stats);
     EntityStats* GetEntityStats(int32_t entityId);
     Vector2* GetPosition(int32_t entityId);
-    const EntityMetadata& GetMetadata(int32_t entityId) const; // New Accessor
+    const EntityMetadata& GetMetadata(int32_t entityId) const;
     
     int32_t GetActiveCount() const;
     const std::vector<int32_t>& GetActiveEntities() const;
@@ -48,7 +48,7 @@ private:
     std::vector<int32_t> _activeEntities;
     std::unordered_map<int32_t, EntityStats> _statsMap;
     std::unordered_map<int32_t, Vector2> _positionMap;
-    std::unordered_map<int32_t, EntityMetadata> _metadataMap; // New Storage
-    std::vector<ItemData> _items;
+    std::unordered_map<int32_t, EntityMetadata> _metadataMap;
+    std::unordered_map<int32_t, ItemData> _items;
     std::vector<int32_t> _grid[EngineConfig::GridWidth][EngineConfig::GridHeight];
 };

@@ -47,7 +47,10 @@ int main() {
     const auto& npcTemplates = loader.GetNPCTemplates(); 
     std::cout << "Spawning " << npcTemplates.size() << " NPCs via factory..." << std::endl;
     
-    for (const auto& templateData : npcTemplates) {
+    // Change the loop to use structured bindings for key-value pairs
+    for (const auto& [name, templateData] : npcTemplates) {
+        // 'name' is the key (e.g., "Thrall"), 'templateData' is the NPCBlueprint struct
+        
         // The Registry handles _nextId++ and returns the unique ID for us
         int32_t newId = sharedRegistry.SpawnNPC(templateData);
         

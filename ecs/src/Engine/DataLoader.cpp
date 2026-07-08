@@ -31,46 +31,36 @@ bool DataLoader::LoadManifest(const std::string& filename) {
 void DataLoader::LoadItemFile(const std::string& filename) {
     std::string fullPath = Engine::GetDataPath(filename);
     std::ifstream file(fullPath);
-    
-    if (!file.is_open()) {
-        std::cerr << "Failed to open items filename: " << fullPath << std::endl;
-        return;
-    } 
-    json data = json::parse(file);
+    if (!file.is_open()) return;
 
+    json data = json::parse(file);
     for (auto it = data.begin(); it != data.end(); ++it) {
+        int32_t id = std::stoi(it.key());
         ItemData item;
-        item.Id = std::stoi(it.key());
+        item.Id = id;
         
         auto& details = it.value();
         item.Name = details["Name"].get<std::string>();
-        
-        if (details.contains("Slot")) {
-            item.Slot = details["Slot"].get<std::string>();
-        }
-        
-        if (details.contains("GrantedComponents")) {
+        if (details.contains("Slot")) item.Slot = details["Slot"].get<std::string>();
+        if (details.contains("GrantedComponents")) 
             item.GrantedComponents = details["GrantedComponents"].get<std::vector<GrantedComponent>>();
-        }
         
-        _items.push_back(std::move(item));
+        _items[id] = std::move(item); // Key-based storage
     }
 }
 
 void DataLoader::LoadCharacterFile(const std::string& filename) {
     std::string fullPath = Engine::GetDataPath(filename);
     std::ifstream file(fullPath);
-    
-    if (!file.is_open()) {
-        std::cerr << "Failed to open characters file: " << fullPath << std::endl;
-        return;
-    }
+    if (!file.is_open()) return;
 
     json data = json::parse(file);
 
     if (filename.find("npc_blueprint.json") != std::string::npos) {
-        _npcs = data.get<std::vector<NPCBlueprint>>();
-        std::cout << "Loaded " << _npcs.size() << " NPC templates." << std::endl;
+        for (const auto& item : data) {
+            NPCBlueprint blueprint = item.get<NPCBlueprint>();
+            _npcs[blueprint.Name] = blueprint; // Key-based storage
+        }
     } 
     else if (filename.find("classes.json") != std::string::npos) {
         _classes = data.get<std::unordered_map<std::string, ClassData>>();
