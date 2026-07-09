@@ -77,10 +77,10 @@ struct FormulaContext {
 
 // --- 3. Attribute/Modifier Records ---
 struct ModifierDto {
-    std::string Target;
+    std::string Stat;
     float Value;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ModifierDto, Target, Value)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ModifierDto, Stat, Value)
 
 // --- 4. Component Data Structures ---
 struct GrantedComponent {

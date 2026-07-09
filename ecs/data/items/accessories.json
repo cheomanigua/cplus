@@ -1,17 +1,17 @@
 {
   "30": { 
     "Name": "Ring of Strength", 
-    "Categories": { "Type": "Accessory", "Execution": "Immediate" },
+    "Categories": { "Type": "Accessory" },
     "GrantedComponents": [
-      { "Tag": "AttributeComponent", "Properties": { "Target": "Strength", "Value": "3.0" } }
+      { "Tag": "AttributeComponent", "Properties": { "Stat": "Strength", "Value": "3.0", "Targeting": "Self", "Persistence": "Permanent" } }
     ]
   },
   "31": { 
     "Name": "Ring of Intelligence", 
-    "Categories": { "Type": "Accessory", "Execution": "Immediate" },
+    "Categories": { "Type": "Accessory" },
     "GrantedComponents": [
-      { "Tag": "AttributeComponent", "Properties": { "Target": "Intelligence", "Value": "3.0" } },
-      { "Tag": "AttributeComponent", "Properties": { "Target": "Strength", "Value": "10.0" } }
+      { "Tag": "AttributeComponent", "Properties": { "Stat": "Intelligence", "Value": "3.0", "Targeting": "Self", "Persistence": "Permanent" } },
+      { "Tag": "AttributeComponent", "Properties": { "Stat": "Strength", "Value": "10.0", "Targeting": "Self", "Persistence": "Permanent" } }
     ]
   }
 }

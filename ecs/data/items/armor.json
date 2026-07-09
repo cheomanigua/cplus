@@ -3,7 +3,7 @@
     "Name": "Leather Armor", 
     "Categories": { "Type": "Armor", "Execution": "Immediate" },
     "GrantedComponents": [
-      { "Tag": "AttributeComponent", "Properties": { "Target": "Armor", "Value": "5.0" } }
+      { "Tag": "AttributeComponent", "Properties": { "Stat": "Armor", "Value": "5.0", "Targeting": "Self", "Persistence": "Permanent" } }
     ]
   }
 }

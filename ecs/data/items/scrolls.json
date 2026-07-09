@@ -4,7 +4,7 @@
     "Categories": { "Type": "Scroll", "Execution": "Immediate" },
     "GrantedComponents": [
       { "Tag": "ConsumableComponent", "Properties": { "Charges": "1" } },
-      { "Tag": "MagicComponent", "Properties": { "Trigger": "OnUse", "Effect": "Damage", "Value": "25.0", "DamageType": "Frost", "SecondaryEffect": "Slow" } }
+      { "Tag": "MagicComponent", "Properties": { "Trigger": "OnUse", "Targeting": "Ranged", "Persistence": "Instant", "Effect": "Add", "Stat": "Health", "Value": "-25.0", "DamageType": "Frost", "SecondaryEffect": "Slow" } }
     ]
   }
 }

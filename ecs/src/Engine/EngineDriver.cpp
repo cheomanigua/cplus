@@ -44,7 +44,7 @@ void EngineDriver::Tick(float deltaTime) {
                     stats->IsDirty = true; // Flag for formula processing
                     
                     // Execute formulas using the metadata
-                    FormulaProcessor::Execute("UpdateStats", *stats, cls, race);
+                    FormulaProcessor::ExecuteUpdateStats("UpdateStats", *stats, cls, race);
                     
                     stats->IsDirty = false;
                     std::cout << "[DEBUG] Processed stats for " << cmd.EntityId 
