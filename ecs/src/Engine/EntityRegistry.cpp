@@ -64,6 +64,11 @@ void EntityRegistry::ClearGrid() {
     }
 }
 
+void EntityRegistry::RegisterEntity(int32_t entityId, Vector2 initialPos) {
+    _positionMap[entityId] = initialPos;
+    _activeEntities.push_back(entityId);
+}
+
 Vector2* EntityRegistry::GetPosition(int32_t entityId) {
     if (_positionMap.find(entityId) != _positionMap.end()) {
         return &_positionMap[entityId];

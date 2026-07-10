@@ -4,8 +4,8 @@
 #include "Engine/MovementComponent.hpp"
 #include "Systems/MovementSystem.hpp"
 #include "Core/Constants.hpp"
+#include "Engine/EntityRegistry.hpp"
 
-// Ensure this matches the declaration in TestRunner.cpp
 void TestMovementSystem() {
     std::unordered_map<int32_t, ItemData> itemMap;
     CommandQueue queue;
@@ -13,23 +13,33 @@ void TestMovementSystem() {
     EntityRegistry registry(itemMap);
     float deltaTime = 1.0f;
     int32_t testEntity = 0;
+    
+    // Use your new registration method
+    registry.RegisterEntity(testEntity, {0.0f, 0.0f});
 
-    buffers.Positions[testEntity] = {0.0f, 0.0f};
+    // Set movement intent
+    Vector2 targetPos = {1000.0f, 0.0f};
+    buffers.TargetPositions[testEntity] = targetPos;
     
     GameCommand moveCmd;
     moveCmd.Type = CommandType::Move;
     moveCmd.EntityId = testEntity;
-    moveCmd.Velocity = {10.0f, 5.0f};
+    moveCmd.Velocity = {10.0f, 0.0f}; 
     moveCmd.Speed = 2.0f;
+    moveCmd.MoveParams.TargetPosition = targetPos;
     queue.Enqueue(moveCmd);
 
     MovementSystem::ProcessCommands(queue, buffers);
     MovementSystem::Update(buffers, deltaTime, registry);
 
-    Vector2 actual = buffers.Positions[testEntity];
-    if (actual.x == 20.0f && actual.y == 10.0f) {
+    Vector2* actualPtr = registry.GetPosition(testEntity);
+    
+    if (actualPtr && actualPtr->x == 20.0f && actualPtr->y == 0.0f) {
         std::cout << "[TEST] MovementSystem: Passed" << std::endl;
     } else {
-        std::cout << "[TEST] MovementSystem: FAILED!" << std::endl;
+        float gotX = actualPtr ? actualPtr->x : -1.0f;
+        float gotY = actualPtr ? actualPtr->y : -1.0f;
+        std::cout << "[TEST] MovementSystem: FAILED! Expected (20, 0), Got (" 
+                  << gotX << ", " << gotY << ")" << std::endl;
     }
 }

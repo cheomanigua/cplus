@@ -38,6 +38,8 @@ public:
     void UpdateEntityCell(int32_t entityId, Vector2 pos);
     const std::vector<int32_t>& GetEntitiesInCell(int x, int y) const;
 
+    void RegisterEntity(int32_t entityId, Vector2 initialPos);
+
     void ClearGrid();
 
 private:
