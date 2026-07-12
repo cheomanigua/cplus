@@ -9,16 +9,18 @@
 #include "Engine/EntityRegistry.hpp"
 #include "Engine/MovementComponent.hpp"
 #include "Engine/DataLoader.hpp"
+#include "Systems/SpatialSystem.hpp"
 
 class EngineDriver {
 private:
-    EntityRegistry* _registry; 
+    EntityRegistry* _registry;
     DataLoader& _dataLoader;
     std::unordered_map<int32_t, ItemData> _items;
     
     // Engine State
     CommandQueue _commandQueue;
     MovementComponent _movementComponent;
+    SpatialSystem _spatialSystem;
     
     IEngineFacade* _view;
     std::string _dataDirectory;

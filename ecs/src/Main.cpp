@@ -1,3 +1,7 @@
+#define RAYMATH_IMPLEMENTATION
+#include "raylib.h"
+#include "raymath.h"
+
 #include "Engine/EngineDriver.hpp"
 #include "Engine/EntityRegistry.hpp"
 #include "Engine/DataLoader.hpp"
@@ -7,12 +11,10 @@
 #include "Core/FormulaProcessor.hpp"
 #include "Core/Commands/GameCommand.hpp"
 #include "Systems/InputSystem.hpp"
+#include "Systems/SpatialSystem.hpp"
 #include "Tests/TestRunner.hpp"
 #include <iostream>
 
-#define RAYMATH_IMPLEMENTATION
-#include "raylib.h"
-#include "raymath.h"
 
 int main() {
     TestRunner::RunAll();
@@ -42,6 +44,7 @@ int main() {
     raylibView.SetRegistry(&sharedRegistry);
     EngineFacade::Implementation = &raylibView;
     EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry);
+    SpatialSystem spatialSystem;
 
     // 6. SPAWN NPCs (Factory Pattern)
     // We no longer use loader.GetNPCs() to get IDs; we use templates to spawn entities.
@@ -66,16 +69,12 @@ int main() {
 
     // 8. Main Loop
     while (!WindowShouldClose()) {
-        // 1. Maintain Spatial State (Required for InputSystem to find clicks)
-        sharedRegistry.ClearGrid(); 
-        for(int32_t id : sharedRegistry.GetActiveEntities()) {
-            Vector2& pos = sharedRegistry.GetPosition(id);
-            sharedRegistry.UpdateEntityCell(id, pos);
-        }
+        // 1. Maintain Spatial State via the System
+        spatialSystem.Update(sharedRegistry);
     
         // 2. InputSystem handles Selection AND Movement Commands
         // No longer calling raylibView.GetNextCommand() here!
-        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), sharedRegistry);
+        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), sharedRegistry, spatialSystem);
         
         // 3. Engine updates logic
         graphicsEngine.Tick(GetFrameTime());

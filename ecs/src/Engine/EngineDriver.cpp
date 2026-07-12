@@ -19,17 +19,19 @@ EngineDriver::EngineDriver(IEngineFacade* view,
 }
 
 void EngineDriver::Tick(float deltaTime) {
-    // 1. Process Movement "Intent"
+    // 1. Update Spatial Grid (Fresh state for the start of the frame)
+    _spatialSystem.Update(*_registry);
+
+    // 2. Process Movement "Intent"[cite: 1]
     MovementSystem::ProcessCommands(_commandQueue, _movementComponent);
 
-    // 2. Perform Movement "Execution"
+    // 3. Perform Movement "Execution"[cite: 1]
     MovementSystem::Update(_movementComponent, deltaTime, *_registry);
 
-    // 3. Process Other Commands (Stats/Combat)
+    // 4. Process Other Commands (Stats/Combat)
     while (_commandQueue.HasCommands()) {
         GameCommand cmd = _commandQueue.Dequeue();
         switch (cmd.Type) {
-          // Inside EngineDriver::Tick(float deltaTime) -> case CommandType::UpdateStats:
             case CommandType::UpdateStats: {
                 EntityStats& stats = _registry->GetEntityStats(cmd.EntityId);
                 

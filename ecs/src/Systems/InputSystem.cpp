@@ -1,10 +1,11 @@
 #include "Systems/InputSystem.hpp"
+#include "Systems/SpatialSystem.hpp"
 #include "Core/RaylibGameView.hpp"
 #include "Core/Interfaces/IEngineFacade.hpp"
 #include "raylib.h"
 #include "raymath.h"
 
-void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry) {
+void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry, const SpatialSystem& spatialSystem) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mousePos = GetMousePosition();
         int32_t clickedId = -1;
@@ -12,7 +13,7 @@ void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry) {
         int cellX = (int)mousePos.x / EngineConfig::CellSize;
         int cellY = (int)mousePos.y / EngineConfig::CellSize;
 
-        const auto& entitiesInCell = registry.GetEntitiesInCell(cellX, cellY);
+        const auto& entitiesInCell = spatialSystem.GetEntitiesInCell(cellX, cellY);
         
         for (int32_t id : entitiesInCell) {
             Vector2& pos = registry.GetPosition(id);

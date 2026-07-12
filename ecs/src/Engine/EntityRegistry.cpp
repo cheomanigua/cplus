@@ -52,31 +52,6 @@ void EntityRegistry::RegisterEntity(int32_t entityId, Vector2 initialPos) {
     _activeCount++;
 }
 
-void EntityRegistry::UpdateEntityCell(int32_t entityId, Vector2 pos) {
-    int x = (int)pos.x / EngineConfig::CellSize;
-    int y = (int)pos.y / EngineConfig::CellSize;
-    
-    if (x >= 0 && x < EngineConfig::GridWidth && y >= 0 && y < EngineConfig::GridHeight) {
-        _grid[x][y].push_back(entityId);
-    }
-}
-
-void EntityRegistry::ClearGrid() {
-    for (int x = 0; x < EngineConfig::GridWidth; ++x) {
-        for (int y = 0; y < EngineConfig::GridHeight; ++y) {
-            _grid[x][y].clear();
-        }
-    }
-}
-
-const std::vector<int32_t>& EntityRegistry::GetEntitiesInCell(int x, int y) const {
-    if (x >= 0 && x < EngineConfig::GridWidth && y >= 0 && y < EngineConfig::GridHeight) {
-        return _grid[x][y];
-    }
-    static const std::vector<int32_t> empty;
-    return empty;
-}
-
 const EntityMetadata& EntityRegistry::GetMetadata(int32_t entityId) const {
     return _metadata[entityId];
 }

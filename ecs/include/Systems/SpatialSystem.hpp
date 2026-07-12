@@ -1,0 +1,14 @@
+#pragma once
+#include <vector>
+#include "Engine/EntityRegistry.hpp"
+#include "Core/Constants.hpp"
+
+class SpatialSystem {
+public:
+    void Clear();
+    void Update(EntityRegistry& registry);
+    const std::vector<int32_t>& GetEntitiesInCell(int x, int y) const;
+
+private:
+    std::vector<int32_t> _grid[EngineConfig::GridWidth][EngineConfig::GridHeight];
+};

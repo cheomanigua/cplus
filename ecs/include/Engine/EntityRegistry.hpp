@@ -34,12 +34,7 @@ public:
     void SetSelectedEntity(int32_t id) { _selectedEntityId = id; }
     int32_t GetSelectedEntity() const { return _selectedEntityId; }
 
-    // Spatial grid remains for lookup, but uses entity IDs
-    void UpdateEntityCell(int32_t entityId, Vector2 pos);
-    const std::vector<int32_t>& GetEntitiesInCell(int x, int y) const;
-
     void RegisterEntity(int32_t entityId, Vector2 initialPos);
-    void ClearGrid();
 
 private:
     int32_t _nextId = 1; 
@@ -55,5 +50,4 @@ private:
 
     // Items and Grid
     std::unordered_map<int32_t, ItemData> _items;
-    std::vector<int32_t> _grid[EngineConfig::GridWidth][EngineConfig::GridHeight];
 };
