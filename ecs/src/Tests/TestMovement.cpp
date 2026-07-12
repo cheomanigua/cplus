@@ -32,14 +32,13 @@ void TestMovementSystem() {
     MovementSystem::ProcessCommands(queue, buffers);
     MovementSystem::Update(buffers, deltaTime, registry);
 
-    Vector2* actualPtr = registry.GetPosition(testEntity);
-    
-    if (actualPtr && actualPtr->x == 20.0f && actualPtr->y == 0.0f) {
+    Vector2& actualRef = registry.GetPosition(testEntity);
+
+    if (actualRef.x == 20.0f && actualRef.y == 0.0f) { // Use actualRef
         std::cout << "[TEST] MovementSystem: Passed" << std::endl;
     } else {
-        float gotX = actualPtr ? actualPtr->x : -1.0f;
-        float gotY = actualPtr ? actualPtr->y : -1.0f;
+        // Since actualRef is a valid reference, just print its values directly
         std::cout << "[TEST] MovementSystem: FAILED! Expected (20, 0), Got (" 
-                  << gotX << ", " << gotY << ")" << std::endl;
+                  << actualRef.x << ", " << actualRef.y << ")" << std::endl;
     }
 }

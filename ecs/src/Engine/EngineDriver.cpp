@@ -31,7 +31,7 @@ void EngineDriver::Tick(float deltaTime) {
         switch (cmd.Type) {
           // Inside EngineDriver::Tick(float deltaTime) -> case CommandType::UpdateStats:
             case CommandType::UpdateStats: {
-                EntityStats* stats = _registry->GetEntityStats(cmd.EntityId);
+                EntityStats& stats = _registry->GetEntityStats(cmd.EntityId);
                 
                 // Retrieve metadata directly from the registry
                 const auto& meta = _registry->GetMetadata(cmd.EntityId);
@@ -40,16 +40,14 @@ void EngineDriver::Tick(float deltaTime) {
                 const auto& cls = _dataLoader.GetClassData(meta.Class);
                 const auto& race = _dataLoader.GetRaceData(meta.Race);
                 
-                if (stats) {
-                    stats->IsDirty = true; // Flag for formula processing
-                    
-                    // Execute formulas using the metadata
-                    FormulaProcessor::ExecuteUpdateStats("UpdateStats", *stats, cls, race);
-                    
-                    stats->IsDirty = false;
-                    std::cout << "[DEBUG] Processed stats for " << cmd.EntityId 
+                stats.IsDirty = true; // Flag for formula processing
+                
+                // Execute formulas using the metadata
+                FormulaProcessor::ExecuteUpdateStats("UpdateStats", stats, cls, race);
+                
+                stats.IsDirty = false;
+                std::cout << "[DEBUG] Processed stats for " << cmd.EntityId 
                               << " (" << meta.Class << "/" << meta.Race << ")" << std::endl;
-                }
                 break;
             }
             case CommandType::EquipItem:

@@ -36,20 +36,19 @@ void MovementSystem::Update(MovementComponent& buffers, float deltaTime, EntityR
     for (size_t i = 0; i < EngineConfig::MaxEntities; ++i) {
         if (!buffers.IsMoving[i]) continue;
 
-        Vector2* pos = registry.GetPosition(i);
-        if (!pos) continue;
+        Vector2& pos = registry.GetPosition(i);
 
         // 1. Calculate distance to target
-        float dist = Vector2Distance(*pos, buffers.TargetPositions[i]);
+        float dist = Vector2Distance(pos, buffers.TargetPositions[i]);
 
         // 2. Stop if close enough
         if (dist < 5.0f) { 
-            *pos = buffers.TargetPositions[i]; // Snap to exact position
+            pos = buffers.TargetPositions[i]; // Snap to exact position
             buffers.IsMoving[i] = false;       // Stop movement
         } else {
             // 3. Move normally
             Vector2 displacement = Vector2Scale(buffers.Velocities[i], buffers.Speeds[i] * deltaTime);
-            *pos = Vector2Add(*pos, displacement);
+            pos = Vector2Add(pos, displacement);
         }
     }
 }

@@ -20,24 +20,22 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const 
     std::cout << std::string(89, '-') << std::endl;
 
     for (int32_t id : activeEntities) {
-        EntityStats* stats = registry.GetEntityStats(id);
+        EntityStats& stats = registry.GetEntityStats(id);
         const auto& meta = registry.GetMetadata(id); 
         
-        if (stats != nullptr) {
-            std::cout << std::left << std::setw(5)  << id 
-                      << std::setw(12) << meta.Name   // Added Name
-                      << std::setw(12) << meta.Class 
-                      << std::setw(10) << meta.Race 
-                      << "(" << (int)meta.SpawnPosition.x << "," 
-                             << (int)meta.SpawnPosition.y << ")"
-                      << std::setw(6) << "" // Spacer for column alignment
-                      << std::setw(8)  << (int)stats->Health 
-                      << std::setw(8)  << (int)stats->Mana 
-                      << std::setw(8)  << (int)stats->Strength 
-                      << std::setw(8)  << (int)stats->Intelligence 
-                      << std::setw(8)  << (int)stats->Dexterity 
-                      << std::endl;
-        }
+        std::cout << std::left << std::setw(5)  << id 
+                  << std::setw(12) << meta.Name   // Added Name
+                  << std::setw(12) << meta.Class 
+                  << std::setw(10) << meta.Race 
+                  << "(" << (int)meta.SpawnPosition.x << "," 
+                         << (int)meta.SpawnPosition.y << ")"
+                  << std::setw(6) << "" // Spacer for column alignment
+                  << std::setw(8)  << (int)stats.Health 
+                  << std::setw(8)  << (int)stats.Mana 
+                  << std::setw(8)  << (int)stats.Strength 
+                  << std::setw(8)  << (int)stats.Intelligence 
+                  << std::setw(8)  << (int)stats.Dexterity 
+                  << std::endl;
     }
 }
 

@@ -15,8 +15,8 @@ void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry) {
         const auto& entitiesInCell = registry.GetEntitiesInCell(cellX, cellY);
         
         for (int32_t id : entitiesInCell) {
-            Vector2* pos = registry.GetPosition(id);
-            if (pos && CheckCollisionPointCircle(mousePos, *pos, 20.0f)) {
+            Vector2& pos = registry.GetPosition(id);
+            if (CheckCollisionPointCircle(mousePos, pos, 20.0f)) {
                 clickedId = id;
                 break;
             }
@@ -34,18 +34,16 @@ void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry) {
 
             int32_t selectedId = registry.GetSelectedEntity();
             if (selectedId != -1) {
-                Vector2* startPos = registry.GetPosition(selectedId);
-                if (startPos) {
-                    GameCommand cmd;
-                    cmd.Type = CommandType::Move;
-                    cmd.EntityId = selectedId;
-                    // Calculate direction
-                    Vector2 dir = Vector2Normalize(Vector2Subtract(mousePos, *startPos));
-                    cmd.Velocity = dir;
-                    cmd.Speed = 100.0f; // Adjust as needed
-                    cmd.MoveParams.TargetPosition = mousePos;
-                    queue.Enqueue(cmd);
-                }
+                Vector2& startPos = registry.GetPosition(selectedId);
+                GameCommand cmd;
+                cmd.Type = CommandType::Move;
+                cmd.EntityId = selectedId;
+                // Calculate direction
+                Vector2 dir = Vector2Normalize(Vector2Subtract(mousePos, startPos));
+                cmd.Velocity = dir;
+                cmd.Speed = 100.0f; // Adjust as needed
+                cmd.MoveParams.TargetPosition = mousePos;
+                queue.Enqueue(cmd);
             }
         }
     }

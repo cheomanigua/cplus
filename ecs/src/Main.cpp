@@ -69,8 +69,8 @@ int main() {
         // 1. Maintain Spatial State (Required for InputSystem to find clicks)
         sharedRegistry.ClearGrid(); 
         for(int32_t id : sharedRegistry.GetActiveEntities()) {
-            Vector2* pos = sharedRegistry.GetPosition(id);
-            if(pos) sharedRegistry.UpdateEntityCell(id, *pos);
+            Vector2& pos = sharedRegistry.GetPosition(id);
+            sharedRegistry.UpdateEntityCell(id, pos);
         }
     
         // 2. InputSystem handles Selection AND Movement Commands
@@ -87,14 +87,11 @@ int main() {
         // Access movement component from the engine to pass to DrawMesh
         const auto& moveComp = graphicsEngine.GetMovementComponent();
         
-        for (int i = 0; i < sharedRegistry.GetActiveCount(); i++) {
-            int32_t id = sharedRegistry.GetActiveEntities()[i];
-            Vector2* pos = sharedRegistry.GetPosition(id);
-            
-            if (pos) {
-                // View reads from Registry AND the MovementComponent
-                raylibView.DrawMesh(id, *pos, moveComp);
-            }
+        for (int32_t id : sharedRegistry.GetActiveEntities()) {
+            // Get reference
+            Vector2 pos = sharedRegistry.GetPosition(id);
+            // View reads from Registry AND the MovementComponent
+            raylibView.DrawMesh(id, pos, moveComp);
         }
         EndDrawing();
     }
