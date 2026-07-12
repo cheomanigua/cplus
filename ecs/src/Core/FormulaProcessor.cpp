@@ -28,11 +28,11 @@ float FormulaProcessor::GetStatRef(const std::string& name, EntityStats& stats,
     if (name == "Mana")         return stats.Mana;
     
     // 3. Class Data (No cast needed, return by value)
-    if (name == "ClassHealth")  return static_cast<float>(cls.ClassHealth);
-    if (name == "ClassMana")    return static_cast<float>(cls.ClassMana);
     if (name == "ClassStr")     return static_cast<float>(cls.ClassStr);
     if (name == "ClassInt")     return static_cast<float>(cls.ClassInt);
     if (name == "ClassDex")     return static_cast<float>(cls.ClassDex);
+    if (name == "ClassHealth")  return static_cast<float>(cls.ClassHealth);
+    if (name == "ClassMana")    return static_cast<float>(cls.ClassMana);
     
     // 4. Race Data (No cast needed, return by value)
     if (name == "RaceStr")      return static_cast<float>(race.RaceStr);

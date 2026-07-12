@@ -22,11 +22,11 @@ namespace nlohmann {
 
 // Forward declaration of EntityStats
 struct EntityStats {
-    float Health;
-    float Mana;
     float Strength;
     float Intelligence;
     float Dexterity;
+    float Health;
+    float Mana;
     bool IsDirty;
 
     // Add this method to expose your stats for the FormulaProcessor
@@ -41,7 +41,7 @@ struct EntityStats {
         };
     }
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityStats, Health, Mana, Strength, Intelligence, Dexterity, IsDirty)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityStats, Strength, Intelligence, Dexterity, Health, Mana, IsDirty)
 
 // --- 1. Character Data Records ---
 struct RaceData {
@@ -52,14 +52,14 @@ struct RaceData {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RaceData, RaceStr, RaceInt, RaceDex)
 
 struct ClassData {
-    int ClassHealth;
-    int ClassMana;
     int ClassStr;
     int ClassInt;
     int ClassDex;
-    std::string PrimarySkill;
+    int ClassHealth;
+    int ClassMana;
+    std::string ClassPrimarySkill;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ClassData, ClassHealth, ClassMana, ClassStr, ClassInt, ClassDex, PrimarySkill)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ClassData, ClassStr, ClassInt, ClassDex, ClassHealth, ClassMana, ClassPrimarySkill)
 
 struct SkillData {
     std::string AttributeScale;
