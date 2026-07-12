@@ -33,21 +33,25 @@ void MovementSystem::ProcessCommands(CommandQueue& queue, MovementComponent& buf
 }
 
 void MovementSystem::Update(MovementComponent& buffers, float deltaTime, EntityRegistry& registry) {
-    for (size_t i = 0; i < EngineConfig::MaxEntities; ++i) {
-        if (!buffers.IsMoving[i]) continue;
+    // Optimization: Iterate only over active entities instead of all possible slots
+    const auto& activeEntities = registry.GetActiveEntities();
 
-        Vector2& pos = registry.GetPosition(i);
+    for (int32_t id : activeEntities) {
+        // Only process movement if this specific entity is flagged as moving
+        if (!buffers.IsMoving[id]) continue;
+
+        Vector2& pos = registry.GetPosition(id);
 
         // 1. Calculate distance to target
-        float dist = Vector2Distance(pos, buffers.TargetPositions[i]);
+        float dist = Vector2Distance(pos, buffers.TargetPositions[id]);
 
         // 2. Stop if close enough
         if (dist < 5.0f) { 
-            pos = buffers.TargetPositions[i]; // Snap to exact position
-            buffers.IsMoving[i] = false;       // Stop movement
+            pos = buffers.TargetPositions[id]; // Snap to exact position
+            buffers.IsMoving[id] = false;       // Stop movement
         } else {
             // 3. Move normally
-            Vector2 displacement = Vector2Scale(buffers.Velocities[i], buffers.Speeds[i] * deltaTime);
+            Vector2 displacement = Vector2Scale(buffers.Velocities[id], buffers.Speeds[id] * deltaTime);
             pos = Vector2Add(pos, displacement);
         }
     }
