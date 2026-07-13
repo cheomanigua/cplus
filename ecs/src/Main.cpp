@@ -63,13 +63,19 @@ int main() {
         // 'name' is the key (e.g., "Thrall"), 'templateData' is the NPCBlueprint struct
         
         // The Registry handles _nextId++ and returns the unique ID for us
-        int32_t newId = sharedRegistry.SpawnNPC(templateData, statsComp);
+        int32_t newId = sharedRegistry.SpawnNPC(templateData);
 
+        // Initialize Identity Component
         identityComp.Metadata[newId] = { templateData.Name, templateData.Class, templateData.Race };
-        // IMPORTANT: Manually sync the position from the template to the component
+
+        // Initialize stats with base/default values (FormulaProcessor will update these later)
+        // You don't need the templateData stats here!
+        statsComp.InitializeStats(newId, 1.0f, 1.0f, 1.0f, 10.0f, 10.0f);
+        
+        // Initiate Position. IMPORTANT: Manually sync the position from the template to the component
         posComp.Positions[newId] = templateData.SpawnPosition;
 
-        // Use the returned ID to command the engine logic
+        // Trigger upate command. Use the returned ID to command the engine logic
         consoleEngine.AddCommand(GameCommand{ CommandType::UpdateStats, newId });
     }
 

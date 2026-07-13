@@ -14,7 +14,7 @@ public:
     // Using explicit constructor to initialize flat buffers
     EntityRegistry(const std::unordered_map<int32_t, ItemData>& items);
     
-    int32_t SpawnNPC(const NPCBlueprint& bp, StatsComponent& statsComp);
+    int32_t SpawnNPC(const NPCBlueprint& bp);
     
     int32_t GetActiveCount() const { return _activeCount; }
     const std::vector<int32_t>& GetActiveEntities() const { return _activeEntities; }

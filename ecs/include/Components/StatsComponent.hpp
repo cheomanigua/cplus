@@ -21,4 +21,17 @@ struct StatsComponent {
             stats.IsDirty = false;
         }
     }
+
+    // Encapsulated initialization logic for specific entity stats[cite: 8]
+    inline void InitializeStats(int32_t id, float str, float intel, float dex, float health, float mana) {
+        auto& stats = Data[id];
+        stats.Strength = str;
+        stats.Intelligence = intel;
+        stats.Dexterity = dex;
+        stats.Health = health;
+        stats.Mana = mana;
+        stats.IsDirty = true; // Mark as dirty so the FormulaProcessor picks it up
+    }
 };
+
+

@@ -7,6 +7,7 @@
 #include "Components/MovementComponent.hpp"
 #include "Components/PositionComponent.hpp"
 #include "Engine/EntityRegistry.hpp"
+#include "Engine/NPCBlueprint.hpp"
 
 void TestMovementSystem() {
     std::unordered_map<int32_t, ItemData> itemMap;
@@ -16,7 +17,8 @@ void TestMovementSystem() {
     PositionComponent posComp;
     EntityRegistry registry(itemMap);
     float deltaTime = 1.0f;
-    int32_t testEntity = 0;
+    NPCBlueprint dummyBp; 
+    int32_t testEntity = registry.SpawnNPC(dummyBp);
     
     // 1. Manually set position in the component instead of calling RegisterEntity
     posComp.Positions[testEntity] = {0.0f, 0.0f};
