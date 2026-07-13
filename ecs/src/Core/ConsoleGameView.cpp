@@ -1,5 +1,5 @@
 #include "Core/ConsoleGameView.hpp"
-#include "Engine/StatsComponent.hpp"
+#include "Components/StatsComponent.hpp"
 #include <iostream>
 #include <iomanip>
 

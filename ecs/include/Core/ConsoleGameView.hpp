@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/EngineDriver.hpp"
-#include "Engine/MovementComponent.hpp"
-#include "Engine/PositionComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "Core/Interfaces/IEngineFacade.hpp"
 #include "Core/Contracts/CharacterSheetDto.hpp"
 #include <iostream>

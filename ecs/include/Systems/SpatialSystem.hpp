@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Engine/EntityRegistry.hpp"
-#include "Engine/PositionComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "Core/Constants.hpp"
 
 class SpatialSystem {

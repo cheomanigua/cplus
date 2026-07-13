@@ -2,8 +2,8 @@
 
 #include "Core/Commands/GameCommand.hpp"
 #include "Core/Commands/CommandQueue.hpp"
-#include "Engine/MovementComponent.hpp"
-#include "Engine/PositionComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "Engine/EntityRegistry.hpp"
 
 class MovementSystem {

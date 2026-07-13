@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Interfaces/IEngineFacade.hpp"
 #include "Engine/EntityRegistry.hpp"
-#include "Engine/MovementComponent.hpp"
+#include "Components/MovementComponent.hpp"
 #include "raylib.h"
 
 class RaylibGameView : public IEngineFacade {

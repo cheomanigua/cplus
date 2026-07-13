@@ -1,6 +1,6 @@
 #include "Core/RaylibGameView.hpp"
 #include "Engine/EntityRegistry.hpp"
-#include "Engine/MovementComponent.hpp"
+#include "Components/MovementComponent.hpp"
 #include <raylib.h>
 
 void RaylibGameView::DrawMesh(int32_t id, const Vector2& transform, const MovementComponent& moveComp) {

@@ -1,6 +1,6 @@
 #include "Engine/EntityRegistry.hpp"
 #include "Engine/NPCBlueprint.hpp"
-#include "Engine/StatsComponent.hpp"
+#include "Components/StatsComponent.hpp"
 
 EntityRegistry::EntityRegistry(const std::unordered_map<int32_t, ItemData>& items) 
     : _items(items) 

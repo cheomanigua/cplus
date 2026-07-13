@@ -7,9 +7,9 @@
 #include "Core/Interfaces/IEngineFacade.hpp"
 #include "Core/FormulaProcessor.hpp"
 #include "Engine/EntityRegistry.hpp"
-#include "Engine/StatsComponent.hpp"
-#include "Engine/MovementComponent.hpp"
-#include "Engine/PositionComponent.hpp"
+#include "Components/StatsComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "Engine/DataLoader.hpp"
 #include "Systems/SpatialSystem.hpp"
 

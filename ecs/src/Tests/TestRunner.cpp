@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Systems/MovementSystem.hpp"
 #include "Core/Commands/CommandQueue.hpp"
-#include "Engine/MovementComponent.hpp"
+#include "Components/MovementComponent.hpp"
 
 // Define individual tests
 void TestMovementSystem();

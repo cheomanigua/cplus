@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Commands/CommandQueue.hpp"
 #include "Engine/EntityRegistry.hpp"
-#include "Engine/PositionComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "Systems/SpatialSystem.hpp"
 #include <cstdint>
 

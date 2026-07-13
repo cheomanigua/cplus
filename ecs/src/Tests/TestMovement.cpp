@@ -3,9 +3,9 @@
 #include "Systems/MovementSystem.hpp"
 #include "Core/Commands/CommandQueue.hpp"
 #include "Core/Constants.hpp"
-#include "Engine/StatsComponent.hpp"
-#include "Engine/MovementComponent.hpp"
-#include "Engine/PositionComponent.hpp"
+#include "Components/StatsComponent.hpp"
+#include "Components/MovementComponent.hpp"
+#include "Components/PositionComponent.hpp"
 #include "Engine/EntityRegistry.hpp"
 
 void TestMovementSystem() {
