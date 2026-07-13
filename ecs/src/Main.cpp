@@ -37,16 +37,17 @@ int main() {
 
     // Declare PositionComponent BEFORE engine drivers
     PositionComponent posComp;
+    MovementComponent moveComp;
     
     // Initialize Engines
-    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, posComp);
+    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, posComp, moveComp);
     
     InitWindow(800, 600, "Data Driven Engine");
     SetTargetFPS(60);
     RaylibGameView raylibView;
     raylibView.SetRegistry(&sharedRegistry);
     EngineFacade::Implementation = &raylibView;
-    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, posComp);
+    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, posComp, moveComp);
     SpatialSystem spatialSystem;
 
     // SPAWN NPCs (Factory Pattern)

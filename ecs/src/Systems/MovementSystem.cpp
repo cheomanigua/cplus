@@ -5,7 +5,7 @@
 #include "raylib.h"
 #include "raymath.h"
 
-void MovementSystem::ProcessCommands(CommandQueue& queue, MovementComponent& movComp) {
+void MovementSystem::ProcessCommands(CommandQueue& queue, MovementComponent& moveComp) {
     // Get the current number of commands so we only cycle through the original set
     size_t commandCount = queue.GetCount(); 
 
@@ -16,13 +16,13 @@ void MovementSystem::ProcessCommands(CommandQueue& queue, MovementComponent& mov
             // Process movement-specific commands
             if (cmd.EntityId >= 0 && cmd.EntityId < EngineConfig::MaxEntities) {
                 if (cmd.Type == CommandType::Move) {
-                    movComp.Velocities[cmd.EntityId] = cmd.Velocity;
-                    movComp.Speeds[cmd.EntityId] = cmd.Speed;
-                    movComp.TargetPositions[cmd.EntityId] = cmd.MoveParams.TargetPosition; 
-                    movComp.IsMoving[cmd.EntityId] = true;
-                    movComp.Active[cmd.EntityId] = true;
+                    moveComp.Velocities[cmd.EntityId] = cmd.Velocity;
+                    moveComp.Speeds[cmd.EntityId] = cmd.Speed;
+                    moveComp.TargetPositions[cmd.EntityId] = cmd.MoveParams.TargetPosition; 
+                    moveComp.IsMoving[cmd.EntityId] = true;
+                    moveComp.Active[cmd.EntityId] = true;
                 } else if (cmd.Type == CommandType::Stop) {
-                    movComp.Active[cmd.EntityId] = false;
+                    moveComp.Active[cmd.EntityId] = false;
                 }
             }
         } else {

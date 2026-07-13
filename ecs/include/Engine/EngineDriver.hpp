@@ -20,9 +20,9 @@ private:
     
     // Engine State
     CommandQueue _commandQueue;
-    MovementComponent _movementComponent;
-    PositionComponent& _posComp;
     SpatialSystem _spatialSystem;
+    MovementComponent& _moveComp;
+    PositionComponent& _posComp;
     
     IEngineFacade* _view;
     std::string _dataDirectory;
@@ -33,7 +33,8 @@ public:
              const std::unordered_map<int32_t, ItemData>& items,
              std::string dataPath, 
              EntityRegistry* registry,
-             PositionComponent& posComp);
+             PositionComponent& posComp,
+             MovementComponent& moveComp);
 
     void Tick(float deltaTime);
     void AddCommand(GameCommand cmd);
@@ -45,6 +46,6 @@ public:
 
     CommandQueue& GetCommandQueue() { return _commandQueue; }
 
-    const MovementComponent& GetMovementComponent() const { return _movementComponent; }
+    const MovementComponent& GetMovementComponent() const { return _moveComp; }
     PositionComponent& GetPositionComponent() { return _posComp; }
 };

@@ -10,7 +10,7 @@
 void TestMovementSystem() {
     std::unordered_map<int32_t, ItemData> itemMap;
     CommandQueue queue;
-    MovementComponent movComp;
+    MovementComponent moveComp;
     PositionComponent posComp;
     EntityRegistry registry(itemMap);
     float deltaTime = 1.0f;
@@ -24,7 +24,7 @@ void TestMovementSystem() {
 
     // Set movement intent
     Vector2 targetPos = {1000.0f, 0.0f};
-    movComp.TargetPositions[testEntity] = targetPos;
+    moveComp.TargetPositions[testEntity] = targetPos;
     
     GameCommand moveCmd;
     moveCmd.Type = CommandType::Move;
@@ -34,8 +34,8 @@ void TestMovementSystem() {
     moveCmd.MoveParams.TargetPosition = targetPos;
     queue.Enqueue(moveCmd);
 
-    MovementSystem::ProcessCommands(queue, movComp);
-    MovementSystem::Update(movComp, posComp, registry, deltaTime);
+    MovementSystem::ProcessCommands(queue, moveComp);
+    MovementSystem::Update(moveComp, posComp, registry, deltaTime);
 
     Vector2& actualRef = posComp.Positions[testEntity];
 
