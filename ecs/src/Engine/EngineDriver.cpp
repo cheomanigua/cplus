@@ -9,6 +9,7 @@ EngineDriver::EngineDriver(IEngineFacade* view,
                            const std::unordered_map<int32_t, ItemData>& items, 
                            std::string dataPath, 
                            EntityRegistry* registry, 
+                           StatsComponent& statsComp, 
                            PositionComponent& posComp, 
                            MovementComponent& moveComp)
     : _registry(registry), 
@@ -16,6 +17,7 @@ EngineDriver::EngineDriver(IEngineFacade* view,
       _items(items), 
       _dataDirectory(dataPath), 
       _view(view), 
+      _statsComp(statsComp), 
       _posComp(posComp),
       _moveComp(moveComp)
 {
@@ -30,14 +32,14 @@ void EngineDriver::Tick(float deltaTime) {
     MovementSystem::ProcessCommands(_commandQueue, _moveComp);
 
     // 3. Perform Movement "Execution"
-    MovementSystem::Update(_moveComp, _posComp, *_registry, deltaTime);
+    MovementSystem::Update(_moveComp, _posComp, _registry->GetActiveEntities(), deltaTime);
 
     // 4. Process Other Commands (Stats/Combat)
     while (_commandQueue.HasCommands()) {
         GameCommand cmd = _commandQueue.Dequeue();
         switch (cmd.Type) {
             case CommandType::UpdateStats: {
-                EntityStats& stats = _registry->GetEntityStats(cmd.EntityId);
+                EntityStats& stats = _statsComp.Data[cmd.EntityId];
                 
                 // Retrieve metadata directly from the registry
                 const auto& meta = _registry->GetMetadata(cmd.EntityId);

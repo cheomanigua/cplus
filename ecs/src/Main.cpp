@@ -35,19 +35,20 @@ int main() {
     // Setup Views
     ConsoleGameView consoleView; 
 
-    // Declare PositionComponent BEFORE engine drivers
+    // Declare components BEFORE engine drivers
+    StatsComponent statsComp;
     PositionComponent posComp;
     MovementComponent moveComp;
     
     // Initialize Engines
-    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, posComp, moveComp);
+    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, statsComp, posComp, moveComp);
     
     InitWindow(800, 600, "Data Driven Engine");
     SetTargetFPS(60);
     RaylibGameView raylibView;
     raylibView.SetRegistry(&sharedRegistry);
     EngineFacade::Implementation = &raylibView;
-    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, posComp, moveComp);
+    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, statsComp, posComp, moveComp);
     SpatialSystem spatialSystem;
 
     // SPAWN NPCs (Factory Pattern)
@@ -60,10 +61,10 @@ int main() {
         // 'name' is the key (e.g., "Thrall"), 'templateData' is the NPCBlueprint struct
         
         // The Registry handles _nextId++ and returns the unique ID for us
-        int32_t newId = sharedRegistry.SpawnNPC(templateData);
+        int32_t newId = sharedRegistry.SpawnNPC(templateData, statsComp);
         // IMPORTANT: Manually sync the position from the template to the component
         posComp.Positions[newId] = templateData.SpawnPosition;
-        
+
         // Use the returned ID to command the engine logic
         consoleEngine.AddCommand(GameCommand{ CommandType::UpdateStats, newId });
     }
@@ -71,7 +72,7 @@ int main() {
     // Run engine tick
     consoleEngine.Tick(0.0f);
 
-    consoleView.DisplayFullCharacterSheet(sharedRegistry, posComp, loader);
+    consoleView.DisplayFullCharacterSheet(sharedRegistry, posComp, statsComp, loader);
 
     // Main Loop
     while (!WindowShouldClose()) {

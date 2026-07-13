@@ -8,6 +8,8 @@
 #include <vector>
 #include "raylib.h"
 
+struct StatsComponent;
+
 class ConsoleGameView : public IEngineFacade {
 public:
     // Stub implementations: fulfill the IEngineFacade contract
@@ -18,6 +20,9 @@ public:
     // Logic moved from Main.cpp
     void RenderNPCStats(const std::vector<NPCBlueprint>& npcs, EngineDriver& engine);
     
-    void DisplayFullCharacterSheet(EntityRegistry& registry, const PositionComponent& posComp, const DataLoader& loader);
+    void DisplayFullCharacterSheet(EntityRegistry& registry, 
+                               const PositionComponent& posComp, 
+                               const StatsComponent& statsComp, 
+                               const DataLoader& loader);
     void Render(const CharacterSheetDto& data);
 };

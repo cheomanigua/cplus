@@ -7,6 +7,7 @@
 #include "Core/Interfaces/IEngineFacade.hpp"
 #include "Core/FormulaProcessor.hpp"
 #include "Engine/EntityRegistry.hpp"
+#include "Engine/StatsComponent.hpp"
 #include "Engine/MovementComponent.hpp"
 #include "Engine/PositionComponent.hpp"
 #include "Engine/DataLoader.hpp"
@@ -21,6 +22,9 @@ private:
     // Engine State
     CommandQueue _commandQueue;
     SpatialSystem _spatialSystem;
+
+    // Components
+    StatsComponent& _statsComp;
     MovementComponent& _moveComp;
     PositionComponent& _posComp;
     
@@ -32,7 +36,8 @@ public:
              DataLoader& loader, 
              const std::unordered_map<int32_t, ItemData>& items,
              std::string dataPath, 
-             EntityRegistry* registry,
+             EntityRegistry* registry, 
+             StatsComponent& statsComp, 
              PositionComponent& posComp,
              MovementComponent& moveComp);
 
@@ -46,6 +51,7 @@ public:
 
     CommandQueue& GetCommandQueue() { return _commandQueue; }
 
-    const MovementComponent& GetMovementComponent() const { return _moveComp; }
+    StatsComponent& GetStatsComponent() { return _statsComp; }
     PositionComponent& GetPositionComponent() { return _posComp; }
+    const MovementComponent& GetMovementComponent() const { return _moveComp; }
 };

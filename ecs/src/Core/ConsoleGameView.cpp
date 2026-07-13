@@ -1,8 +1,12 @@
 #include "Core/ConsoleGameView.hpp"
+#include "Engine/StatsComponent.hpp"
 #include <iostream>
 #include <iomanip>
 
-void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const PositionComponent& posComp, const DataLoader& loader) {
+void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, 
+                                                const PositionComponent& posComp, 
+                                                const StatsComponent& statsComp, 
+                                                const DataLoader& loader) {
     const auto& activeEntities = registry.GetActiveEntities();
     
     // Header - Added "Name" column
@@ -20,8 +24,8 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const 
     std::cout << std::string(89, '-') << std::endl;
 
     for (int32_t id : activeEntities) {
-        EntityStats& stats = registry.GetEntityStats(id);
         const auto& meta = registry.GetMetadata(id);
+        const EntityStats& stats = statsComp.Data[id];
         const Vector2& pos = posComp.Positions[id];
         
         std::cout << std::left << std::setw(5)  << id 

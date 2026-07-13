@@ -19,7 +19,7 @@ public:
      * applies velocity and speed to positions based on time.
      */
     static void Update(MovementComponent& moveComp, 
-                       PositionComponent& posComp, 
-                       const EntityRegistry& registry, 
-                       float deltaTime);
+                   PositionComponent& posComp, 
+                   const std::vector<int32_t>& activeEntities, 
+                   float deltaTime);
 };

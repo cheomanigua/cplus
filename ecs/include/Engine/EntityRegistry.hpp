@@ -7,6 +7,7 @@
 #include "Core/Constants.hpp"
 
 struct NPCBlueprint;
+struct StatsComponent;
 
 struct EntityMetadata {
     std::string Name;
@@ -14,16 +15,15 @@ struct EntityMetadata {
     std::string Race;
 };
 
+
 class EntityRegistry {
 public:
     // Using explicit constructor to initialize flat buffers
     EntityRegistry(const std::unordered_map<int32_t, ItemData>& items);
     
-    int32_t SpawnNPC(const NPCBlueprint& bp);
+    int32_t SpawnNPC(const NPCBlueprint& bp, StatsComponent& statsComp);
     
     // Direct access methods using entityId as index
-    void RegisterStats(int32_t entityId, const EntityStats& stats);
-    EntityStats& GetEntityStats(int32_t entityId); 
     const EntityMetadata& GetMetadata(int32_t entityId) const;
     
     int32_t GetActiveCount() const { return _activeCount; }
@@ -39,7 +39,6 @@ private:
     
     // Flat buffers indexed by EntityID for cache efficiency
     std::vector<int32_t> _activeEntities;
-    std::vector<EntityStats> _stats;
     std::vector<EntityMetadata> _metadata;
     std::vector<bool> _isActive;
 

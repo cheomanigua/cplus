@@ -1,7 +1,6 @@
 // src/Systems/MovementSystem.cpp
 #include "Systems/MovementSystem.hpp"
 #include "Core/Constants.hpp"
-#include "Engine/EntityRegistry.hpp"
 #include "raylib.h"
 #include "raymath.h"
 
@@ -34,12 +33,9 @@ void MovementSystem::ProcessCommands(CommandQueue& queue, MovementComponent& mov
 
 void MovementSystem::Update(MovementComponent& moveComp, 
                            PositionComponent& posComp, 
-                           const EntityRegistry& registry, 
+                           const std::vector<int32_t>& activeEntities, 
                            float deltaTime) {
     
-    // Maintain your high-performance optimization
-    const auto& activeEntities = registry.GetActiveEntities();
-
     for (int32_t id : activeEntities) {
         // Only process if the entity is moving
         if (!moveComp.IsMoving[id]) continue;
