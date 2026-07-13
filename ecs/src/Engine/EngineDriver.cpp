@@ -9,6 +9,7 @@ EngineDriver::EngineDriver(IEngineFacade* view,
                            const std::unordered_map<int32_t, ItemData>& items, 
                            std::string dataPath, 
                            EntityRegistry* registry, 
+                           IdentityComponent& identityComp, 
                            StatsComponent& statsComp, 
                            PositionComponent& posComp, 
                            MovementComponent& moveComp)
@@ -17,6 +18,7 @@ EngineDriver::EngineDriver(IEngineFacade* view,
       _items(items), 
       _dataDirectory(dataPath), 
       _view(view), 
+      _identityComp(identityComp), 
       _statsComp(statsComp), 
       _posComp(posComp),
       _moveComp(moveComp)
@@ -41,10 +43,8 @@ void EngineDriver::Tick(float deltaTime) {
             case CommandType::UpdateStats: {
                 EntityStats& stats = _statsComp.Data[cmd.EntityId];
                 
-                // Retrieve metadata directly from the registry
-                const auto& meta = _registry->GetMetadata(cmd.EntityId);
-                
                 // Retrieve template data from the loader
+                const auto& meta = _identityComp.Metadata[cmd.EntityId];
                 const auto& cls = _dataLoader.GetClassData(meta.Class);
                 const auto& race = _dataLoader.GetRaceData(meta.Race);
                 
@@ -55,7 +55,7 @@ void EngineDriver::Tick(float deltaTime) {
                 
                 stats.IsDirty = false;
                 std::cout << "[DEBUG] Processed stats for " << cmd.EntityId 
-                              << " (" << meta.Class << "/" << meta.Race << ")" << std::endl;
+                              << " (" << meta.Name << ": " << meta.Class << "/" << meta.Race << ")" << std::endl;
                 break;
             }
             case CommandType::EquipItem:

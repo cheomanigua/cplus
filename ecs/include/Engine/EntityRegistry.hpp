@@ -9,22 +9,12 @@
 struct NPCBlueprint;
 struct StatsComponent;
 
-struct EntityMetadata {
-    std::string Name;
-    std::string Class;
-    std::string Race;
-};
-
-
 class EntityRegistry {
 public:
     // Using explicit constructor to initialize flat buffers
     EntityRegistry(const std::unordered_map<int32_t, ItemData>& items);
     
     int32_t SpawnNPC(const NPCBlueprint& bp, StatsComponent& statsComp);
-    
-    // Direct access methods using entityId as index
-    const EntityMetadata& GetMetadata(int32_t entityId) const;
     
     int32_t GetActiveCount() const { return _activeCount; }
     const std::vector<int32_t>& GetActiveEntities() const { return _activeEntities; }
@@ -39,7 +29,6 @@ private:
     
     // Flat buffers indexed by EntityID for cache efficiency
     std::vector<int32_t> _activeEntities;
-    std::vector<EntityMetadata> _metadata;
     std::vector<bool> _isActive;
 
     // Items and Grid

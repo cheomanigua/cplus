@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/EngineDriver.hpp"
+#include "Components/IdentityComponent.hpp"
 #include "Components/MovementComponent.hpp"
 #include "Components/PositionComponent.hpp"
 #include "Core/Interfaces/IEngineFacade.hpp"
@@ -21,6 +22,7 @@ public:
     void RenderNPCStats(const std::vector<NPCBlueprint>& npcs, EngineDriver& engine);
     
     void DisplayFullCharacterSheet(EntityRegistry& registry, 
+                               const IdentityComponent& identityComp, 
                                const PositionComponent& posComp, 
                                const StatsComponent& statsComp, 
                                const DataLoader& loader);

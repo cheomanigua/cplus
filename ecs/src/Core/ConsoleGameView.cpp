@@ -4,6 +4,7 @@
 #include <iomanip>
 
 void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, 
+                                                const IdentityComponent& identityComp, 
                                                 const PositionComponent& posComp, 
                                                 const StatsComponent& statsComp, 
                                                 const DataLoader& loader) {
@@ -24,7 +25,7 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry,
     std::cout << std::string(89, '-') << std::endl;
 
     for (int32_t id : activeEntities) {
-        const auto& meta = registry.GetMetadata(id);
+        const auto& meta = identityComp.Metadata[id];
         const EntityStats& stats = statsComp.Data[id];
         const Vector2& pos = posComp.Positions[id];
         

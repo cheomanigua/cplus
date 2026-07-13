@@ -10,6 +10,7 @@
 #include "Core/PathResolver.hpp"
 #include "Core/FormulaProcessor.hpp"
 #include "Core/Commands/GameCommand.hpp"
+#include "Core/Constants.hpp"
 #include "Systems/InputSystem.hpp"
 #include "Systems/SpatialSystem.hpp"
 #include "Tests/TestRunner.hpp"
@@ -39,16 +40,17 @@ int main() {
     StatsComponent statsComp;
     PositionComponent posComp;
     MovementComponent moveComp;
+    IdentityComponent identityComp(EngineConfig::MaxEntities);
     
     // Initialize Engines
-    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, statsComp, posComp, moveComp);
+    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, identityComp, statsComp, posComp, moveComp);
     
     InitWindow(800, 600, "Data Driven Engine");
     SetTargetFPS(60);
     RaylibGameView raylibView;
     raylibView.SetRegistry(&sharedRegistry);
     EngineFacade::Implementation = &raylibView;
-    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, statsComp, posComp, moveComp);
+    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, identityComp, statsComp, posComp, moveComp);
     SpatialSystem spatialSystem;
 
     // SPAWN NPCs (Factory Pattern)
@@ -62,6 +64,8 @@ int main() {
         
         // The Registry handles _nextId++ and returns the unique ID for us
         int32_t newId = sharedRegistry.SpawnNPC(templateData, statsComp);
+
+        identityComp.Metadata[newId] = { templateData.Name, templateData.Class, templateData.Race };
         // IMPORTANT: Manually sync the position from the template to the component
         posComp.Positions[newId] = templateData.SpawnPosition;
 
@@ -72,7 +76,7 @@ int main() {
     // Run engine tick
     consoleEngine.Tick(0.0f);
 
-    consoleView.DisplayFullCharacterSheet(sharedRegistry, posComp, statsComp, loader);
+    consoleView.DisplayFullCharacterSheet(sharedRegistry, identityComp, posComp, statsComp, loader);
 
     // Main Loop
     while (!WindowShouldClose()) {

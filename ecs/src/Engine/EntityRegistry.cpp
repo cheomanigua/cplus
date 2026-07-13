@@ -6,15 +6,11 @@ EntityRegistry::EntityRegistry(const std::unordered_map<int32_t, ItemData>& item
     : _items(items) 
 {
     // Pre-allocate buffers to the maximum supported entity count
-    _metadata.resize(EngineConfig::MaxEntities);
     _isActive.assign(EngineConfig::MaxEntities, false);
 }
 
 int32_t EntityRegistry::SpawnNPC(const NPCBlueprint& bp, StatsComponent& statsComp) {
     int32_t newId = _nextId++;
-    
-    // Store metadata using the newId as a direct index
-    _metadata[newId] = { bp.Name, bp.Class, bp.Race }; 
     
     // Initialize stats
     EntityStats stats = statsComp.Data[newId];
@@ -30,8 +26,4 @@ int32_t EntityRegistry::SpawnNPC(const NPCBlueprint& bp, StatsComponent& statsCo
     _activeCount++;
 
     return newId;
-}
-
-const EntityMetadata& EntityRegistry::GetMetadata(int32_t entityId) const {
-    return _metadata[entityId];
 }
