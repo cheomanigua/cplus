@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 
-void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const DataLoader& loader) {
+void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const PositionComponent& posComp, const DataLoader& loader) {
     const auto& activeEntities = registry.GetActiveEntities();
     
     // Header - Added "Name" column
@@ -21,14 +21,15 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry, const 
 
     for (int32_t id : activeEntities) {
         EntityStats& stats = registry.GetEntityStats(id);
-        const auto& meta = registry.GetMetadata(id); 
+        const auto& meta = registry.GetMetadata(id);
+        const Vector2& pos = posComp.Positions[id];
         
         std::cout << std::left << std::setw(5)  << id 
                   << std::setw(12) << meta.Name   // Added Name
                   << std::setw(12) << meta.Class 
                   << std::setw(10) << meta.Race 
-                  << "(" << (int)meta.SpawnPosition.x << "," 
-                         << (int)meta.SpawnPosition.y << ")"
+                  << "(" << (int)pos.x << "," 
+                         << (int)pos.y << ")"
                   << std::setw(6) << "" // Spacer for column alignment
                   << std::setw(8)  << (int)stats.Health 
                   << std::setw(8)  << (int)stats.Mana 

@@ -1,25 +1,30 @@
 #include <iostream>
 #include <unordered_map>
-#include "Core/Commands/CommandQueue.hpp"
-#include "Engine/MovementComponent.hpp"
 #include "Systems/MovementSystem.hpp"
+#include "Core/Commands/CommandQueue.hpp"
 #include "Core/Constants.hpp"
+#include "Engine/MovementComponent.hpp"
+#include "Engine/PositionComponent.hpp"
 #include "Engine/EntityRegistry.hpp"
 
 void TestMovementSystem() {
     std::unordered_map<int32_t, ItemData> itemMap;
     CommandQueue queue;
-    MovementComponent buffers;
+    MovementComponent movComp;
+    PositionComponent posComp;
     EntityRegistry registry(itemMap);
     float deltaTime = 1.0f;
     int32_t testEntity = 0;
     
-    // Use your new registration method
-    registry.RegisterEntity(testEntity, {0.0f, 0.0f});
+    // 1. Manually set position in the component instead of calling RegisterEntity
+    posComp.Positions[testEntity] = {0.0f, 0.0f};
+    // 2. Register activation status in the registry
+    EntityStats stats; // Initialize empty or default stats
+    registry.RegisterStats(testEntity, stats);
 
     // Set movement intent
     Vector2 targetPos = {1000.0f, 0.0f};
-    buffers.TargetPositions[testEntity] = targetPos;
+    movComp.TargetPositions[testEntity] = targetPos;
     
     GameCommand moveCmd;
     moveCmd.Type = CommandType::Move;
@@ -29,10 +34,10 @@ void TestMovementSystem() {
     moveCmd.MoveParams.TargetPosition = targetPos;
     queue.Enqueue(moveCmd);
 
-    MovementSystem::ProcessCommands(queue, buffers);
-    MovementSystem::Update(buffers, deltaTime, registry);
+    MovementSystem::ProcessCommands(queue, movComp);
+    MovementSystem::Update(movComp, posComp, registry, deltaTime);
 
-    Vector2& actualRef = registry.GetPosition(testEntity);
+    Vector2& actualRef = posComp.Positions[testEntity];
 
     if (actualRef.x == 20.0f && actualRef.y == 0.0f) { // Use actualRef
         std::cout << "[TEST] MovementSystem: Passed" << std::endl;

@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
 #include "Engine/EntityRegistry.hpp"
+#include "Engine/PositionComponent.hpp"
 #include "Core/Constants.hpp"
 
 class SpatialSystem {
 public:
     void Clear();
-    void Update(EntityRegistry& registry);
+    void Update(EntityRegistry& registry, const PositionComponent& posComp);
     const std::vector<int32_t>& GetEntitiesInCell(int x, int y) const;
 
 private:

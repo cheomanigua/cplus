@@ -5,7 +5,7 @@
 #include "raylib.h"
 #include "raymath.h"
 
-void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry, const SpatialSystem& spatialSystem) {
+void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry, PositionComponent& posComp, const SpatialSystem& spatialSystem) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mousePos = GetMousePosition();
         int32_t clickedId = -1;
@@ -16,7 +16,7 @@ void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry, const
         const auto& entitiesInCell = spatialSystem.GetEntitiesInCell(cellX, cellY);
         
         for (int32_t id : entitiesInCell) {
-            Vector2& pos = registry.GetPosition(id);
+            Vector2& pos = posComp.Positions[id];
             if (CheckCollisionPointCircle(mousePos, pos, 20.0f)) {
                 clickedId = id;
                 break;
@@ -35,7 +35,7 @@ void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry, const
 
             int32_t selectedId = registry.GetSelectedEntity();
             if (selectedId != -1) {
-                Vector2& startPos = registry.GetPosition(selectedId);
+                Vector2& startPos = posComp.Positions[selectedId];
                 GameCommand cmd;
                 cmd.Type = CommandType::Move;
                 cmd.EntityId = selectedId;

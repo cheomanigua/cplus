@@ -9,14 +9,14 @@ void SpatialSystem::Clear() {
     }
 }
 
-void SpatialSystem::Update(EntityRegistry& registry) {
+void SpatialSystem::Update(EntityRegistry& registry, const PositionComponent& posComp) {
     Clear();
     
     // Iterate only over active entities
     const auto& activeEntities = registry.GetActiveEntities();
     
     for (int32_t id : activeEntities) {
-        Vector2 pos = registry.GetPosition(id);
+        Vector2 pos = posComp.Positions[id];
         
         int x = static_cast<int>(pos.x / EngineConfig::CellSize);
         int y = static_cast<int>(pos.y / EngineConfig::CellSize);

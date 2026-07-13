@@ -19,34 +19,37 @@
 int main() {
     TestRunner::RunAll();
 
-    // 1. Initialize the DataLoader
+    // Initialize the DataLoader
     DataLoader loader;
     if (!loader.LoadManifest("manifest.json")) {
         std::cerr << "Failed to load manifest!" << std::endl;
         return -1;
     }
     
-    // 2. Initialize FormulaProcessor
+    // Initialize FormulaProcessor
     FormulaProcessor::Initialize(Engine::GetDataPath("system/formulas.json"));
 
-    // 3. Create the SHARED Registry
+    // Create the SHARED Registry
     EntityRegistry sharedRegistry(loader.GetItems());
 
-    // 4. Setup Views
+    // Setup Views
     ConsoleGameView consoleView; 
+
+    // Declare PositionComponent BEFORE engine drivers
+    PositionComponent posComp;
     
-    // 5. Initialize Engines
-    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry);
+    // Initialize Engines
+    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, posComp);
     
     InitWindow(800, 600, "Data Driven Engine");
     SetTargetFPS(60);
     RaylibGameView raylibView;
     raylibView.SetRegistry(&sharedRegistry);
     EngineFacade::Implementation = &raylibView;
-    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry);
+    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, posComp);
     SpatialSystem spatialSystem;
 
-    // 6. SPAWN NPCs (Factory Pattern)
+    // SPAWN NPCs (Factory Pattern)
     // We no longer use loader.GetNPCs() to get IDs; we use templates to spawn entities.
     const auto& npcTemplates = loader.GetNPCTemplates(); 
     std::cout << "Spawning " << npcTemplates.size() << " NPCs via factory..." << std::endl;
@@ -57,24 +60,26 @@ int main() {
         
         // The Registry handles _nextId++ and returns the unique ID for us
         int32_t newId = sharedRegistry.SpawnNPC(templateData);
+        // IMPORTANT: Manually sync the position from the template to the component
+        posComp.Positions[newId] = templateData.SpawnPosition;
         
         // Use the returned ID to command the engine logic
         consoleEngine.AddCommand(GameCommand{ CommandType::UpdateStats, newId });
     }
 
-    // 7. Run engine tick
+    // Run engine tick
     consoleEngine.Tick(0.0f);
 
-    consoleView.DisplayFullCharacterSheet(sharedRegistry, loader);
+    consoleView.DisplayFullCharacterSheet(sharedRegistry, posComp, loader);
 
-    // 8. Main Loop
+    // Main Loop
     while (!WindowShouldClose()) {
         // 1. Maintain Spatial State via the System
-        spatialSystem.Update(sharedRegistry);
+        spatialSystem.Update(sharedRegistry, posComp);
     
         // 2. InputSystem handles Selection AND Movement Commands
         // No longer calling raylibView.GetNextCommand() here!
-        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), sharedRegistry, spatialSystem);
+        InputSystem::PollInput(graphicsEngine.GetCommandQueue(), sharedRegistry, posComp, spatialSystem);
         
         // 3. Engine updates logic
         graphicsEngine.Tick(GetFrameTime());
@@ -87,10 +92,7 @@ int main() {
         const auto& moveComp = graphicsEngine.GetMovementComponent();
         
         for (int32_t id : sharedRegistry.GetActiveEntities()) {
-            // Get reference
-            Vector2 pos = sharedRegistry.GetPosition(id);
-            // View reads from Registry AND the MovementComponent
-            raylibView.DrawMesh(id, pos, moveComp);
+            raylibView.DrawMesh(id, posComp.Positions[id], moveComp);
         }
         EndDrawing();
     }

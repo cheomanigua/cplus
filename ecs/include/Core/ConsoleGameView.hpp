@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/EngineDriver.hpp"
 #include "Engine/MovementComponent.hpp"
+#include "Engine/PositionComponent.hpp"
 #include "Core/Interfaces/IEngineFacade.hpp"
 #include "Core/Contracts/CharacterSheetDto.hpp"
 #include <iostream>
@@ -17,6 +18,6 @@ public:
     // Logic moved from Main.cpp
     void RenderNPCStats(const std::vector<NPCBlueprint>& npcs, EngineDriver& engine);
     
-    void DisplayFullCharacterSheet(EntityRegistry& registry, const DataLoader& loader);
+    void DisplayFullCharacterSheet(EntityRegistry& registry, const PositionComponent& posComp, const DataLoader& loader);
     void Render(const CharacterSheetDto& data);
 };

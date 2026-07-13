@@ -8,6 +8,7 @@
 #include "Core/FormulaProcessor.hpp"
 #include "Engine/EntityRegistry.hpp"
 #include "Engine/MovementComponent.hpp"
+#include "Engine/PositionComponent.hpp"
 #include "Engine/DataLoader.hpp"
 #include "Systems/SpatialSystem.hpp"
 
@@ -20,6 +21,7 @@ private:
     // Engine State
     CommandQueue _commandQueue;
     MovementComponent _movementComponent;
+    PositionComponent& _posComp;
     SpatialSystem _spatialSystem;
     
     IEngineFacade* _view;
@@ -30,7 +32,8 @@ public:
              DataLoader& loader, 
              const std::unordered_map<int32_t, ItemData>& items,
              std::string dataPath, 
-             EntityRegistry* registry);
+             EntityRegistry* registry,
+             PositionComponent& posComp);
 
     void Tick(float deltaTime);
     void AddCommand(GameCommand cmd);
@@ -43,4 +46,5 @@ public:
     CommandQueue& GetCommandQueue() { return _commandQueue; }
 
     const MovementComponent& GetMovementComponent() const { return _movementComponent; }
+    PositionComponent& GetPositionComponent() { return _posComp; }
 };

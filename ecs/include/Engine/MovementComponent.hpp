@@ -16,5 +16,9 @@ struct MovementComponent {
         Velocities.resize(EngineConfig::MaxEntities);
         Speeds.resize(EngineConfig::MaxEntities);
         Active.resize(EngineConfig::MaxEntities, false);
+
+        // Explicitly initialize fixed-size arrays
+        std::fill(std::begin(IsMoving), std::end(IsMoving), false);
+        for(auto& pos : TargetPositions) { pos = {0, 0}; }
     }
 };

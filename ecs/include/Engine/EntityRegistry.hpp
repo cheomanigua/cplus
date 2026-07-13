@@ -12,7 +12,6 @@ struct EntityMetadata {
     std::string Name;
     std::string Class;
     std::string Race;
-    Vector2 SpawnPosition;
 };
 
 class EntityRegistry {
@@ -25,7 +24,6 @@ public:
     // Direct access methods using entityId as index
     void RegisterStats(int32_t entityId, const EntityStats& stats);
     EntityStats& GetEntityStats(int32_t entityId); 
-    Vector2& GetPosition(int32_t entityId);
     const EntityMetadata& GetMetadata(int32_t entityId) const;
     
     int32_t GetActiveCount() const { return _activeCount; }
@@ -33,8 +31,6 @@ public:
 
     void SetSelectedEntity(int32_t id) { _selectedEntityId = id; }
     int32_t GetSelectedEntity() const { return _selectedEntityId; }
-
-    void RegisterEntity(int32_t entityId, Vector2 initialPos);
 
 private:
     int32_t _nextId = 1; 
@@ -44,7 +40,6 @@ private:
     // Flat buffers indexed by EntityID for cache efficiency
     std::vector<int32_t> _activeEntities;
     std::vector<EntityStats> _stats;
-    std::vector<Vector2> _positions;
     std::vector<EntityMetadata> _metadata;
     std::vector<bool> _isActive;
 

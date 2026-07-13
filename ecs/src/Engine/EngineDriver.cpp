@@ -8,25 +8,27 @@ EngineDriver::EngineDriver(IEngineFacade* view,
                            DataLoader& loader, 
                            const std::unordered_map<int32_t, ItemData>& items, 
                            std::string dataPath, 
-                           EntityRegistry* registry)
+                           EntityRegistry* registry, 
+                           PositionComponent& posComp)
     : _registry(registry), 
       _dataLoader(loader), 
       _items(items), 
       _dataDirectory(dataPath), 
-      _view(view) 
+      _view(view), 
+      _posComp(posComp)
 {
     // Constructor body must be opened with {
 }
 
 void EngineDriver::Tick(float deltaTime) {
     // 1. Update Spatial Grid (Fresh state for the start of the frame)
-    _spatialSystem.Update(*_registry);
+    _spatialSystem.Update(*_registry, _posComp);
 
-    // 2. Process Movement "Intent"[cite: 1]
+    // 2. Process Movement "Intent"
     MovementSystem::ProcessCommands(_commandQueue, _movementComponent);
 
-    // 3. Perform Movement "Execution"[cite: 1]
-    MovementSystem::Update(_movementComponent, deltaTime, *_registry);
+    // 3. Perform Movement "Execution"
+    MovementSystem::Update(_movementComponent, _posComp, *_registry, deltaTime);
 
     // 4. Process Other Commands (Stats/Combat)
     while (_commandQueue.HasCommands()) {
