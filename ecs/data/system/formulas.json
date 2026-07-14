@@ -7,6 +7,8 @@
       { "Type": "Add", "Stat": "Intelligence", "Source": "RaceInt" },
       { "Type": "Set", "Stat": "Dexterity", "Source": "ClassDex" },
       { "Type": "Add", "Stat": "Dexterity", "Source": "RaceDex" },
+      { "Type": "Set", "Stat": "Charisma", "Source": "ClassCha" },
+      { "Type": "Add", "Stat": "Charisma", "Source": "RaceCha" },
 
       { "Type": "Set", "Stat": "Health", "Source": "Strength" },
       { "Type": "Multiply", "Stat": "Health", "Value": 10.0 },

@@ -24,6 +24,7 @@ float FormulaProcessor::GetStatRef(const std::string& name, EntityStats& stats,
     if (name == "Strength")     return stats.Strength;
     if (name == "Intelligence") return stats.Intelligence;
     if (name == "Dexterity")    return stats.Dexterity;
+    if (name == "Charisma")     return stats.Charisma;
     if (name == "Health")       return stats.Health;
     if (name == "Mana")         return stats.Mana;
     
@@ -31,6 +32,7 @@ float FormulaProcessor::GetStatRef(const std::string& name, EntityStats& stats,
     if (name == "ClassStr")     return static_cast<float>(cls.ClassStr);
     if (name == "ClassInt")     return static_cast<float>(cls.ClassInt);
     if (name == "ClassDex")     return static_cast<float>(cls.ClassDex);
+    if (name == "ClassCha")     return static_cast<float>(cls.ClassCha);
     if (name == "ClassHealth")  return static_cast<float>(cls.ClassHealth);
     if (name == "ClassMana")    return static_cast<float>(cls.ClassMana);
     
@@ -38,6 +40,7 @@ float FormulaProcessor::GetStatRef(const std::string& name, EntityStats& stats,
     if (name == "RaceStr")      return static_cast<float>(race.RaceStr);
     if (name == "RaceInt")      return static_cast<float>(race.RaceInt);
     if (name == "RaceDex")      return static_cast<float>(race.RaceDex);
+    if (name == "RaceCha")      return static_cast<float>(race.RaceCha);
     
     return 0.0f;
 }
@@ -70,6 +73,7 @@ void FormulaProcessor::ExecuteUpdateStats(const std::string& formulaName, Entity
         if      (targetName == "Strength")     stats.Strength = currentVal;
         else if (targetName == "Intelligence") stats.Intelligence = currentVal;
         else if (targetName == "Dexterity")    stats.Dexterity = currentVal;
+        else if (targetName == "Charisma")     stats.Charisma = currentVal;
         else if (targetName == "Health")       stats.Health = currentVal;
         else if (targetName == "Mana")         stats.Mana = currentVal;
     }

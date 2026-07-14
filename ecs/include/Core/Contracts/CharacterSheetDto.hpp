@@ -5,20 +5,22 @@ struct CharacterSheetDto {
     std::string Name;
     std::string Weapon;
     std::string Skill;
-    int Health;
-    int Mana;
     int Strength;
     int Intelligence;
     int Dexterity;
+    int Charisma;
+    int Health;
+    int Mana;
 
     CharacterSheetDto(std::string name, std::string weapon, std::string skill, 
-                      int health, int mana, int strength, int intelligence, int dexterity)
+                      int strength, int intelligence, int dexterity, int charisma, int health, int mana)
         : Name(std::move(name)), 
           Weapon(std::move(weapon)), 
           Skill(std::move(skill)), 
-          Health(health), 
-          Mana(mana), 
           Strength(strength), 
           Intelligence(intelligence),
-          Dexterity(dexterity) {}
+          Dexterity(dexterity),
+          Charisma(charisma), 
+          Health(health), 
+          Mana(mana) {}
 };

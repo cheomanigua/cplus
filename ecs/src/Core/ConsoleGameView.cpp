@@ -21,8 +21,9 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry,
               << std::setw(8)  << "Mana" 
               << std::setw(8)  << "Str" 
               << std::setw(8)  << "Int" 
-              << std::setw(8)  << "Dex" << std::endl;
-    std::cout << std::string(89, '-') << std::endl;
+              << std::setw(8)  << "Dex" 
+              << std::setw(8)  << "Cha" << std::endl;
+    std::cout << std::string(97, '-') << std::endl;
 
     for (int32_t id : activeEntities) {
         const auto& meta = identityComp.Metadata[id];
@@ -41,6 +42,7 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry,
                   << std::setw(8)  << (int)stats.Strength 
                   << std::setw(8)  << (int)stats.Intelligence 
                   << std::setw(8)  << (int)stats.Dexterity 
+                  << std::setw(8)  << (int)stats.Charisma 
                   << std::endl;
     }
 }

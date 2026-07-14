@@ -69,8 +69,9 @@ int main() {
         identityComp.Metadata[newId] = { templateData.Name, templateData.Class, templateData.Race };
 
         // Initialize stats with base/default values (FormulaProcessor will update these later)
+        // Strength, Intelligence, Dexterity, Charisma, Health, Mana
         // You don't need the templateData stats here!
-        statsComp.InitializeStats(newId, 1.0f, 1.0f, 1.0f, 10.0f, 10.0f);
+        statsComp.InitializeStats(newId, 1.0f, 1.0f, 1.0f, 1.0f, 10.0f, 10.0f);
         
         // Initiate Position. IMPORTANT: Manually sync the position from the template to the component
         posComp.Positions[newId] = templateData.SpawnPosition;

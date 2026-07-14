@@ -25,6 +25,7 @@ struct EntityStats {
     float Strength;
     float Intelligence;
     float Dexterity;
+    float Charisma;
     float Health;
     float Mana;
     bool IsDirty;
@@ -35,31 +36,34 @@ struct EntityStats {
             {"Strength", Strength},
             {"Intelligence", Intelligence},
             {"Dexterity", Dexterity},
+            {"Charisma", Charisma},
             {"Health", Health},
             {"Mana", Mana}
             // Add any other stats you need to register
         };
     }
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityStats, Strength, Intelligence, Dexterity, Health, Mana, IsDirty)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityStats, Strength, Intelligence, Dexterity, Charisma, Health, Mana, IsDirty)
 
 // --- 1. Character Data Records ---
 struct RaceData {
     int RaceStr;
     int RaceInt;
     int RaceDex;
+    int RaceCha;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RaceData, RaceStr, RaceInt, RaceDex)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RaceData, RaceStr, RaceInt, RaceDex, RaceCha)
 
 struct ClassData {
     int ClassStr;
     int ClassInt;
     int ClassDex;
+    int ClassCha;
     int ClassHealth;
     int ClassMana;
     std::string ClassPrimarySkill;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ClassData, ClassStr, ClassInt, ClassDex, ClassHealth, ClassMana, ClassPrimarySkill)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ClassData, ClassStr, ClassInt, ClassDex, ClassCha, ClassHealth, ClassMana, ClassPrimarySkill)
 
 struct SkillData {
     std::string AttributeScale;
