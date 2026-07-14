@@ -37,20 +37,21 @@ int main() {
     ConsoleGameView consoleView; 
 
     // Declare components BEFORE engine drivers
+    IdentityComponent identityComp(EngineConfig::MaxEntities);
     StatsComponent statsComp;
+    ItemComponent itemComp;
     PositionComponent posComp;
     MovementComponent moveComp;
-    IdentityComponent identityComp(EngineConfig::MaxEntities);
     
     // Initialize Engines
-    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, identityComp, statsComp, posComp, moveComp);
+    EngineDriver consoleEngine(&consoleView, loader, loader.GetItems(), "/data", &sharedRegistry, identityComp, statsComp, itemComp, posComp, moveComp);
     
     InitWindow(800, 600, "Data Driven Engine");
     SetTargetFPS(60);
     RaylibGameView raylibView;
     raylibView.SetRegistry(&sharedRegistry);
     EngineFacade::Implementation = &raylibView;
-    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, identityComp, statsComp, posComp, moveComp);
+    EngineDriver graphicsEngine(&raylibView, loader, loader.GetItems(), "/data", &sharedRegistry, identityComp, statsComp, itemComp, posComp, moveComp);
     SpatialSystem spatialSystem;
 
     // SPAWN NPCs (Factory Pattern)
@@ -72,6 +73,9 @@ int main() {
         // Strength, Intelligence, Dexterity, Charisma, Health, Mana
         // You don't need the templateData stats here!
         statsComp.InitializeStats(newId, 1.0f, 1.0f, 1.0f, 1.0f, 10.0f, 10.0f);
+
+        // Initialize ItemComponent with the ID from the blueprint
+        itemComp.EquippedItemId[newId] = templateData.EquippedItemId;
         
         // Initiate Position. IMPORTANT: Manually sync the position from the template to the component
         posComp.Positions[newId] = templateData.SpawnPosition;

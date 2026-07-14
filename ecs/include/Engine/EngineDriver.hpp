@@ -9,6 +9,7 @@
 #include "Engine/EntityRegistry.hpp"
 #include "Components/IdentityComponent.hpp"
 #include "Components/StatsComponent.hpp"
+#include "Components/ItemComponent.hpp"
 #include "Components/MovementComponent.hpp"
 #include "Components/PositionComponent.hpp"
 #include "Engine/DataLoader.hpp"
@@ -16,22 +17,22 @@
 
 class EngineDriver {
 private:
+    IEngineFacade* _view;
     EntityRegistry* _registry;
-    DataLoader& _dataLoader;
     std::unordered_map<int32_t, ItemData> _items;
+    std::string _dataDirectory;
     
     // Engine State
     CommandQueue _commandQueue;
+    DataLoader& _dataLoader;
     SpatialSystem _spatialSystem;
 
     // Components
     IdentityComponent& _identityComp;
     StatsComponent& _statsComp;
+    ItemComponent& _itemComp;
     MovementComponent& _moveComp;
     PositionComponent& _posComp;
-    
-    IEngineFacade* _view;
-    std::string _dataDirectory;
 
 public:
     EngineDriver(IEngineFacade* view, 
@@ -41,22 +42,27 @@ public:
              EntityRegistry* registry, 
              IdentityComponent& identityComp, 
              StatsComponent& statsComp, 
-             PositionComponent& posComp,
+             ItemComponent& itemComp, 
+             PositionComponent& posComp, 
              MovementComponent& moveComp);
 
     void Tick(float deltaTime);
     void AddCommand(GameCommand cmd);
-    
+    void InitializeEntities(DataLoader& loader);
+
+    /*********************/
+    /*****  GETTERS  *****/
+    /*********************/
+
     // Update GetRegistry to return the raw pointer directly
     EntityRegistry* GetRegistry() { return _registry; }
-    
-    void InitializeEntities(DataLoader& loader);
 
     CommandQueue& GetCommandQueue() { return _commandQueue; }
 
-    // Components
+    // Components Getters
     IdentityComponent& GetIdentityComponent() { return _identityComp; }
     StatsComponent& GetStatsComponent() { return _statsComp; }
+    ItemComponent& GetItemComponent() { return _itemComp; }
     PositionComponent& GetPositionComponent() { return _posComp; }
     const MovementComponent& GetMovementComponent() const { return _moveComp; }
 };

@@ -39,11 +39,18 @@ void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry, Posit
                 GameCommand cmd;
                 cmd.Type = CommandType::Move;
                 cmd.EntityId = selectedId;
+
                 // Calculate direction
                 Vector2 dir = Vector2Normalize(Vector2Subtract(mousePos, startPos));
                 cmd.Velocity = dir;
                 cmd.Speed = 100.0f; // Adjust as needed
                 cmd.MoveParams.TargetPosition = mousePos;
+                
+
+                // // Item related commands
+                //cmd.InteractionParams.ItemId = itemIdToEquip;
+
+
                 queue.Enqueue(cmd);
             }
         }

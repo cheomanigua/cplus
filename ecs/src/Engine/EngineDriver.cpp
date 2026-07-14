@@ -11,6 +11,7 @@ EngineDriver::EngineDriver(IEngineFacade* view,
                            EntityRegistry* registry, 
                            IdentityComponent& identityComp, 
                            StatsComponent& statsComp, 
+                           ItemComponent& itemComp, 
                            PositionComponent& posComp, 
                            MovementComponent& moveComp)
     : _registry(registry), 
@@ -20,6 +21,7 @@ EngineDriver::EngineDriver(IEngineFacade* view,
       _view(view), 
       _identityComp(identityComp), 
       _statsComp(statsComp), 
+      _itemComp(itemComp), 
       _posComp(posComp),
       _moveComp(moveComp)
 {
@@ -59,6 +61,9 @@ void EngineDriver::Tick(float deltaTime) {
                 break;
             }
             case CommandType::EquipItem:
+                // Assuming command carries the ItemID to equip
+                _itemComp.EquippedItemId[cmd.EntityId] = cmd.InteractionParams.ItemId;
+                std::cout << "[DEBUG] Entity " << cmd.EntityId << " equipped item " << cmd.InteractionParams.ItemId << std::endl;
                 break;
             default:
                 std::cout << "[DEBUG] Unrecognized command type: " << (int)cmd.Type << std::endl;

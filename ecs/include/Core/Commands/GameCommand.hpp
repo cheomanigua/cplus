@@ -22,6 +22,7 @@ struct GameCommand {
         struct {
             int32_t TargetId;
             float Value;
+            int32_t ItemId;
         } InteractionParams;
     };
 };
