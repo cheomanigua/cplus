@@ -10,6 +10,7 @@ void TestMovementSystem();
 void TestRunner::RunAll() {
     std::cout << "--- Starting Test Suite ---" << std::endl;
     TestMovementSystem();
+    TestItemComponentLoading();
     // Add new tests here:
     // TestCollision();
     // TestStats();
