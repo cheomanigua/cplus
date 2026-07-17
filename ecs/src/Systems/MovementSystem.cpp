@@ -44,14 +44,10 @@ void MovementSystem::Update(MovementComponent& moveComp,
         Vector2& pos = posComp.Positions[id];
         Vector2& target = moveComp.TargetPositions[id];
 
-        float dist = Vector2Distance(pos, target);
+        pos = Vector2MoveTowards(pos, target, moveComp.Speeds[id] * deltaTime);
 
-        if (dist < 5.0f) { 
-            pos = target; 
+        if (Vector2Equals(pos, target)) {
             moveComp.IsMoving[id] = false;
-        } else {
-            Vector2 displacement = Vector2Scale(moveComp.Velocities[id], moveComp.Speeds[id] * deltaTime);
-            pos = Vector2Add(pos, displacement);
         }
     }
 }

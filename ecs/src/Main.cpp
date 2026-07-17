@@ -110,6 +110,14 @@ int main() {
         
         for (int32_t id : sharedRegistry.GetActiveEntities()) {
             raylibView.DrawMesh(id, posComp.Positions[id], moveComp);
+
+            // Draw distance label
+            if (moveComp.IsMoving[id]) {
+            float dist = Vector2Distance(posComp.Positions[id], moveComp.TargetPositions[id]);
+            DrawText(TextFormat("Dist: %.2f", dist), 
+                     (int)posComp.Positions[id].x, 
+                     (int)posComp.Positions[id].y - 20, 10, BLACK);
+            }
         }
         EndDrawing();
     }
