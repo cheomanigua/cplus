@@ -22,13 +22,13 @@ namespace nlohmann {
 
 // Forward declaration of EntityStats
 struct EntityStats {
-    float Strength;
-    float Intelligence;
-    float Dexterity;
-    float Charisma;
-    float Health;
-    float Mana;
-    bool IsDirty;
+    float Strength {0.0f};
+    float Intelligence {0.0f};
+    float Dexterity {0.0f};
+    float Charisma {0.0f};
+    float Health {0.0f};
+    float Mana {0.0f};
+    bool IsDirty { false };
 
     // Add this method to expose your stats for the FormulaProcessor
     std::unordered_map<std::string, float> GetDynamicAttributes() const {
@@ -47,21 +47,21 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(EntityStats, Strength, Intelligence, Dexterit
 
 // --- 1. Character Data Records ---
 struct RaceData {
-    int RaceStr;
-    int RaceInt;
-    int RaceDex;
-    int RaceCha;
+    int RaceStr {0};
+    int RaceInt {0};
+    int RaceDex {0};
+    int RaceCha {0};
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(RaceData, RaceStr, RaceInt, RaceDex, RaceCha)
 
 struct ClassData {
-    int ClassStr;
-    int ClassInt;
-    int ClassDex;
-    int ClassCha;
-    int ClassHealth;
-    int ClassMana;
-    std::string ClassPrimarySkill;
+    int ClassStr {0};
+    int ClassInt {0};
+    int ClassDex {0};
+    int ClassCha {0};
+    int ClassHealth {0};
+    int ClassMana {0};
+    std::string ClassPrimarySkill {""};
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ClassData, ClassStr, ClassInt, ClassDex, ClassCha, ClassHealth, ClassMana, ClassPrimarySkill)
 
@@ -72,11 +72,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SkillData, AttributeScale)
 
 // --- 2. Context for FormulaProcessor ---
 struct FormulaContext {
-    const EntityStats* Stats; 
-    std::optional<ClassData> Class;
-    std::optional<RaceData> Race;
-    int WeaponDamage = 0;
-    std::map<std::string, float> ExtraParams;
+    const EntityStats* Stats { nullptr };
+    std::optional<ClassData> Class { std::nullopt };
+    std::optional<RaceData> Race { std::nullopt };
+    int WeaponDamage {0};
+    std::map<std::string, float> ExtraParams {};
 };
 
 // --- 3. Attribute/Modifier Records ---

@@ -6,8 +6,8 @@
 
 // Structure to pass item-specific data (from MagicComponent) into the formula
 struct ItemEffectContext {
-    float BonusValue = 0.0f;
-    std::string DamageType = "None";
+    float BonusValue { 0.0f };
+    std::string DamageType { "None" };
     // Add additional properties here as needed
 };
 
