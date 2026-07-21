@@ -19,9 +19,9 @@ void MovementSystem::ProcessCommands(CommandQueue& queue, MovementComponent& mov
                     moveComp.Speeds[cmd.EntityId] = cmd.Speed;
                     moveComp.TargetPositions[cmd.EntityId] = cmd.MoveParams.TargetPosition; 
                     moveComp.IsMoving[cmd.EntityId] = true;
-                    moveComp.Active[cmd.EntityId] = true;
+                    moveComp.IsActive[cmd.EntityId] = true;
                 } else if (cmd.Type == CommandType::Stop) {
-                    moveComp.Active[cmd.EntityId] = false;
+                    moveComp.IsActive[cmd.EntityId] = false;
                 }
             }
         } else {
