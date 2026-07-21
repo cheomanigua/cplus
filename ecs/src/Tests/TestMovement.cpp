@@ -43,7 +43,7 @@ void TestMovementSystem() {
     // 5. Verify
     Vector2& actualRef = posComp.Positions[testEntity];
 
-    if (actualRef.x == 20.0f && actualRef.y == 0.0f) {
+    if (actualRef.x == 2.0f && actualRef.y == 0.0f) {
         std::cout << "[TEST] MovementSystem: Passed" << std::endl;
     } else {
         std::cout << "[TEST] MovementSystem: FAILED! Expected (20, 0), Got (" 

@@ -4,7 +4,6 @@
 #include "raylib.h"
 #include "Components/MovementComponent.hpp"
 
-struct Vector2;
 
 class IEngineFacade {
 public:
