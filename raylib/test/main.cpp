@@ -12,19 +12,19 @@ int main() {
     InitWindow(800, 600, "Harpoon Sim - Native Raylib");
     SetTargetFPS(60);
 
-    Vector2 unknownTarget = { 220.0f, 230.0f };
-    Vector2 ussPasadena = { 520.0f, 330.0f };
-    Vector2 destination = ussPasadena;
+    Vector2 unknownTarget { 220.0f, 230.0f };
+    Vector2 ussPasadena { 520.0f, 330.0f };
+    Vector2 destination { ussPasadena };
     
-    bool isMoving = false;
-    const float speed = 200.0f;
-    const float radarRadius = 100.0f;
+    bool isMoving { false };
+    const float speed { 200.0f };
+    const float radarRadius { 100.0f };
 
     // Time and Torpedo system
-    float timeScale = 1.0f;
-    float gameClock = 0.0f;
-    float lastFireTime = -5.0f; // Fire immediately at start
-    const float torpedoSpeed = 250.0f;
+    float timeScale { 1.0f };
+    float gameClock { 0.0f };
+    float lastFireTime { -5.0f }; // Fire immediately at start
+    const float torpedoSpeed { 250.0f };
     Torpedo myTorpedo = { {0,0}, {0,0}, false };
 
     while (!WindowShouldClose()) {
