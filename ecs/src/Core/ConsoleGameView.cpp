@@ -34,15 +34,15 @@ void ConsoleGameView::DisplayFullCharacterSheet(EntityRegistry& registry,
                   << std::setw(12) << meta.Name   // Added Name
                   << std::setw(12) << meta.Class 
                   << std::setw(10) << meta.Race 
-                  << "(" << (int)pos.x << "," 
-                         << (int)pos.y << ")"
+                  << "(" << static_cast<int>(pos.x) << "," 
+                         << static_cast<int>(pos.y) << ")"
                   << std::setw(6) << "" // Spacer for column alignment
-                  << std::setw(8)  << (int)stats.Health 
-                  << std::setw(8)  << (int)stats.Mana 
-                  << std::setw(8)  << (int)stats.Strength 
-                  << std::setw(8)  << (int)stats.Intelligence 
-                  << std::setw(8)  << (int)stats.Dexterity 
-                  << std::setw(8)  << (int)stats.Charisma 
+                  << std::setw(8)  << static_cast<int>(stats.Health) 
+                  << std::setw(8)  << static_cast<int>(stats.Mana) 
+                  << std::setw(8)  << static_cast<int>(stats.Strength) 
+                  << std::setw(8)  << static_cast<int>(stats.Intelligence) 
+                  << std::setw(8)  << static_cast<int>(stats.Dexterity) 
+                  << std::setw(8)  << static_cast<int>(stats.Charisma) 
                   << std::endl;
     }
 }

@@ -66,7 +66,7 @@ void EngineDriver::Tick(float deltaTime) {
                 std::cout << "[DEBUG] Entity " << cmd.EntityId << " equipped item " << cmd.InteractionParams.ItemId << std::endl;
                 break;
             default:
-                std::cout << "[DEBUG] Unrecognized command type: " << (int)cmd.Type << std::endl;
+                std::cout << "[DEBUG] Unrecognized command type: " << static_cast<int>(cmd.Type) << std::endl;
                 break;
         }
     }

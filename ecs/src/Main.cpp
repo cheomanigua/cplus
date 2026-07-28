@@ -115,8 +115,8 @@ int main() {
             if (moveComp.IsMoving[id]) {
             float dist = Vector2Distance(posComp.Positions[id], moveComp.TargetPositions[id]);
             DrawText(TextFormat("Dist: %.2f", dist), 
-                     (int)posComp.Positions[id].x, 
-                     (int)posComp.Positions[id].y - 20, 10, BLACK);
+                     static_cast<int>(posComp.Positions[id].x), 
+                     static_cast<int>(posComp.Positions[id].y - 20), 10, BLACK);
             }
         }
         EndDrawing();

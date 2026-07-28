@@ -10,8 +10,8 @@ void InputSystem::PollInput(CommandQueue& queue, EntityRegistry& registry, Posit
         Vector2 mousePos = GetMousePosition();
         int32_t clickedId = -1;
 
-        int cellX = (int)mousePos.x / EngineConfig::CellSize;
-        int cellY = (int)mousePos.y / EngineConfig::CellSize;
+        int cellX = static_cast<int>(mousePos.x) / EngineConfig::CellSize;
+        int cellY = static_cast<int>(mousePos.y) / EngineConfig::CellSize;
 
         const auto& entitiesInCell = spatialSystem.GetEntitiesInCell(cellX, cellY);
         

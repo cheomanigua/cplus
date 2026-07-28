@@ -270,6 +270,7 @@ static void UpdateCameraFPS(Camera& camera)
 
     camera.position = Vector3Add(camera.position, Vector3Scale(bobbing, walkLerp));
     camera.target = Vector3Add(camera.position, pitch);
+    DrawCube(camera.position, 1, 1, 1, RED);
 }
 
 // Draw game level
@@ -298,29 +299,56 @@ static void DrawLevel(void)
     constexpr Vector3 towerSize { 16.0f, 32.0f, 16.0f };
     constexpr Color towerColor { 150, 200, 200, 255 };
 
-    Vector3 towerPos { 16.0f, 16.0f, 16.0f };
+
+    Vector3 towerPos {};
+
+    towerPos = { 16.0f, 16.0f, 16.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
-    towerPos.x *= -1;
+    //towerPos.x *= -1;
+    //DrawCubeV(towerPos, towerSize, towerColor);
+    //DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
+
+    //towerPos.z *= -1;
+    //DrawCubeV(towerPos, towerSize, towerColor);
+    //DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
+
+    //towerPos.x *= -1;
+    //DrawCubeV(towerPos, towerSize, towerColor);
+    //DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
+
+    towerPos = { 48.0f, 16.0f, 16.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
-    towerPos.z *= -1;
+    towerPos = { 80.0f, 16.0f, 16.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
-    towerPos.x *= -1;
+    towerPos = { 16.0f, 16.0f, 48.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
-    towerPos = Vector3{ 48.0f, 16.0f, 16.0f };
+    towerPos = { 48.0f, 16.0f, 48.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
-    towerPos = Vector3{ 80.0f, 16.0f, 16.0f };
+    towerPos = { 80.0f, 16.0f, 48.0f };
+    DrawCubeV(towerPos, towerSize, towerColor);
+    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
+
+    towerPos = { 16.0f, 16.0f, -16.0f };
+    DrawCubeV(towerPos, towerSize, towerColor);
+    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
+
+    towerPos = { 48.0f, 16.0f, -16.0f };
+    DrawCubeV(towerPos, towerSize, towerColor);
+    DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
+
+    towerPos = { 80.0f, 16.0f, -16.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
     // Red sun
-    DrawSphere(Vector3{ 300.0f, 300.0f, 0.0f }, 100.0f, Color{ 255, 0, 0, 255 });
+    DrawSphere(Vector3{ 300.0f, 300.0f, 0.0f }, 100.0f, Color{ 255, 128, 0, 128 });
 }
