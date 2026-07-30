@@ -1,0 +1,4 @@
+Name,ClassStr,ClassInt,ClassDex,ClassCha,ClassHealth,ClassMana,ClassPrimarySkill
+Warrior,10,5,4,2,50,0,OneHandedWeapons
+Wizard,3,15,5,7,20,50,Magic
+Thief,5,8,15,8,25,5,Steal

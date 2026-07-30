@@ -1,0 +1,38 @@
+{
+  "Human": {
+    "RaceStr": 5,
+    "RaceInt": 5,
+    "RaceDex": 3,
+    "RaceCha": 7
+  },
+  "Orc": {
+    "RaceStr": 8,
+    "RaceInt": 2,
+    "RaceDex": 3,
+    "RaceCha": 2
+  },
+  "Elf": {
+    "RaceStr": 4,
+    "RaceInt": 7,
+    "RaceDex": 7,
+    "RaceCha": 4
+  },
+  "Goblin": {
+    "RaceStr": 5,
+    "RaceInt": 5,
+    "RaceDex": 5,
+    "RaceCha": 2
+  },
+  "Dwarf": {
+    "RaceStr": 7,
+    "RaceInt": 5,
+    "RaceDex": 5,
+    "RaceCha": 5
+  },
+  "Hobbit": {
+    "RaceStr": 2,
+    "RaceInt": 8,
+    "RaceDex": 6,
+    "RaceCha": 6
+  }
+}

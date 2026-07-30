@@ -1,0 +1,29 @@
+{
+  "Warrior": {
+    "ClassStr": 10,
+    "ClassInt": 5,
+    "ClassDex": 4,
+    "ClassCha": 2,
+    "ClassHealth": 50,
+    "ClassMana": 0,
+    "ClassPrimarySkill": "OneHandedWeapons"
+  },
+  "Wizard": {
+    "ClassStr": 3,
+    "ClassInt": 15,
+    "ClassDex": 5,
+    "ClassCha": 7,
+    "ClassHealth": 20,
+    "ClassMana": 50,
+    "ClassPrimarySkill": "Magic"
+  },
+  "Thief": {
+    "ClassStr": 5,
+    "ClassInt": 8,
+    "ClassDex": 15,
+    "ClassCha": 8,
+    "ClassHealth": 25,
+    "ClassMana": 5,
+    "ClassPrimarySkill": "Steal"
+  }
+}

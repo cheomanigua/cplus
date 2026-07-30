@@ -1,0 +1,26 @@
+{
+  "OneHandedWeapons": {
+    "AttributeScale": "Strength"
+  },
+  "TwoHandedWeapons": {
+    "AttributeScale": "Strength"
+  },
+  "Archery": {
+    "AttributeScale": "Dexterity"
+  },
+  "Blocking": {
+    "AttributeScale": "Dexterity"
+  },
+  "Armor": {
+    "AttributeScale": "Strength"
+  },
+  "Magic": {
+    "AttributeScale": "Intelligence"
+  },
+  "Steal": {
+    "AttributeScale": "Dexterity"
+  },
+  "Trade": {
+    "AttributeScale": "Charisma"
+  }
+}

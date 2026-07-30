@@ -1,0 +1,10 @@
+Name,AttributeScale
+OneHandedWeapons,Strength
+TwoHandedWeapons,Strength
+Archery,Dexterity
+Blocking,Dexterity
+Armor,Strength
+Magic,Intelligence
+Steal,Dexterity
+Trade,Charisma
+
