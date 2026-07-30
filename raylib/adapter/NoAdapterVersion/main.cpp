@@ -6,15 +6,15 @@ int main() {
     InitWindow(800, 600, "Harpoon Sim - Raylib Direct");
     SetTargetFPS(60);
 
-    Vector2 unknownTarget = { 220.0f, 230.0f };
-    Vector2 ussPasadena = { 520.0f, 330.0f };
-    Vector2 destination = ussPasadena;
-    bool isMoving = false;
-    const float speed = 200.0f;
+    Vector2 unknownTarget { 220.0f, 230.0f };
+    Vector2 ussPasadena { 520.0f, 330.0f };
+    Vector2 destination { ussPasadena };
+    bool isMoving { false };
+    const float speed { 200.0f };
 
     // 2. Main Simulation Loop
     while (!WindowShouldClose()) {
-        float dt = GetFrameTime();
+        float dt { GetFrameTime() };
 
         // INPUT
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {

@@ -37,9 +37,9 @@ int main() {
     // Stack allocation (standard behavior for structs in C++)
     PositionComp ussPasadenaPos {110.15f, 30.85f};
     PositionComp targetPos {160.14f, 31.15f};
-    SensorComp passiveRadar(50.0f, true);
+    SensorComp passiveRadar {50.0f, true};
 
-    bool detected = IsWithinRadarRange(ussPasadenaPos, targetPos, passiveRadar);
+    bool detected { IsWithinRadarRange(ussPasadenaPos, targetPos, passiveRadar) };
 
     std::cout << "Target Detected: " << (detected ? "True" : "False") << "\n";
 

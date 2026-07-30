@@ -7,7 +7,7 @@ namespace SimEngine::InputAdapter {
         InputIntent intent;
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             intent.moveRequested = true;
-            Vector2 mouse = GetMousePosition();
+            Vector2 mouse { GetMousePosition() };
             intent.destination = { mouse.x, mouse.y };
         }
         return intent;

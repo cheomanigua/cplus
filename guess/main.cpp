@@ -37,10 +37,10 @@ int guess(int max)
         std::cout << "Enter a number: ";
         std::cin >> num;
 
-        if (num >= 0 && num <= max)
+        if (num > 0 && num <= max)
             return num;
 
-        std::cout << "Please enter a number between 0 and " << max << ".\n";
+        std::cout << "Please enter a number between 1 and " << max << ".\n";
     }
 }
 

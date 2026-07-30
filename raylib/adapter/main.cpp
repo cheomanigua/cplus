@@ -22,12 +22,12 @@ int main() {
     SimulationEngine::Entity unknownTarget(220.0f, 230.0f);
     SimulationEngine::Entity ussPasadena(520.0f, 330.0f);
     SimEngine::Vec2 destination = ussPasadena.GetPos();
-    bool isMoving = false;
-    const float speed = 200.0f;
+    bool isMoving { false };
+    const float speed { 200.0f };
 
     // 2. Main Simulation Loop
     while (!SimEngine::Renderer::ShouldClose()) {
-        float dt = SimEngine::Renderer::GetFrameTime();
+        float dt { SimEngine::Renderer::GetFrameTime()};
 
         // POLL AGNOSTIC INTENT
         SimEngine::InputIntent intent = SimEngine::InputAdapter::PollInputs();
