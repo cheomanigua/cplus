@@ -1,29 +1,38 @@
 {
   "Warrior": {
-    "ClassStr": 10,
-    "ClassInt": 5,
-    "ClassDex": 4,
-    "ClassCha": 2,
-    "ClassHealth": 50,
-    "ClassMana": 0,
+    "ClassStr": 10.0,
+    "ClassInt": 5.0,
+    "ClassDex": 4.0,
+    "ClassCha": 2.0,
+    "ClassHealth": 50.0,
+    "ClassMana": 0.0,
     "ClassPrimarySkill": "OneHandedWeapons"
   },
   "Wizard": {
-    "ClassStr": 3,
-    "ClassInt": 15,
-    "ClassDex": 5,
-    "ClassCha": 7,
-    "ClassHealth": 20,
-    "ClassMana": 50,
+    "ClassStr": 3.0,
+    "ClassInt": 15.0,
+    "ClassDex": 5.0,
+    "ClassCha": 7.0,
+    "ClassHealth": 20.0,
+    "ClassMana": 50.0,
     "ClassPrimarySkill": "Magic"
   },
   "Thief": {
-    "ClassStr": 5,
-    "ClassInt": 8,
-    "ClassDex": 15,
-    "ClassCha": 8,
-    "ClassHealth": 25,
-    "ClassMana": 5,
+    "ClassStr": 5.0,
+    "ClassInt": 8.0,
+    "ClassDex": 15.0,
+    "ClassCha": 8.0,
+    "ClassHealth": 25.0,
+    "ClassMana": 5.0,
     "ClassPrimarySkill": "Steal"
+  },
+  "Priest": {
+    "ClassStr": 4.0,
+    "ClassInt": 10.0,
+    "ClassDex": 7.0,
+    "ClassCha": 10.0,
+    "ClassHealth": 20.0,
+    "ClassMana": 20.0,
+    "ClassPrimarySkill": "Magic"
   }
 }
