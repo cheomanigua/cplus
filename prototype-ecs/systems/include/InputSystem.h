@@ -4,5 +4,5 @@
 class InputSystem
 {
 public:
-    void update(Registry& registry, float speed);
+    void update(Registry& registry);
 };

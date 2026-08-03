@@ -49,6 +49,15 @@ public:
         return pool.get(entity);
     }
 
+    template <typename T>
+    void removeComponent(Entity entity)
+    {
+        // Access the pool for type T and call remove
+        // (Depending on how your registry stores pools, e.g.:)
+        auto& pool = getPool<T>(); 
+        pool.remove(entity);
+    }
+
 private:
     template <typename T>
     ComponentPool<T>& getOrCreatePool()

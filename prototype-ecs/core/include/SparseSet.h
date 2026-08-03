@@ -17,6 +17,22 @@ public:
         m_dense.push_back(entity);
     }
 
+    void remove(Entity entity)
+    {
+        if (!contains(entity)) return;
+
+        std::size_t rowIndex = m_sparse[entity];
+        std::size_t lastEntity = m_dense.back();
+
+        // Swap with the last element in dense array
+        m_dense[rowIndex] = lastEntity;
+        m_sparse[lastEntity] = rowIndex;
+
+        // Remove the target entity
+        m_dense.pop_back();
+        m_sparse[entity] = NullEntity;
+    }
+
     bool contains(Entity entity) const
     {
         return entity < m_sparse.size() && m_sparse[entity] != NullEntity;

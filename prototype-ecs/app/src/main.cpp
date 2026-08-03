@@ -2,7 +2,9 @@
 #include "Registry.h"
 #include "PositionComponent.h"
 #include "VelocityComponent.h"
+#include "SpeedComponent.h"
 #include "TagSelectedComponent.h"
+#include "SelectionBoundsComponent.h"
 #include "ConsoleRenderSystem.h"
 #include "GraphicalRenderSystem.h"
 #include "InputSystem.h"
@@ -30,18 +32,18 @@ int main()
 
     registry.addComponent<PositionComponent>(player, Vector2{100.0f, 150.0f});
     registry.addComponent<VelocityComponent>(player, Vector2{50.0f, 0.0f});
-    registry.addComponent<TagSelectedComponent>(player);  // <---------------- Add this. Now respond to WASD
+    registry.addComponent<SpeedComponent>(player, 200.0f);
+    registry.addComponent<SelectionBoundsComponent>(player, 20.0f); // <--- Add bounds
 
     registry.addComponent<PositionComponent>(enemy, Vector2{200.0f, 150.0f});
     registry.addComponent<VelocityComponent>(enemy, Vector2{0.0f, 30.0f});
+    registry.addComponent<SelectionBoundsComponent>(enemy, 30.0f); // <--- Can have a different size!
 
-
-    const float playerSpeed = 200.0f;
 
     while (!WindowShouldClose())
     {
         // Update simulation systems
-        inputSystem.update(registry, playerSpeed);
+        inputSystem.update(registry);
         movementSystem.update(registry);
         consoleRenderSystem.update(registry);
         graphicalRenderSystem.update(registry);
