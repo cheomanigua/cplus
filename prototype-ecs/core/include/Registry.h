@@ -6,15 +6,45 @@
 #include <memory>
 #include <typeindex>
 #include <cassert>
+#include <utility>
+#include "raylib.h" // In case we pass a Vector2 into spawnEntity
 
 class Registry
 {
 public:
     Entity createEntity()
     {
-        Entity id{m_nextEntityId++};
+        Entity id;
+        if (!m_freeIds.empty())
+        {
+            id = m_freeIds.back();
+            m_freeIds.pop_back();
+        }
+        else
+        {
+            id = m_nextEntityId++;
+        }
         m_entities.push_back(id);
         return id;
+    }
+
+    void destroyEntity(Entity entity)
+    {
+        // 1. Remove components from all pools for this entity
+        for (auto& pair : m_pools)
+        {
+            pair.second->remove(entity);
+        }
+
+        // 2. Remove from active entities vector
+        auto it = std::find(m_entities.begin(), m_entities.end(), entity);
+        if (it != m_entities.end())
+        {
+            m_entities.erase(it);
+        }
+
+        // 3. Push ID back to free list for recycling
+        m_freeIds.push_back(entity);
     }
 
     const std::vector<Entity>& getEntities() const
@@ -58,6 +88,20 @@ public:
         pool.remove(entity);
     }
 
+    // Variadic template to spawn an entity with any components you want
+    template<typename... Components>
+    Entity spawnEntity(Components&&... components) {
+        Entity e = createEntity();
+        // Fold expression to add each component passed into the function
+        (addComponent<std::decay_t<Components>>(e, std::forward<Components>(components)), ...);
+        return e;
+    }
+    
+    // Simple wrapper for despawning
+    void despawnEntity(Entity e) {
+        destroyEntity(e);
+    }
+
 private:
     template <typename T>
     ComponentPool<T>& getOrCreatePool()
@@ -83,5 +127,6 @@ private:
 
     Entity m_nextEntityId{1};
     std::vector<Entity> m_entities{};
+    std::vector<Entity> m_freeIds{};
     std::unordered_map<std::type_index, std::shared_ptr<IComponentPool>> m_pools{};
 };

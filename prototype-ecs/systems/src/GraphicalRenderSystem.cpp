@@ -18,7 +18,7 @@ void GraphicalRenderSystem::update(Registry& registry)
         }
     }
 
-    DrawText("ECS Component Pipeline Active!", 150, 240, 20, DARKGRAY);
+    DrawText("Click on any entity and move it with WASD/cursor keys", 20, 20, 20, DARKGRAY);
 
     EndDrawing();
 }

@@ -5,6 +5,7 @@
 #include "SpeedComponent.h"
 #include "TagSelectedComponent.h"
 #include "SelectionBoundsComponent.h"
+#include "InputComponent.h"
 #include "ConsoleRenderSystem.h"
 #include "GraphicalRenderSystem.h"
 #include "InputSystem.h"
@@ -15,7 +16,7 @@ int main()
 {
     const int screenWidth{800};
     const int screenHeight{600};
-    InitWindow(screenWidth, screenHeight, "Prototype Engine - Step 6");
+    InitWindow(screenWidth, screenHeight, "Prototype ECS Engine");
     SetTargetFPS(60);
 
     Registry registry{};
@@ -24,21 +25,22 @@ int main()
     ConsoleRenderSystem consoleRenderSystem{};
     GraphicalRenderSystem graphicalRenderSystem{};
 
-    Entity player{registry.createEntity()};
-    Entity enemy{registry.createEntity()};
+    Entity player = registry.spawnEntity(
+            PositionComponent{100.0f, 150.0f},
+            VelocityComponent{50.0f, 0.0f},
+            SpeedComponent{50.0f},
+            SelectionBoundsComponent{20.0f},
+            InputComponent{});
+
+    Entity enemy = registry.spawnEntity(
+            PositionComponent{200.0f, 150.0f},
+            VelocityComponent{00.0f, 3.0f},
+            SpeedComponent{50.0f},
+            SelectionBoundsComponent{20.0f},
+            InputComponent{});
 
     std::cout << "Player entity: " << player << "\n";
     std::cout << "Enemy entity: " << enemy << "\n";
-
-    registry.addComponent<PositionComponent>(player, Vector2{100.0f, 150.0f});
-    registry.addComponent<VelocityComponent>(player, Vector2{50.0f, 0.0f});
-    registry.addComponent<SpeedComponent>(player, 200.0f);
-    registry.addComponent<SelectionBoundsComponent>(player, 20.0f); // <--- Add bounds
-
-    registry.addComponent<PositionComponent>(enemy, Vector2{200.0f, 150.0f});
-    registry.addComponent<VelocityComponent>(enemy, Vector2{0.0f, 30.0f});
-    registry.addComponent<SelectionBoundsComponent>(enemy, 30.0f); // <--- Can have a different size!
-
 
     while (!WindowShouldClose())
     {

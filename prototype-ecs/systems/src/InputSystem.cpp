@@ -1,4 +1,5 @@
 #include "InputSystem.h"
+#include "InputComponent.h"
 #include "VelocityComponent.h"
 #include "PositionComponent.h"
 #include "SpeedComponent.h"
@@ -41,27 +42,22 @@ void InputSystem::update(Registry& registry)
         }
     }
 
-    // 2. Read keyboard state for movement
-    Vector2 movement = {
-        static_cast<float>(IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) - static_cast<float>(IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)),
-        static_cast<float>(IsKeyDown(KEY_DOWN)  || IsKeyDown(KEY_S)) - static_cast<float>(IsKeyDown(KEY_UP)   || IsKeyDown(KEY_W))
-    };
+    // 2. Read keyboard states and pass raw intent to selected entities that have an InputComponent
+    bool up = IsKeyDown(KEY_UP) || IsKeyDown(KEY_W);
+    bool down = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
+    bool left = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
+    bool right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
 
-    if (Vector2Length(movement) > 0.0f)
-    {
-        movement = Vector2Normalize(movement);
-    }
-
-    // 3. Apply velocity ONLY to entities that have TagSelectedComponent and VelocityComponent
+    // 3. Apply ONLY to entities that have TagSelectedComponent and InputComponent
     for (Entity e : registry.getEntities())
     {
-        if (registry.hasComponent<TagSelectedComponent>(e) && 
-            registry.hasComponent<VelocityComponent>(e) && 
-            registry.hasComponent<SpeedComponent>(e))
+        if (registry.hasComponent<TagSelectedComponent>(e) && registry.hasComponent<InputComponent>(e))
         {
-            auto& vel = registry.getComponent<VelocityComponent>(e);
-            auto& spd = registry.getComponent<SpeedComponent>(e);
-            vel.velocity = Vector2Scale(movement, spd.speed);
+            auto& input = registry.getComponent<InputComponent>(e);
+            input.moveUp = up;
+            input.moveDown = down;
+            input.moveLeft = left;
+            input.moveRight = right;
         }
     }
 }
