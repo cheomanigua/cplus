@@ -12,6 +12,7 @@ void ConsoleRenderSystem::update(Registry& registry)
     {
         std::cout << "[ConsoleRenderSystem] Rendering entities to console:\n";
         
+        // Iterate through entities and update positions for those with Position
         for (Entity e : registry.getEntities())
         {
             bool hasPos = registry.hasComponent<PositionComponent>(e);

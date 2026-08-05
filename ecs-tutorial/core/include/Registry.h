@@ -6,7 +6,7 @@
 #include <memory>
 #include <typeindex>
 #include <cassert>
-#include <utility>
+#include <utility>  // <----------- Add this
 #include "raylib.h" // In case we pass a Vector2 into spawnEntity
 
 class Registry
@@ -14,16 +14,7 @@ class Registry
 public:
     Entity createEntity()
     {
-        Entity id;
-        if (!m_freeIds.empty())
-        {
-            id = m_freeIds.back();
-            m_freeIds.pop_back();
-        }
-        else
-        {
-            id = m_nextEntityId++;
-        }
+        Entity id{m_nextEntityId++};
         m_entities.push_back(id);
         return id;
     }
@@ -47,6 +38,7 @@ public:
         m_freeIds.push_back(entity);
     }
 
+    // Expose active entities publicly for systems to iterate over
     const std::vector<Entity>& getEntities() const
     {
         return m_entities;
@@ -88,6 +80,7 @@ public:
         pool.remove(entity);
     }
 
+    // ************ NEW BLOCK FOR STEP 15 ************ //
     // Variadic template to spawn an entity with any components you want
     template<typename... Components>
     Entity spawnEntity(Components&&... components) {
@@ -101,6 +94,7 @@ public:
     void despawnEntity(Entity e) {
         destroyEntity(e);
     }
+    // *************** END NEW BLOCK *************** //
 
 private:
     template <typename T>

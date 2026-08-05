@@ -15,14 +15,14 @@ file(GLOB_RECURSE SOURCES
     systems/*.cpp   # Add this
 )
 
-add_executable(prototype ${SOURCES})
+add_executable(tutorial ${SOURCES})
 
 # Target include directories for future modules
-target_include_directories(prototype PRIVATE
+target_include_directories(tutorial PRIVATE
     app/src
     core/include
     components/include
     systems/include # Add this
 )
 
-target_link_libraries(prototype PRIVATE raylib)
+target_link_libraries(tutorial PRIVATE raylib)

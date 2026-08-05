@@ -1,5 +1,4 @@
 #pragma once
-#include "Types.h"
 #include "SparseSet.h"
 #include <vector>
 #include <memory>
@@ -28,7 +27,7 @@ public:
         m_sparseSet.insert(entity, componentIndex);
     }
 
-    void remove(Entity entity) override
+    void remove(Entity entity)
     {
         if (m_sparseSet.contains(entity))
         {
@@ -39,6 +38,10 @@ public:
             {
                 // Move the last component into the gap
                 m_components[indexToRemove] = std::move(m_components[lastIndex]);
+                
+                // Find which entity owned the last component and update its index in the sparse set
+                // (Assuming your SparseSet has a way to find an entity by its dense index, 
+                // or you can update it based on how your SparseSet is structured).
             }
 
             m_components.pop_back();

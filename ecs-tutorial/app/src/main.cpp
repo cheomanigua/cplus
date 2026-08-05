@@ -3,9 +3,9 @@
 #include "PositionComponent.h"
 #include "VelocityComponent.h"
 #include "SpeedComponent.h"
-#include "TagSelectedComponent.h"
-#include "SelectionBoundsComponent.h"
 #include "InputComponent.h"
+#include "TagSelectedComponent.h"
+#include "SelectionBoundsComponent.h" // <---------------- Add this
 #include "ConsoleRenderSystem.h"
 #include "GraphicalRenderSystem.h"
 #include "InputSystem.h"
@@ -16,7 +16,7 @@ int main()
 {
     const int screenWidth{800};
     const int screenHeight{600};
-    InitWindow(screenWidth, screenHeight, "Prototype ECS Engine");
+    InitWindow(screenWidth, screenHeight, "Prototype Engine");
     SetTargetFPS(60);
 
     Registry registry{};
@@ -34,7 +34,7 @@ int main()
 
     Entity enemy = registry.spawnEntity(
             PositionComponent{200.0f, 150.0f},
-            VelocityComponent{00.0f, 3.0f},
+            VelocityComponent{00.0f, 30.0f},
             SpeedComponent{50.0f},
             SelectionBoundsComponent{20.0f},
             InputComponent{});

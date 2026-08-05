@@ -1,12 +1,9 @@
 #include "InputSystem.h"
 #include "InputComponent.h"
-#include "VelocityComponent.h"
 #include "PositionComponent.h"
-#include "SpeedComponent.h"
 #include "TagSelectedComponent.h"
-#include "SelectionBoundsComponent.h" // Updated component name
+#include "SelectionBoundsComponent.h"
 #include <raylib.h>
-#include <raymath.h>
 
 void InputSystem::update(Registry& registry)
 {
@@ -31,7 +28,7 @@ void InputSystem::update(Registry& registry)
             {
                 auto& pos = registry.getComponent<PositionComponent>(e);
                 auto& bounds = registry.getComponent<SelectionBoundsComponent>(e);
-
+                
                 // Uses each entity's individual bounding size dynamically
                 if (CheckCollisionPointCircle(mousePos, pos.position, bounds.radius))
                 {
@@ -42,16 +39,17 @@ void InputSystem::update(Registry& registry)
         }
     }
 
-    // 2. Read keyboard states and pass raw intent to selected entities that have an InputComponent
+    // 2. Read keyboard states using Raylib
     bool up = IsKeyDown(KEY_UP) || IsKeyDown(KEY_W);
     bool down = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
     bool left = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
     bool right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
 
-    // 3. Apply ONLY to entities that have TagSelectedComponent and InputComponent
+    // 3. Apply input intent ONLY to entities that have TagSelectedComponent and InputComponent
     for (Entity e : registry.getEntities())
     {
-        if (registry.hasComponent<TagSelectedComponent>(e) && registry.hasComponent<InputComponent>(e))
+        if (registry.hasComponent<TagSelectedComponent>(e) && 
+            registry.hasComponent<InputComponent>(e))
         {
             auto& input = registry.getComponent<InputComponent>(e);
             input.moveUp = up;
