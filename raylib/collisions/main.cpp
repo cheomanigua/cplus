@@ -39,14 +39,14 @@ int main()
     {
         float dt = GetFrameTime();
 
-        Vector2 movement = {
+        Vector2 direction = {
             static_cast<float>(IsKeyDown(KEY_RIGHT)) - static_cast<float>(IsKeyDown(KEY_LEFT)),
             static_cast<float>(IsKeyDown(KEY_DOWN))  - static_cast<float>(IsKeyDown(KEY_UP))
         };
 
-        if (Vector2Length(movement) > 0.0f)
+        if (Vector2Length(direction) > 0.0f)
         {
-            movement = Vector2Normalize(movement);
+            direction = Vector2Normalize(direction);
         }
 
 
@@ -57,8 +57,8 @@ int main()
         bool hasCollidedCR = CheckCollisionCircleRec(circle1.position, circle1.radius, square2.GetBounds());
 
         // Movement
-        circle1.position = Vector2Add(circle1.position, Vector2Scale(movement, speed * dt));
-        square1.position = Vector2Add(square1.position, Vector2Scale(movement, speed * dt));
+        circle1.position = Vector2Add(circle1.position, Vector2Scale(direction, speed * dt));
+        square1.position = Vector2Add(square1.position, Vector2Scale(direction, speed * dt));
 
 
         // Draw

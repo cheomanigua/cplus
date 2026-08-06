@@ -1,12 +1,12 @@
 #include <raylib.h>
 #include "Registry.h"
 #include "PositionComponent.h"
-#include "VelocityComponent.h"
+#include "DirectionComponent.h"
 #include "SpeedComponent.h"
 #include "InputComponent.h"
 #include "TagSelectedComponent.h"
 #include "SelectionBoundsComponent.h" // <---------------- Add this
-#include "ConsoleRenderSystem.h"
+//#include "ConsoleRenderSystem.h"
 #include "GraphicalRenderSystem.h"
 #include "InputSystem.h"
 #include "MovementSystem.h"
@@ -22,19 +22,19 @@ int main()
     Registry registry{};
     InputSystem inputSystem{};
     MovementSystem movementSystem{};
-    ConsoleRenderSystem consoleRenderSystem{};
+    //ConsoleRenderSystem consoleRenderSystem{};
     GraphicalRenderSystem graphicalRenderSystem{};
 
     Entity player = registry.spawnEntity(
             PositionComponent{100.0f, 150.0f},
-            VelocityComponent{50.0f, 0.0f},
+            DirectionComponent{50.0f, 0.0f},
             SpeedComponent{50.0f},
             SelectionBoundsComponent{20.0f},
             InputComponent{});
 
     Entity enemy = registry.spawnEntity(
             PositionComponent{200.0f, 150.0f},
-            VelocityComponent{00.0f, 30.0f},
+            DirectionComponent{00.0f, 30.0f},
             SpeedComponent{50.0f},
             SelectionBoundsComponent{20.0f},
             InputComponent{});
@@ -47,7 +47,7 @@ int main()
         // Update simulation systems
         inputSystem.update(registry);
         movementSystem.update(registry);
-        consoleRenderSystem.update(registry);
+        //consoleRenderSystem.update(registry);
         graphicalRenderSystem.update(registry);
     }
 

@@ -13,7 +13,7 @@ This document is a quick reference. It layouts the architecture and patterns use
 **ECS (Entity Component System)** – Great for the high-performance simulation core (physics, combat, AI).
 - **Entity**: Just a unique ID (like a serial number).
 - **Component**: Pure data (e.g., a struct with position, a struct with health).
-- **System**: Logic that processes many components at once (e.g., a `MovementSystem` that loops through all entities with `PositionComponent` , `VelocityComponent` and `SpeedComponent`).
+- **System**: Logic that processes many components at once (e.g., a `MovementSystem` that loops through all entities with `PositionComponent` , `DirectionComponent` and `SpeedComponent`).
 
 There is also an alternative and better known pattern, that I put here just for curiosity:
 
@@ -64,7 +64,7 @@ So far, this is what has been implemented:
 * **Step 6. Position Component & Usage Setup**: Develops the `PositionComponent` struct and integrated initial coordinate data into entities within the application flow.
 * **Step 7. Console Render System**: Implements the `ConsoleRenderSystem` to print entity positions and tracking text directly to standard output for debugging.
 * **Step 8. Graphical Render System**: Integrates Raylib into `GraphicalRenderSystem` to render entities visually as 2D shapes on a window canvas.
-* **Step 9: Movement System & Velocity Component**: Introduces the `VelocityComponent` and implemented the `MovementSystem` to update entity positions based on velocity metrics each frame.
+* **Step 9: Movement System & Velocity Component**: Introduces the `DirectionComponent` and implemented the `MovementSystem` to update entity positions based on direction metrics each frame.
 * **Step 10: Input System**: Builds the `InputSystem` to capture real-time keyboard states and update entity velocities interactively.
 * **Step 11: Tag Components (ECS Tagging System)**: Develops `TagSelectedComponent` to flag and categorize entities dynamically based on runtime states.
 * **Step 12: Selection Bounds Component**: Implements `SelectionBoundsComponent` and integrated Raylib collision checks to enable mouse picking and single-entity selection.
@@ -81,7 +81,7 @@ General:
 * **Component Pools & Polymorphism**: Creates `ComponentPool<T>` wrapped around sparse sets and introduced the `IComponentPool` virtual interface to handle component containers generically.
 * **Entity Registry**: Builds the central `Registry` class capable of entity creation, component insertion, component retrieval, safety checks, and dynamic component additions.
 * **Entity Lifecycle & ID Recycling**: Implements `destroyEntity(Entity)` to automatically strip all components from component pools, purge entities from active tracking vectors, and push recycled IDs onto a free-list stack for future reuse.
-* **Component Modules**: Develops multiple dedicated component structs including `PositionComponent`, `VelocityComponent`, `SpeedComponent`, `TagSelectedComponent`, and `SelectionBoundsComponent`.
+* **Component Modules**: Develops multiple dedicated component structs including `PositionComponent`, `DirectionComponent`, `SpeedComponent`, `TagSelectedComponent`, and `SelectionBoundsComponent`.
 * **Simulation Systems**: Implements functional systems for user input (`InputSystem`), physics movement (`MovementSystem`), console logging (`ConsoleRenderSystem`), and Raylib-based 2D shape rendering (`GraphicalRenderSystem`).
 * **Interactive Application Loop**: Set up a game loop inside `main.cpp` leveraging Raylib to handle real-time mouse clicking, entity selection, and dynamic movement processing.
 
@@ -89,17 +89,7 @@ General:
 # Not implemented
 
 
-### Step 15: Entity Spawning and Despawning API
-
-Dynamic runtime simulation requires robust spawn and despawn routines to handle entity creation and destruction cleanly during active gameplay loops.
-* Without an explicit runtime entity management trigger, applications remain strictly limited to hardcoded startup allocations.
-* With interactive key bindings or event triggers mapped to entity destruction and ID reuse, we validate real-time memory recycling.
-
-
-By introducing this runtime control layer, we validate our architecture's readiness for dynamic game states and long-running sessions.
-
-
-### Step 17: Scene / World Management Container
+### Step 18: Scene / World Management Container
 
 A mature ECS engine requires a central container or scene manager to own the registry, handle state resets, and manage multi-scene transitions cleanly.
 * Without scene isolation, global registries accumulate stale states and make resetting or loading new game levels difficult.
@@ -109,7 +99,7 @@ A mature ECS engine requires a central container or scene manager to own the reg
 By introducing this organizational layer, we validate our architecture's ability to handle structured game flow and application state changes.
 
 
-### Step 18: Component-Based Event / Messaging System
+### Step 19: Component-Based Event / Messaging System
 
 Asynchronous communication between systems is essential for decoupling complex gameplay interactions like collision alerts or damage triggers.
 * Without an event queue, systems must invoke each other directly or rely on rigid sequential checks, leading to tightly coupled code.
@@ -119,21 +109,21 @@ Asynchronous communication between systems is essential for decoupling complex g
 By introducing this event queue layer, we validate our engine's ability to support decoupled, reactive gameplay mechanics.
 
 
-### Step 19: Data-Driven Configuration (JSON Loading)
+### Step 20: Data-Driven Configuration (JSON Loading)
 Hardcoding entity initializations inside application source files restricts flexibility for modding and level design.
 * Without external data configuration, every design adjustment requires recompiling source code.
 * With an integrated JSON parser, the engine can read entity blueprints, initial positions, and component properties from external files.
 
 By introducing data-driven loading, we validate our architecture's capability to separate code structure from content data.
 
-### Step 20: Multi-Threaded System Scheduling
+### Step 21: Multi-Threaded System Scheduling
 High-performance engines require parallel task execution to maximize multi-core CPU utilization during large simulations.
 * Without system scheduling separation, all tasks run sequentially on a single thread regardless of workload size.
 * With categorized read-only and read-write system identification, independent simulations like rendering or audio calculations can execute concurrently.
 
 By introducing multi-threaded scheduling, we validate our engine's readiness for heavy, production-scale performance demands.
 
-### Step 21: View / Query System
+### Step 22: View / Query System
 
 An Entity Component System (ECS) architecture benefits from query abstractions to efficiently retrieve and iterate over entities matching specific component combinations without repetitive manual checks.
 * Without a dedicated query view, systems must manually verify component presence for every entity, increasing boilerplate and reducing cache traversal efficiency.
@@ -142,5 +132,7 @@ An Entity Component System (ECS) architecture benefits from query abstractions t
 
 By introducing this querying layer, we validate our engine's ability to scale system logic cleanly as component combinations grow.
 
-
+### Step 23: Spatial Partitioning
+### Step 24: Dirty Flags
+### Step 25: Collisions
 

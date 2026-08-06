@@ -1,7 +1,7 @@
 #include "MovementSystem.h"
 #include "PositionComponent.h"
-#include "VelocityComponent.h"
-#include "SpeedComponent.h" // <----------- Add this
+#include "DirectionComponent.h"
+#include "SpeedComponent.h"
 #include "InputComponent.h"
 #include <raylib.h>
 #include <raymath.h>
@@ -16,37 +16,38 @@ void MovementSystem::update(Registry& registry)
             continue;
 
         auto& pos = registry.getComponent<PositionComponent>(e);
-        auto& spd = registry.getComponent<SpeedComponent>(e); // <----------- Add this
-        Vector2 velocity{0.0f, 0.0f};
+        auto& spd = registry.getComponent<SpeedComponent>(e);
+        Vector2 direction{0.0f, 0.0f};
 
         // Case A: Entity is player-controlled via inputs (entity has InputComponent)
         if (registry.hasComponent<InputComponent>(e))
         {
             auto& input = registry.getComponent<InputComponent>(e);
 
-            // velocity.x and velocity.y values are obtained by WASD keys (0.0f, 1.0f or -1.0f)
-            velocity.x = static_cast<float>(input.moveRight) - static_cast<float>(input.moveLeft);
-            velocity.y = static_cast<float>(input.moveDown) - static_cast<float>(input.moveUp);
+            // direction values are obtained by WASD keys (0.0f, 1.0f or -1.0f)
+            direction = Vector2{ 
+                static_cast<float>(input.moveRight) - static_cast<float>(input.moveLeft),
+                static_cast<float>(input.moveDown) - static_cast<float>(input.moveUp),
+            };
 
-            if (Vector2Length(velocity) > 0.0f)
+            if (Vector2Length(direction) > 0.0f)
             {
-                velocity = Vector2Normalize(velocity);
+                direction = Vector2Normalize(direction);
             }
         }
-        // Case B: Entity moves automatically (using its VelocityComponent as a direction vector)
-        else if (registry.hasComponent<VelocityComponent>(e))
+        // Case B: Entity moves automatically (using its DirectionComponent as a direction vector)
+        else if (registry.hasComponent<DirectionComponent>(e))
         {
-            auto& vel = registry.getComponent<VelocityComponent>(e);
-            velocity = vel.velocity;
+            auto& dir = registry.getComponent<DirectionComponent>(e);
+            direction = dir.direction;
 
-            if (Vector2Length(velocity) > 0.0f)
+            if (Vector2Length(direction) > 0.0f)
             {
-                velocity = Vector2Normalize(velocity);
+                direction = Vector2Normalize(direction);
             }
         }
 
         // Apply final movement for calculation in one single place
-        pos.position.x += velocity.x * spd.speed * deltaTime;
-        pos.position.y += velocity.y * spd.speed * deltaTime;
+        pos.position = Vector2Add(pos.position, Vector2Scale(direction, spd.speed * deltaTime));
     }
 }

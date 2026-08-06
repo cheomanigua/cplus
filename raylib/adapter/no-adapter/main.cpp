@@ -12,8 +12,8 @@ int main() {
     InitWindow(800, 600, "Harpoon Sim - Native Raylib");
     SetTargetFPS(60);
 
-    Vector2 ship2Pos { 220.0f, 230.0f };
-    Vector2 ship1Pos { 520.0f, 330.0f };
+    Vector2 ship2Pos { 220.0f, 230.0f }; // Shooter
+    Vector2 ship1Pos { 520.0f, 330.0f }; // Target
     Vector2 destination { ship1Pos };
     
     bool isMoving { false };
@@ -38,18 +38,66 @@ int main() {
             isMoving = true;
         }
         if (IsKeyPressed(KEY_UP)) timeScale += 0.5f;
-        if (IsKeyPressed(KEY_DOWN)) timeScale = fmax(0.1f, timeScale - 0.5f);
+        if (IsKeyPressed(KEY_DOWN)) timeScale = fmaxf(0.1f, timeScale - 0.5f);
 
-        // MOVEMENT LOGIC
+        // MOVEMENT LOGIC & TARGET VELOCITY CALCULATION
+        Vector2 targetVelocity { 0.0f, 0.0f };
         if (isMoving) {
-            ship1Pos = Vector2MoveTowards(ship1Pos, destination, speed * scaledDt);
-            if (Vector2Equals(ship1Pos, destination)) isMoving = false;
+            Vector2 toDestination = Vector2Subtract(destination, ship1Pos);
+            if (Vector2Length(toDestination) > 0.0f) {
+                Vector2 moveDir = Vector2Normalize(toDestination);
+                targetVelocity = Vector2Scale(moveDir, speed);
+                ship1Pos = Vector2MoveTowards(ship1Pos, destination, speed * scaledDt);
+                if (Vector2Equals(ship1Pos, destination)) isMoving = false;
+            }
         }
 
-        // TORPEDO LOGIC (Fires every 5 game-seconds)
+        // TORPEDO LOGIC (Fires every 5 game-seconds with Lead Pursuit)
         if (gameClock - lastFireTime >= 5.0f) {
             lastFireTime = gameClock;
-            Vector2 direction = Vector2Normalize(Vector2Subtract(ship1Pos, ship2Pos));
+
+            // --- LEAD PURSUIT INTERCEPTION MATH ---
+            Vector2 R = Vector2Subtract(ship1Pos, ship2Pos); // Relative position vector
+            Vector2 V = targetVelocity;                     // Target velocity vector
+            float s_p = torpedoSpeed;                       // Projectile speed
+
+            // Quadratic equation coefficients: At^2 + Bt + C = 0
+            float A = Vector2DotProduct(V, V) - (s_p * s_p);
+            float B = 2.0f * Vector2DotProduct(R, V);
+            float C = Vector2DotProduct(R, R);
+
+            Vector2 aimPosition = ship1Pos; // Fallback to current position if no solution
+
+            if (fabsf(A) < 0.0001f) {
+                // Linear case if speeds match closely
+                if (fabsf(B) > 0.0001f) {
+                    float t = -C / B;
+                    if (t > 0.0f) {
+                        aimPosition = Vector2Add(ship1Pos, Vector2Scale(V, t));
+                    }
+                }
+            } else {
+                // Quadratic formula discriminant
+                float discriminant = (B * B) - (4.0f * A * C);
+                if (discriminant >= 0.0f) {
+                    float sqrtDisc = sqrtf(discriminant);
+                    float t1 = (-B - sqrtDisc) / (2.0f * A);
+                    float t2 = (-B + sqrtDisc) / (2.0f * A);
+
+                    // Find the smallest positive time of impact
+                    float t = -1.0f;
+                    if (t1 > 0.0f && t2 > 0.0f) t = fminf(t1, t2);
+                    else if (t1 > 0.0f) t = t1;
+                    else if (t2 > 0.0f) t = t2;
+
+                    if (t > 0.0f) {
+                        aimPosition = Vector2Add(ship1Pos, Vector2Scale(V, t));
+                    }
+                }
+            }
+
+            // Calculate final trajectory vector toward predicted intercept point
+            Vector2 direction = Vector2Normalize(Vector2Subtract(aimPosition, ship2Pos));
             torpedo.pos = ship2Pos;
             torpedo.velocity = Vector2Scale(direction, torpedoSpeed);
             torpedo.active = true;
