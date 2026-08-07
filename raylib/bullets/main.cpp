@@ -94,8 +94,6 @@ int main()
     constexpr int screenHeight { 450 };
 
     Player player { {400.0f, 215.0f}, 20.0f, 100.0f };
-    Item potion {1, "Health Potion", {100, 100}, {5.0f}, RED, Trigger::OnUse, Execution::Inmediate, Targeting::Self, false, Persistence::Instant, Attribute::Health};
-    printItem(potion);
     std::array<Bullet, MaxBullets> bullets;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys");
@@ -103,23 +101,22 @@ int main()
 
     while (!WindowShouldClose())
     {
-        float dt = GetFrameTime();
+        float deltaTime = GetFrameTime();
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Shoot(bullets, player);
         }
 
-        UpdateBullets(bullets, dt);
+        UpdateBullets(bullets, deltaTime);
 
         // Move
-        player.position = Vector2Add(player.position, Vector2Scale(GetMovementDirection(), player.speed * dt));
+        player.position = Vector2Add(player.position, Vector2Scale(GetMovementDirection(), player.speed * deltaTime));
 
         // Draw
         BeginDrawing();
             ClearBackground(RAYWHITE);
             DrawCircleV(player.position, player.radius, BLUE);
-            DrawCircleV(potion.position, potion.radius, potion.color);
             DrawBullets(bullets);
             DrawText(TextFormat("Active Bullets: %d", CountActiveBullets(bullets)), 10, 10, 20, BLACK);
         EndDrawing();
