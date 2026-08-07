@@ -28,7 +28,7 @@ void InputSystem::update(Registry& registry)
             {
                 auto& pos = registry.getComponent<PositionComponent>(e);
                 auto& bounds = registry.getComponent<SelectionBoundsComponent>(e);
-                
+
                 // Uses each entity's individual bounding size dynamically
                 if (CheckCollisionPointCircle(mousePos, pos.position, bounds.radius))
                 {

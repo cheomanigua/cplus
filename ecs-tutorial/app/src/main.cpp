@@ -5,7 +5,7 @@
 #include "SpeedComponent.h"
 #include "InputComponent.h"
 #include "TagSelectedComponent.h"
-#include "SelectionBoundsComponent.h" // <---------------- Add this
+#include "SelectionBoundsComponent.h"
 //#include "ConsoleRenderSystem.h"
 #include "GraphicalRenderSystem.h"
 #include "InputSystem.h"

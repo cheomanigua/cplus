@@ -12,7 +12,7 @@ void GraphicalRenderSystem::update(Registry& registry)
         if (registry.hasComponent<PositionComponent>(e))
         {
             auto& pos = registry.getComponent<PositionComponent>(e);
-            
+
             // Draw the entities as a circles
             DrawCircle(static_cast<int>(pos.position.x), static_cast<int>(pos.position.y), 20.0f, BLUE);
         }
