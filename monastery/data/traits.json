@@ -1,0 +1,20 @@
+{
+  "setting": "monastery",
+  "traits": [
+    { "id": "Honest", "description": "Values truth above all; unlikely to lie.", "will_lie": false },
+    { "id": "Greedy", "description": "Driven by tithes, gold, and hidden wealth.", "will_lie": true },
+    { "id": "Secretive", "description": "Keeps cards close to chest; hides past sins.", "will_lie": true },
+    { "id": "Ambitious", "description": "Wants to rise to Abbot or higher status at any cost.", "will_lie": true },
+    { "id": "Paranoid", "description": "Suspicious of demonic influence or secret plots.", "will_lie": true },
+    { "id": "Fanatical", "description": "Extremely devoted to strict monastic dogma.", "will_lie": false },
+    { "id": "Impulsive", "description": "Acts on sudden emotional triggers without confession.", "will_lie": true },
+    { "id": "Envious", "description": "Resents other brothers for holy favor or sacred items.", "will_lie": true },
+    { "id": "Vindictive", "description": "Holds long grudges over ancient abbey disputes.", "will_lie": true },
+    { "id": "Curious", "description": "Inquisitive; pries into restricted archives.", "will_lie": false },
+    { "id": "Gluttonous", "description": "Overindulges in food, wine, and material comforts.", "will_lie": true },
+    { "id": "Humble", "description": "Deeply modest, cooperative, and self-effacing.", "will_lie": false },
+    { "id": "Melancholic", "description": "Prone to deep sorrow, quiet brooding, and isolation.", "will_lie": false },
+    { "id": "Zealot", "description": "Aggressively militant about enforcing monastic rules on others.", "will_lie": true },
+    { "id": "Cowardly", "description": "Frightened easily by conflict, threats, or danger.", "will_lie": true }
+  ]
+}

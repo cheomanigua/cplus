@@ -1,0 +1,18 @@
+{
+  "setting": "monastery",
+  "locations": [
+    { "id": "chapel", "name": "The Great Chapel", "zone_type": "Public", "safety_level": "High" },
+    { "id": "library", "name": "The Restricted Library", "zone_type": "Private", "safety_level": "Medium" },
+    { "id": "herb_garden", "name": "The Herb Garden", "zone_type": "Outdoor", "safety_level": "High" },
+    { "id": "wine_cellar", "name": "The Deep Cellars", "zone_type": "Private", "safety_level": "Low" },
+    { "id": "dormitory", "name": "The Monastic Dormitory", "zone_type": "Private", "safety_level": "Medium" },
+    { "id": "refectory", "name": "The Dining Refectory", "zone_type": "Public", "safety_level": "High" },
+    { "id": "kitchen", "name": "The Abbey Kitchen", "zone_type": "Workshop", "safety_level": "Medium" },
+    { "id": "chapter_room", "name": "The Chapterhouse", "zone_type": "Restricted", "safety_level": "High" },
+    { "id": "calefactory", "name": "The Calefactory (Warming House)", "zone_type": "SemiPrivate", "safety_level": "Medium" },
+    { "id": "cloister", "name": "The Great Cloister", "zone_type": "Public", "safety_level": "High" },
+    { "id": "crypt", "name": "The Subterranean Crypts", "zone_type": "Restricted", "safety_level": "Low" },
+    { "id": "infirmary", "name": "The Monastic Infirmary", "zone_type": "SemiPrivate", "safety_level": "High" },
+    { "id": "scriptorium", "name": "The Scriptorium", "zone_type": "Private", "safety_level": "Medium" }
+  ]
+}

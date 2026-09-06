@@ -1,0 +1,17 @@
+{
+  "setting": "monastery",
+  "relationship_types": [
+    { "id": "BusinessRivals", "description": "Competing for control over abbey trade and tithes." },
+    { "id": "SuperiorSubordinate", "description": "One holds strict spiritual or administrative rank over the other." },
+    { "id": "CreditorDebtor", "description": "One owes heavy silver or favor debts to the other." },
+    { "id": "SecretLovers", "description": "A forbidden romance breaking sacred vows." },
+    { "id": "MenteeMentor", "description": "Elder master and novice monk with deep theological ties." },
+    { "id": "ExFriends", "description": "Former brothers who split over a theological disagreement." },
+    { "id": "BlackmailerTarget", "description": "One holds evidence of broken vows over the other." },
+    { "id": "BloodFeud", "description": "Families locked in historic vendettas before entering holy orders." },
+    { "id": "CoConspirators", "description": "Partners hiding a smuggled relic or dark secret." },
+    { "id": "Acquaintances", "description": "Neutral day-to-day contact with no deep feelings." },
+    { "id": "SwornEnemies", "description": "Openly hostile brothers ready to strike at each other." },
+    { "id": "ProtectorWard", "description": "An older monk fiercely shielding a vulnerable younger brother." }
+  ]
+}

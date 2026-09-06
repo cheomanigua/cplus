@@ -1,0 +1,20 @@
+{
+  "setting": "monastery",
+  "items": [
+    { "id": "sacred_wine", "name": "Sacred Altar Wine", "is_contraband": false },
+    { "id": "medicinal_herbs", "name": "Dried Healing Herbs", "is_contraband": false },
+    { "id": "forbidden_manuscript", "name": "Heresy Manuscript", "is_contraband": true },
+    { "id": "golden_chalice", "name": "Stolen Golden Chalice", "is_contraband": true },
+    { "id": "altar_knife", "name": "Ceremonial Dagger", "is_contraband": false },
+    { "id": "prayer_beads", "name": "Ivory Prayer Beads", "is_contraband": false },
+    { "id": "poisoned_oil", "name": "Nightshade Anointing Oil", "is_contraband": true },
+    { "id": "tattered_robe", "name": "Bloody Monk Habit", "is_contraband": true },
+    { "id": "abbot_seal", "name": "Abbot's Wax Seal Stamp", "is_contraband": false },
+    { "id": "confession_log", "name": "Confession Ledger", "is_contraband": false },
+    { "id": "silver_paten", "name": "Consecrated Silver Paten", "is_contraband": false },
+    { "id": "iron_key", "name": "Heavy Crypt Key", "is_contraband": false },
+    { "id": "smuggled_tobacco", "name": "Foreign Leaf Tobacco", "is_contraband": true },
+    { "id": "illuminated_ink", "name": "Lapis Lazuli Ink Pot", "is_contraband": false },
+    { "id": "relic_bone", "name": "Questionable Saint Bone Fragment", "is_contraband": true }
+  ]
+}

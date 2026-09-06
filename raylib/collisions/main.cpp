@@ -37,7 +37,7 @@ int main()
 
     while (!WindowShouldClose())
     {
-        float dt = GetFrameTime();
+        float deltaTime = GetFrameTime();
 
         Vector2 direction = {
             static_cast<float>(IsKeyDown(KEY_RIGHT)) - static_cast<float>(IsKeyDown(KEY_LEFT)),
@@ -51,14 +51,15 @@ int main()
 
 
         // Collision Detection
-        bool hasCollidedPC = CheckCollisionPointCircle(circle1.position, circle2.position, circle2.radius);
+        bool hasCollidedPC = CheckCollisionPointCircle(circle1.position, circle2.position, circle1.radius);
         bool hasCollidedCC = CheckCollisionCircles(circle1.position, circle1.radius, circle2.position, circle2.radius);
         bool hasCollidedRR = CheckCollisionRecs(square1.GetBounds(), square2.GetBounds());
         bool hasCollidedCR = CheckCollisionCircleRec(circle1.position, circle1.radius, square2.GetBounds());
+        bool hasCollidedRC = CheckCollisionCircleRec(circle2.position, circle2.radius, square1.GetBounds());
 
         // Movement
-        circle1.position = Vector2Add(circle1.position, Vector2Scale(direction, speed * dt));
-        square1.position = Vector2Add(square1.position, Vector2Scale(direction, speed * dt));
+        circle1.position = Vector2Add(circle1.position, Vector2Scale(direction, speed * deltaTime));
+        square1.position = Vector2Add(square1.position, Vector2Scale(direction, speed * deltaTime));
 
 
         // Draw
@@ -77,6 +78,7 @@ int main()
             DrawText(TextFormat("CirclevsCircle: %s", hasCollidedCC ? "YES" : "NO"), 10, 50, 20, hasCollidedCC ? RED : DARKGRAY);
             DrawText(TextFormat("RectvsRect: %s", hasCollidedRR ? "YES" : "NO"), 10, 70, 20, hasCollidedRR ? RED : DARKGRAY);
             DrawText(TextFormat("CirclevsRect: %s", hasCollidedCR ? "YES" : "NO"), 10, 90, 20, hasCollidedCR ? RED : DARKGRAY);
+            DrawText(TextFormat("RectvsCircle: %s", hasCollidedRC ? "YES" : "NO"), 10, 110, 20, hasCollidedRC ? RED : DARKGRAY);
 
         EndDrawing();
     }

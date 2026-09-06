@@ -1,0 +1,109 @@
+{
+  "setting": "monastery",
+  "routines": [
+    {
+      "role_id": "monk_herbalist",
+      "schedule": [
+        { "time": "Morning", "location": "herb_garden" },
+        { "time": "Midday", "location": "refectory" },
+        { "time": "Evening", "location": "infirmary" }
+      ]
+    },
+    {
+      "role_id": "abbot_leader",
+      "schedule": [
+        { "time": "Morning", "location": "chapter_room" },
+        { "time": "Midday", "location": "chapel" },
+        { "time": "Evening", "location": "chapter_room" }
+      ]
+    },
+    {
+      "role_id": "monk_winemaker",
+      "schedule": [
+        { "time": "Morning", "location": "wine_cellar" },
+        { "time": "Midday", "location": "refectory" },
+        { "time": "Evening", "location": "wine_cellar" }
+      ]
+    },
+    {
+      "role_id": "scribe_monk",
+      "schedule": [
+        { "time": "Morning", "location": "scriptorium" },
+        { "time": "Midday", "location": "library" },
+        { "time": "Evening", "location": "scriptorium" }
+      ]
+    },
+    {
+      "role_id": "blacksmith_monk",
+      "schedule": [
+        { "time": "Morning", "location": "crypt" },
+        { "time": "Midday", "location": "refectory" },
+        { "time": "Evening", "location": "dormitory" }
+      ]
+    },
+    {
+      "role_id": "cellarer_monk",
+      "schedule": [
+        { "time": "Morning", "location": "wine_cellar" },
+        { "time": "Midday", "location": "cloister" },
+        { "time": "Evening", "location": "dormitory" }
+      ]
+    },
+    {
+      "role_id": "master_of_novices",
+      "schedule": [
+        { "time": "Morning", "location": "chapel" },
+        { "time": "Midday", "location": "dormitory" },
+        { "time": "Evening", "location": "library" }
+      ]
+    },
+    {
+      "role_id": "hospitaler_monk",
+      "schedule": [
+        { "time": "Morning", "location": "infirmary" },
+        { "time": "Midday", "location": "refectory" },
+        { "time": "Evening", "location": "herb_garden" }
+      ]
+    },
+    {
+      "role_id": "chantor_monk",
+      "schedule": [
+        { "time": "Morning", "location": "chapel" },
+        { "time": "Midday", "location": "cloister" },
+        { "time": "Evening", "location": "dormitory" }
+      ]
+    },
+    {
+      "role_id": "inquisitor_friar",
+      "schedule": [
+        { "time": "Morning", "location": "library" },
+        { "time": "Midday", "location": "chapter_room" },
+        { "time": "Evening", "location": "calefactory" }
+      ]
+    },
+    {
+      "role_id": "kitchen_master",
+      "schedule": [
+        { "time": "Morning", "location": "kitchen" },
+        { "time": "Midday", "location": "refectory" },
+        { "time": "Evening", "location": "kitchen" }
+      ]
+    },
+    {
+      "role_id": "sacristan_monk",
+      "schedule": [
+        { "time": "Morning", "location": "chapel" },
+        { "time": "Midday", "location": "crypt" },
+        { "time": "Evening", "location": "dormitory" }
+      ]
+    },
+    {
+      "role_id": "librarian_monk",
+      "schedule": [
+        { "time": "Morning", "location": "library" },
+        { "time": "Midday", "location": "scriptorium" },
+        { "time": "Evening", "location": "library" }
+      ]
+    }
+  ]
+}

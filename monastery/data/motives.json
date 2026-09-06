@@ -1,0 +1,101 @@
+{
+  "setting": "monastery",
+  "motives": [
+    {
+      "id": "relic_theft_coverup",
+      "description": "{Killer} eliminated {Victim} to protect their illegal trade of holy artifacts.",
+      "required_killer_traits": ["Greedy", "Ambitious"],
+      "required_victim_traits": ["Honest"],
+      "required_relationship": "BusinessRivals",
+      "evidence_item": "golden_chalice"
+    },
+    {
+      "id": "heresy_silencing",
+      "description": "{Killer} silenced {Victim} before they could report forbidden theological writings.",
+      "required_killer_traits": ["Fanatical", "Secretive"],
+      "required_victim_traits": ["Curious"],
+      "required_relationship": "SuperiorSubordinate",
+      "evidence_item": "forbidden_manuscript"
+    },
+    {
+      "id": "tithe_debt_bloodshed",
+      "description": "{Killer} murdered {Victim} to wipe out an unpayable silver debt to the abbey.",
+      "required_killer_traits": ["Impulsive", "Greedy"],
+      "required_victim_traits": ["Secretive"],
+      "required_relationship": "CreditorDebtor",
+      "evidence_item": "confession_log"
+    },
+    {
+      "id": "abbot_succession",
+      "description": "{Killer} struck down {Victim} to steal a path toward becoming the next Abbot.",
+      "required_killer_traits": ["Ambitious", "Envious"],
+      "required_victim_traits": ["Honest"],
+      "required_relationship": "SuperiorSubordinate",
+      "evidence_item": "abbot_seal"
+    },
+    {
+      "id": "confessional_blackmail",
+      "description": "{Killer} snapped and killed {Victim} after weeks of extortion over broken vows.",
+      "required_killer_traits": ["Vindictive", "Paranoid"],
+      "required_victim_traits": ["Secretive"],
+      "required_relationship": "BlackmailerTarget",
+      "evidence_item": "poisoned_oil"
+    },
+    {
+      "id": "vow_of_chastity_breach",
+      "description": "{Killer} acted out of blind rage upon discovering a hidden romantic betrayal.",
+      "required_killer_traits": ["Impulsive", "Vindictive"],
+      "required_victim_traits": ["Curious"],
+      "required_relationship": "SecretLovers",
+      "evidence_item": "tattered_robe"
+    },
+    {
+      "id": "ancient_blood_feud",
+      "description": "{Killer} exacted revenge for a historic family feud that followed them into the monastery.",
+      "required_killer_traits": ["Fanatical", "Vindictive"],
+      "required_victim_traits": ["Honest"],
+      "required_relationship": "BloodFeud",
+      "evidence_item": "altar_knife"
+    },
+    {
+      "id": "smuggling_conspiracy",
+      "description": "{Killer} murdered {Victim} out of fear they would confess their shared wine smuggling.",
+      "required_killer_traits": ["Paranoid", "Secretive"],
+      "required_victim_traits": ["Impulsive"],
+      "required_relationship": "CoConspirators",
+      "evidence_item": "sacred_wine"
+    },
+    {
+      "id": "novice_master_betrayal",
+      "description": "{Killer} turned on {Victim} after discovering they were being cruelly exploited.",
+      "required_killer_traits": ["Ambitious", "Vindictive"],
+      "required_victim_traits": ["Secretive"],
+      "required_relationship": "MenteeMentor",
+      "evidence_item": "prayer_beads"
+    },
+    {
+      "id": "demonic_paranoia",
+      "description": "{Killer} struck down {Victim} convinced the brother was an agent of evil.",
+      "required_killer_traits": ["Paranoid", "Impulsive"],
+      "required_victim_traits": ["Curious"],
+      "required_relationship": "Acquaintances",
+      "evidence_item": "medicinal_herbs"
+    },
+    {
+      "id": "gluttonous_theft",
+      "description": "{Killer} killed {Victim} after being caught stealing restricted rations from the cellar.",
+      "required_killer_traits": ["Gluttonous", "Impulsive"],
+      "required_victim_traits": ["Honest"],
+      "required_relationship": "SwornEnemies",
+      "evidence_item": "smuggled_tobacco"
+    },
+    {
+      "id": "relic_forgery_exposure",
+      "description": "{Killer} murdered {Victim} to keep them from revealing that the monastery's main saint relic was fake.",
+      "required_killer_traits": ["Greedy", "Zealot"],
+      "required_victim_traits": ["Curious"],
+      "required_relationship": "BusinessRivals",
+      "evidence_item": "relic_bone"
+    }
+  ]
+}

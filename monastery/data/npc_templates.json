@@ -1,0 +1,70 @@
+{
+  "setting": "monastery",
+  "npc_templates": [
+    {
+      "role_id": "monk_herbalist",
+      "base_traits": ["Honest", "Secretive"],
+      "trade_profile": { "produces": ["medicinal_herbs"], "consumes": ["sacred_wine"], "class": "Lower" }
+    },
+    {
+      "role_id": "abbot_leader",
+      "base_traits": ["Fanatical", "Ambitious"],
+      "trade_profile": { "produces": ["abbot_seal"], "consumes": ["prayer_beads"], "class": "Upper" }
+    },
+    {
+      "role_id": "monk_winemaker",
+      "base_traits": ["Greedy", "Impulsive"],
+      "trade_profile": { "produces": ["sacred_wine"], "consumes": ["medicinal_herbs"], "class": "Middle" }
+    },
+    {
+      "role_id": "scribe_monk",
+      "base_traits": ["Curious", "Honest"],
+      "trade_profile": { "produces": ["confession_log"], "consumes": ["forbidden_manuscript"], "class": "Middle" }
+    },
+    {
+      "role_id": "blacksmith_monk",
+      "base_traits": ["Vindictive", "Secretive"],
+      "trade_profile": { "produces": ["altar_knife"], "consumes": ["sacred_wine"], "class": "Lower" }
+    },
+    {
+      "role_id": "cellarer_monk",
+      "base_traits": ["Greedy", "Envious"],
+      "trade_profile": { "produces": ["golden_chalice"], "consumes": ["sacred_wine"], "class": "Middle" }
+    },
+    {
+      "role_id": "master_of_novices",
+      "base_traits": ["Fanatical", "Paranoid"],
+      "trade_profile": { "produces": ["prayer_beads"], "consumes": ["confession_log"], "class": "Upper" }
+    },
+    {
+      "role_id": "hospitaler_monk",
+      "base_traits": ["Honest", "Curious"],
+      "trade_profile": { "produces": ["medicinal_herbs"], "consumes": ["poisoned_oil"], "class": "Middle" }
+    },
+    {
+      "role_id": "chantor_monk",
+      "base_traits": ["Impulsive", "Envious"],
+      "trade_profile": { "produces": ["tattered_robe"], "consumes": ["golden_chalice"], "class": "Lower" }
+    },
+    {
+      "role_id": "inquisitor_friar",
+      "base_traits": ["Paranoid", "Ambitious"],
+      "trade_profile": { "produces": ["forbidden_manuscript"], "consumes": ["abbot_seal"], "class": "Upper" }
+    },
+    {
+      "role_id": "kitchen_master",
+      "base_traits": ["Gluttonous", "Impulsive"],
+      "trade_profile": { "produces": ["smuggled_tobacco"], "consumes": ["sacred_wine"], "class": "Lower" }
+    },
+    {
+      "role_id": "sacristan_monk",
+      "base_traits": ["Secretive", "Greedy"],
+      "trade_profile": { "produces": ["silver_paten"], "consumes": ["iron_key"], "class": "Middle" }
+    },
+    {
+      "role_id": "librarian_monk",
+      "base_traits": ["Curious", "Melancholic"],
+      "trade_profile": { "produces": ["illuminated_ink"], "consumes": ["forbidden_manuscript"], "class": "Upper" }
+    }
+  ]
+}

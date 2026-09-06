@@ -1,0 +1,12 @@
+{
+  "setting": "monastery",
+  "titles": [
+    "Brother", "Father", "Abbot", "Novice", "Prior", "Bishop", "Deacon", 
+    "Friar", "Elder", "Pilgrim", "Subprior", "Cantor", "Sacristan", "Almoner"
+  ],
+  "surnames": [
+    "Thomas", "Gregory", "Luke", "Benedict", "Francis", "Clement", "Ignatius", 
+    "Dominic", "Augustine", "Ambrose", "Bede", "Anselm", "Bernard", "Columban", 
+    "Isidore", "Jerome", "Malachy", "Patrick", "Vincenzo", "Wulfstan"
+  ]
+}
