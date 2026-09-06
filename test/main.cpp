@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 #include <iostream>
 #include <unordered_map>
@@ -6,7 +7,7 @@
 enum class Day
 {
     Monday = 1,
-    Tuesday,
+    Tuedsday,
     Wednesday
 };
 
@@ -25,11 +26,13 @@ int main()
     for (const auto& number : numbers) {
         std::cout << number << "\n";
     }
-    numbers.erase(std::remove(numbers.begin(), numbers.end(), 20), numbers.end());
+    std::erase(numbers, 20);
     std::cout << "------\n";
+    std::ranges::sort(numbers);
     for (const auto& number : numbers) {
         std::cout << number << "\n";
     }
+
     constexpr std::size_t vsize {50'000};
     std::vector<int> vvalues {};
     std::array<int, vsize> avalues {};
