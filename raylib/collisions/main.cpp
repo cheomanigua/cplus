@@ -52,6 +52,7 @@ int main()
 
         // Collision Detection
         bool hasCollidedPC = CheckCollisionPointCircle(circle1.position, circle2.position, circle1.radius);
+        bool hasCollidedPR = CheckCollisionPointRec(circle2.position, square1.GetBounds());
         bool hasCollidedCC = CheckCollisionCircles(circle1.position, circle1.radius, circle2.position, circle2.radius);
         bool hasCollidedRR = CheckCollisionRecs(square1.GetBounds(), square2.GetBounds());
         bool hasCollidedCR = CheckCollisionCircleRec(circle1.position, circle1.radius, square2.GetBounds());
@@ -75,10 +76,11 @@ int main()
 
             DrawText("move the blue ball and blue square with arrow keys", 10, 10, 20, DARKGRAY);
             DrawText(TextFormat("PointInCircle: %s", hasCollidedPC ? "YES" : "NO"), 10, 30, 20, hasCollidedPC ? RED : DARKGRAY);
-            DrawText(TextFormat("CirclevsCircle: %s", hasCollidedCC ? "YES" : "NO"), 10, 50, 20, hasCollidedCC ? RED : DARKGRAY);
-            DrawText(TextFormat("RectvsRect: %s", hasCollidedRR ? "YES" : "NO"), 10, 70, 20, hasCollidedRR ? RED : DARKGRAY);
-            DrawText(TextFormat("CirclevsRect: %s", hasCollidedCR ? "YES" : "NO"), 10, 90, 20, hasCollidedCR ? RED : DARKGRAY);
-            DrawText(TextFormat("RectvsCircle: %s", hasCollidedRC ? "YES" : "NO"), 10, 110, 20, hasCollidedRC ? RED : DARKGRAY);
+            DrawText(TextFormat("PointInRect: %s", hasCollidedPR ? "YES" : "NO"), 10, 50, 20, hasCollidedPR ? RED : DARKGRAY);
+            DrawText(TextFormat("CirclevsCircle: %s", hasCollidedCC ? "YES" : "NO"), 10, 70, 20, hasCollidedCC ? RED : DARKGRAY);
+            DrawText(TextFormat("RectvsRect: %s", hasCollidedRR ? "YES" : "NO"), 10, 90, 20, hasCollidedRR ? RED : DARKGRAY);
+            DrawText(TextFormat("CirclevsRect: %s", hasCollidedCR ? "YES" : "NO"), 10, 110, 20, hasCollidedCR ? RED : DARKGRAY);
+            DrawText(TextFormat("RectvsCircle: %s", hasCollidedRC ? "YES" : "NO"), 10, 130, 20, hasCollidedRC ? RED : DARKGRAY);
 
         EndDrawing();
     }

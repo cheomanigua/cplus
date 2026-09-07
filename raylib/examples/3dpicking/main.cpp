@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "raymath.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point

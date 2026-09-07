@@ -6,7 +6,7 @@
 
 enum class Day
 {
-    Monday = 1,
+    Monday,
     Tuedsday,
     Wednesday
 };
@@ -23,12 +23,12 @@ int main()
     }
 
     std::vector<int> numbers = {10, 20, 30, 20, 15, 26, 20};
+    std::ranges::sort(numbers);
     for (const auto& number : numbers) {
         std::cout << number << "\n";
     }
     std::erase(numbers, 20);
     std::cout << "------\n";
-    std::ranges::sort(numbers);
     for (const auto& number : numbers) {
         std::cout << number << "\n";
     }
@@ -37,11 +37,9 @@ int main()
     std::vector<int> vvalues {};
     std::array<int, vsize> avalues {};
     std::unordered_map<int, int> mvalues {};
-    int sum1 {};
-    int sum2 {};
-    int sum3 {};
+    int sum1{}, sum2{}, sum3{};
 
-    for (std::size_t i = 1; i < vsize; ++i)
+    for (std::size_t i = 0; i < vsize; ++i)
     {
         vvalues.push_back(static_cast<int>(i));
         avalues[i] = static_cast<int>(i);

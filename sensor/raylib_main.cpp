@@ -1,4 +1,6 @@
 #include <iostream>
+#include "raylib.h"
+#include "raymath.h"
 
 enum class SensorState {
     Disabled,
@@ -7,8 +9,7 @@ enum class SensorState {
 };
 
 struct PositionComp {
-    float x{};
-    float y{};
+    Vector2 position{};
 };
 
 struct SensorComp {
@@ -21,10 +22,8 @@ bool IsWithinRadarRange(
         const PositionComp& targetPos,
         const SensorComp& radar)
 {
-	const float deltaX { targetPos.x - sourcePos.x };
-    const float deltaY { targetPos.y - sourcePos.y };
-    const float distanceSquared { (deltaX * deltaX) + (deltaY * deltaY) };
-    float rangeSquared {radar.range * radar.range};
+    const float distanceSquared { Vector2DistanceSqr(sourcePos.position, targetPos.position) };
+    float rangeSquared { radar.range * radar.range };
 
 	switch (radar.state)
 	{
@@ -51,7 +50,7 @@ int main() {
     // Stack allocation (standard behavior for structs in C++)
     PositionComp ussPasadenaPos {110.00f, 30.00f};
     PositionComp opforShipPos {160.00f, 30.00f};
-    SensorComp ussPasadenaRadar {50.0f, SensorState::Active};
+    SensorComp ussPasadenaRadar {50.0f, SensorState::Passive};
 
     bool detected { IsWithinRadarRange(ussPasadenaPos, opforShipPos, ussPasadenaRadar) };
 
