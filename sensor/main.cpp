@@ -50,7 +50,7 @@ bool IsWithinRadarRange(
 int main() {
     // Stack allocation (standard behavior for structs in C++)
     PositionComp ussPasadenaPos {110.00f, 30.00f};
-    PositionComp opforShipPos {160.00f, 30.00f};
+    PositionComp opforShipPos {110.00f, 80.01f};
     SensorComp ussPasadenaRadar {50.0f, SensorState::Active};
 
     bool detected { IsWithinRadarRange(ussPasadenaPos, opforShipPos, ussPasadenaRadar) };
