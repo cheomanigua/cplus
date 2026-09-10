@@ -15,13 +15,13 @@ bool IsWithinRadarRange(
         const PositionComp& targetPos,
         const SensorComp& radar)
 {
-    if (!radar.enabled)
-        return false;
-
     float deltaX {targetPos.x - sourcePos.x};
     float deltaY {targetPos.y - sourcePos.y};
     float distanceSquared {(deltaX * deltaX) + (deltaY * deltaY)};
 	float rangeSquared {radar.range * radar.range};
+
+    if (!radar.enabled)
+        return false;
 
     std::cout << "Distance: " << distanceSquared 
               << ". Radar Range: " << rangeSquared << "\n";

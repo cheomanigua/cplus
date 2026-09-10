@@ -5,7 +5,7 @@
 
 void ConsoleRenderSystem::update(Registry& registry)
 {
-    static double lastLogTime{0.0};
+    static double lastLogTime{};
     double currentTime = GetTime();
 
     if (currentTime - lastLogTime >= 1.0)

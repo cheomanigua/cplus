@@ -48,8 +48,7 @@ void InputSystem::update(Registry& registry)
     // 3. Apply input intent ONLY to entities that have TagSelectedComponent and InputComponent
     for (Entity e : registry.getEntities())
     {
-        if (registry.hasComponent<TagSelectedComponent>(e) && 
-            registry.hasComponent<InputComponent>(e))
+        if (registry.hasComponent<TagSelectedComponent>(e) && registry.hasComponent<InputComponent>(e))
         {
             auto& input = registry.getComponent<InputComponent>(e);
             input.moveUp = up;

@@ -21,25 +21,25 @@ bool IsWithinRadarRange(
         const PositionComp& targetPos,
         const SensorComp& radar)
 {
-	const float deltaX { targetPos.x - sourcePos.x };
+    const float deltaX { targetPos.x - sourcePos.x };
     const float deltaY { targetPos.y - sourcePos.y };
     const float distanceSquared { (deltaX * deltaX) + (deltaY * deltaY) };
     float rangeSquared {radar.range * radar.range};
 
-	switch (radar.state)
-	{
-		case SensorState::Disabled:
-			std::cout << "Sensor disabled\n";
-			rangeSquared = 0.0f;
-			break;
-		case SensorState::Passive:
-			std::cout << "Passive scanning\n";
-			rangeSquared /= 2.0f;
-			break;
-		case SensorState::Active:
-			std::cout << "Active scanning\n";
-			break;
-	}
+    switch (radar.state)
+    {
+        case SensorState::Disabled:
+            std::cout << "Sensor disabled\n";
+            rangeSquared = 0.0f;
+            break;
+        case SensorState::Passive:
+            std::cout << "Passive scanning\n";
+            rangeSquared /= 2.0f;
+            break;
+        case SensorState::Active:
+            std::cout << "Active scanning\n";
+            break;
+    }
 
     std::cout << "Distance: " << distanceSquared 
               << ". Radar Range: " << rangeSquared << "\n";

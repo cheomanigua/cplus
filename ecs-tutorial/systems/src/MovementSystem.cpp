@@ -17,7 +17,7 @@ void MovementSystem::update(Registry& registry)
 
         auto& pos = registry.getComponent<PositionComponent>(e);
         auto& spd = registry.getComponent<SpeedComponent>(e);
-        Vector2 direction{0.0f, 0.0f};
+        Vector2 direction{};
 
         // Case A: Entity is player-controlled via inputs (entity has InputComponent)
         if (registry.hasComponent<InputComponent>(e))

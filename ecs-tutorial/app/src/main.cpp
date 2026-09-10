@@ -1,15 +1,13 @@
-#include <raylib.h>
-#include "Registry.h"
 #include "PositionComponent.h"
 #include "DirectionComponent.h"
 #include "SpeedComponent.h"
 #include "InputComponent.h"
-#include "TagSelectedComponent.h"
 #include "SelectionBoundsComponent.h"
 //#include "ConsoleRenderSystem.h"
-#include "GraphicalRenderSystem.h"
+#include "Registry.h"
 #include "InputSystem.h"
 #include "MovementSystem.h"
+#include "GraphicalRenderSystem.h"
 #include <iostream>
 
 int main()
