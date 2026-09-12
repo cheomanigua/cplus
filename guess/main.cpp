@@ -61,14 +61,14 @@ bool isGuessed(int num, int secret)
 
 int main() {
     bool won {false};
-    int max = maxNumber(difficulty());
+    int max {maxNumber(difficulty())};
 
     std::random_device rd;
     std::mt19937 mt{rd()};
     std::uniform_int_distribution<int> number { 0, max };
-    int secret = number(mt);
+    int secret {number(mt)};
 
-    for (int i{}; i < 5; i++) {
+    for (int i{}; i < 5; ++i) {
         if (isGuessed(guess(max), secret))
         {
             won = true;

@@ -12,7 +12,7 @@ void MovementSystem::update(Registry& registry)
 
     for (Entity e : registry.getEntities())
     {
-        if (!registry.hasComponent<PositionComponent>(e) || !registry.hasComponent<SpeedComponent>(e))
+        if (!registry.hasComponent<SpeedComponent>(e) || !registry.hasComponent<PositionComponent>(e))
             continue;
 
         auto& pos = registry.getComponent<PositionComponent>(e);

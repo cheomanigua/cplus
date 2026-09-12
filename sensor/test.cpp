@@ -1,8 +1,7 @@
 #include <iostream>
 
 struct PositionComp {
-    float x{};
-    float y{};
+    float x{}, y{};
 };
 
 struct SensorComp {
@@ -18,7 +17,7 @@ bool IsWithinRadarRange(
     float deltaX {targetPos.x - sourcePos.x};
     float deltaY {targetPos.y - sourcePos.y};
     float distanceSquared {(deltaX * deltaX) + (deltaY * deltaY)};
-	float rangeSquared {radar.range * radar.range};
+    float rangeSquared {radar.range * radar.range};
 
     if (!radar.enabled)
         return false;
