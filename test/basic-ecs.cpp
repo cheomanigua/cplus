@@ -17,7 +17,7 @@ struct Registry {
 
 void movementSystem(Registry& registry, float deltaTime)
 {
-    for (size_t id : registry.entityIds)
+    for (auto id : registry.entityIds)
     {
         registry.positions[id].x += 1.0f;
         registry.positions[id].y += 1.0f;
@@ -26,7 +26,7 @@ void movementSystem(Registry& registry, float deltaTime)
 
 void printPositions(Registry& registry)
 {
-    for (size_t id : registry.entityIds)
+    for (auto id : registry.entityIds)
     {
         std::cout << "Entity " << id << ": " <<
             registry.positions[id].x << ", " <<
