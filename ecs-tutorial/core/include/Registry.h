@@ -21,20 +21,21 @@ public:
 
     void destroyEntity(Entity entity)
     {
-        // 1. Remove components from all pools for this entity
+        // 1. Remove components across all registered component pools
         for (auto& pair : m_pools)
         {
             pair.second->remove(entity);
         }
 
-        // 2. Remove from active entities vector
+        // 2. Remove entity from active tracking vector in O(1) via Swap-And-Pop
         auto it = std::find(m_entities.begin(), m_entities.end(), entity);
         if (it != m_entities.end())
         {
-            m_entities.erase(it);
+            *it = m_entities.back(); // Overwrite target with the last active entity
+            m_entities.pop_back();   // Pop the duplicate trailing entity
         }
 
-        // 3. Push ID back to free list for recycling
+        // 3. Push ID back to free list for future recycling
         m_freeIds.push_back(entity);
     }
 
