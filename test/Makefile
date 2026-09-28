@@ -1,6 +1,6 @@
 CXX = g++
 TARGET = MyApp
-SRCS = entity.cpp
+SRCS = test.cpp
 
 # Detect the operating system
 UNAME_S := $(shell uname -s)
