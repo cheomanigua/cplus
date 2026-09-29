@@ -1,6 +1,6 @@
-If you just run `git clone` or `git pull`, this directory does not contain `entt.hpp` because it has been git ignored.
+If you just run `git clone` or `git pull`, you must download the file `entt.hpp` manually and place it in `core/include/" direcotry.
 
-Download `entt.hpp` in this directory:
+You can download `entt.hpp` here:
 
 [https://raw.githubusercontent.com/skypjack/entt/refs/heads/main/single_include/entt/entt.hpp](https://raw.githubusercontent.com/skypjack/entt/refs/heads/main/single_include/entt/entt.hpp)
 
