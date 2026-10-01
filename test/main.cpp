@@ -1,70 +1,41 @@
-#include <algorithm>
-#include <array>
 #include <iostream>
-#include <unordered_map>
 #include <vector>
+#include "entt.hpp"
 
-enum class Day
-{
-    Monday,
-    Tuedsday,
-    Wednesday
+entt::registry reg;
+
+struct Position {
+	float x{}, y{};
 };
 
-int main()
+void printPosition(entt::registry& reg)
 {
-    Day day {Day::Wednesday};
+    auto view = reg.view<Position>();
 
-    if (day == Day::Wednesday)
+    for (auto [entity, position] : view.each())
     {
-        std::cout << "It's Wednesday\n";
-    } else {
-        std::cout << "It's Tuesday\n";
+        std::cout << "Entity " << entt::to_entity(entity) << ": "
+                  << position.x << ", "
+                  << position.y << '\n';
     }
-
-    std::vector<int> numbers = {10, 20, 30, 20, 15, 26, 20};
-    std::ranges::sort(numbers);
-    for (const auto& number : numbers) {
-        std::cout << number << "\n";
-    }
-    std::erase(numbers, 20);
-    std::cout << "------\n";
-    for (const auto& number : numbers) {
-        std::cout << number << "\n";
-    }
-
-    constexpr std::size_t vsize {50'000};
-    std::vector<int> vvalues {};
-    std::array<int, vsize> avalues {};
-    std::unordered_map<int, int> mvalues {};
-    int sum1{}, sum2{}, sum3{};
-
-    for (std::size_t i = 0; i < vsize; ++i)
-    {
-        vvalues.push_back(static_cast<int>(i));
-        avalues[i] = static_cast<int>(i);
-        mvalues.emplace(vvalues.back(), avalues[i]);
-    }
-
-    //for (std::size_t i = 0; i < vvalues.size(); ++i)
-    for (const auto& value : vvalues)
-    {
-        //sum1 += vvalues[i];
-        sum1 += value;
-    }
-
-    //for (std::size_t i = 0; i < avalues.size(); ++i)
-    for (const auto& value : avalues)
-    {
-        //sum2 += avalues[i];
-        sum2 += value;
-    }
-
-    for (const auto& [key, value] : mvalues)
-    {
-        sum3 += value;
-    }
-
-    std::cout << sum1 << ' ' << sum2 << ' ' << sum3 << '\n';
+	std::cout << "\n";
 }
 
+int main() {
+
+	for(std::size_t i = 0; i < 5; ++i)
+	{
+		auto entity = reg.create();
+		reg.emplace<Position>(entity, static_cast<float>(i), static_cast<float>(i));
+	};
+
+	printPosition(reg);
+	reg.destroy(static_cast<entt::entity>(1));
+	printPosition(reg);
+
+	auto entity = reg.create();
+	reg.emplace<Position>(entity, 5.0f, 5.0f);
+	printPosition(reg);
+
+	return 0;
+}
