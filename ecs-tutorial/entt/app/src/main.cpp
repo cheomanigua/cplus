@@ -15,12 +15,12 @@
 
 int main()
 {
-    const int screenWidth{800};
-    const int screenHeight{600};
+    constexpr int screenWidth{800};
+    constexpr int screenHeight{600};
     InitWindow(screenWidth, screenHeight, "Prototype Engine");
     SetTargetFPS(60);
 
-    entt::registry registry;
+    entt::registry registry{};
     GraphicalRenderSystem graphicalRenderSystem{};
     InputSystem inputSystem{};
     MovementSystem movementSystem{};
@@ -32,15 +32,26 @@ int main()
     registry.emplace<Position>(player, 60.0f, 60.0f);
     registry.emplace<Input>(player);
     registry.emplace<Speed>(player, 150.0f);
-    registry.emplace<TagSelected>(player);
     registry.emplace<SelectionBounds>(player, 20.0f);
+    //registry.emplace<TagSelected>(player);
 
     registry.emplace<Position>(enemy, 190.0f, 60.0f);
     registry.emplace<Input>(enemy);
-    registry.emplace<Direction>(enemy, 0.0f, 30.0f);
     registry.emplace<Speed>(enemy, 50.0f);
     registry.emplace<SelectionBounds>(enemy, 20.0f);
+    //registry.emplace<Direction>(enemy, 0.0f, 30.0f);
 
+    for (std::size_t i = 0; i < 200; ++i)
+    {
+        auto enemy  = registry.create();
+        float x = static_cast<float>((i % 16) * 50.0f);
+        float y = 1.0f + static_cast<float>(i / 16) * 50.0f;
+        registry.emplace<Position>(enemy, x, y);
+        registry.emplace<Input>(enemy);
+        registry.emplace<Speed>(enemy, 50.0f);
+        registry.emplace<SelectionBounds>(enemy, 20.0f);
+    }
+        
     while (!WindowShouldClose())
     {
         inputSystem.update(registry);
@@ -51,4 +62,3 @@ int main()
     CloseWindow();
     return 0;
 }
-
