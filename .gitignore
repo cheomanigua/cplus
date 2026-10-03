@@ -1,4 +1,9 @@
 **/build/
 MyApp
+myapp
 entt.hpp
+flecs.h
+flecs.c
+flecs.o
+main.o
 
