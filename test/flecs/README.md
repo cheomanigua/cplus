@@ -39,6 +39,3 @@ g++ main.o flecs.o -lrt -lpthread -lm -o myapp
 ```bash
 ./myapp
 ```
-
-The **`entities[3].destruct()` change is the most important one**. Your `520` happened to correspond to one of the entities in your particular run, but you shouldn't rely on that ID.
-

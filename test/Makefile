@@ -1,12 +1,12 @@
 CXX = g++
 TARGET = MyApp
-SRCS = entity.cpp
+SRCS = enum.cpp
 
 # Detect the operating system
 UNAME_S := $(shell uname -s)
 
 # Base compiler flags
-CXXFLAGS = -O2 -Wall -std=c++20
+CXXFLAGS = -O2 -Wall -std=c++23
 
 # OS-specific configurations
 ifeq ($(UNAME_S), Darwin)
