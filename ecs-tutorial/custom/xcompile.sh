@@ -1,5 +1,4 @@
 rm -rf build
 mkdir build
-cd build
-cmake ..
-cmake --build .
+cmake -S . -B build
+cmake --build build 
