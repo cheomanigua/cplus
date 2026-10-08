@@ -1,9 +1,9 @@
 **/build/
 MyApp
 myapp
+game
 entt.hpp
 flecs.h
 flecs.c
 flecs.o
 main.o
-
