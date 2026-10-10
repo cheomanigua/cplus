@@ -1,39 +1,45 @@
-#include <iostream>
+#include <print>
 #include "flecs.h"
 
 struct Position {
     float x{}, y{};
 };
 
-void printPos(flecs::world& world)
+struct Velocity {
+    float x{}, y{};
+};
+
+void movementSys(flecs::query<Position, Velocity>& q, float dt)
 {
-    auto query = world.query<Position>();
-    query.each([](flecs::entity entity, Position& pos) {
-        std::cout << "Entity "
-                  << entity.id() << ": "
-                  << pos.x << ", "
-                  << pos.y << "\n";
+    q.each([dt](Position& pos, Velocity& vel) {
+        pos.x += vel.x * dt;
+        pos.y += vel.y * dt;
     });
-    std::cout << "\n";
+}
+
+void printPos(flecs::query<const Position>& q)
+{
+    q.each([](flecs::entity e, const Position& pos) {
+        std::println("Entity {}: {}, {}", e.id(), pos.x, pos.y);
+    });
 }
 
 int main() {
     flecs::world world;
+    constexpr float dt {1.0f / 60.0f};
+    auto posQ = world.query<const Position>();
+    auto movQ = world.query_builder<Position, Velocity>().cached().build();
 
-    for (std::size_t i = 0; i < 5; ++i) {
-        auto entity = world.entity();
-
-        entity.set<Position>({
-            static_cast<float>(i),
-            static_cast<float>(i)
-        });
+    for(std::size_t i = 0; i < 5; ++i) {
+        auto e = world.entity();
+        float value = static_cast<float>(i);
+        e.set<Position>({value, value});
+        e.set<Velocity>({value, value});
     }
-    printPos(world);
+    printPos(posQ);
 
-    world.entity(520).destruct();
-    printPos(world);
-
-    auto entity = world.entity();
-    entity.set<Position>({5.0f, 5.0f});
-    printPos(world);
+    for(std::size_t frame = 0; frame < 60; ++frame) {
+        movementSys(movQ, dt);
+    }
+    printPos(posQ);
 }
