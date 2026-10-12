@@ -6,11 +6,6 @@ struct Circle {
     float radius;
 };
 
-struct Speed
-{
-    float value{};
-};
-
 int main()
 {
     constexpr int screenWidth { 800 };

@@ -1,36 +1,20 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
-struct Position
-{
-    float x{}, y{};
+struct Circle {
+	sf::Vector2f position;
+	float radius;
 };
 
-struct Direction
+sf::Vector2f getMovementDirection()
 {
-    float x{}, y{};
-};
-
-struct Speed
-{
-    float value{};
-};
-
-Direction getMovementDirection()
-{
-    Direction direction{};
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-        direction.y -= 1.f;
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-        direction.y += 1.f;
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-        direction.x -= 1.f;
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-        direction.x += 1.f;
+	sf::Vector2f direction = {
+	    static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) -
+	    static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)),
+	
+	    static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) -
+	    static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+	};
 
     const float length = std::sqrt(
         direction.x * direction.x +
@@ -50,12 +34,14 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode({800, 600}), "Movement");
     window.setFramerateLimit(60);
+    constexpr float speed { 200.0f };
 
-    sf::CircleShape circle(15.f);
-    circle.setFillColor(sf::Color::Green);
+	Circle circle{{400.0f, 215.0f}, 20.0f};
+    sf::CircleShape draw(circle.radius);
+	draw.setOrigin({circle.radius, circle.radius});
+	draw.setPosition(circle.position);
+    draw.setFillColor(sf::Color::Green);
 
-    Position position{400.f, 300.f};
-    Speed speed{200.f};
 
     sf::Clock clock;
 
@@ -69,15 +55,13 @@ int main()
                 window.close();
         }
 
-        const Direction direction = getMovementDirection();
+        const sf::Vector2f direction = getMovementDirection();
+        circle.position += direction * speed * deltaTime;
 
-        position.x += direction.x * speed.value * deltaTime;
-        position.y += direction.y * speed.value * deltaTime;
-
-        circle.setPosition({position.x, position.y});
+        draw.setPosition(circle.position);
 
         window.clear();
-        window.draw(circle);
+        window.draw(draw);
         window.display();
     }
 }
