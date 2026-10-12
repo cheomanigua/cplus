@@ -21,9 +21,10 @@ int main()
     SetTargetFPS(60);
 
     flecs::world world{};
-    GraphicalRenderSystem graphicalRenderSystem{};
-    InputSystem inputSystem{};
-    MovementSystem movementSystem{};
+    GraphicalRenderSystem graphicalRenderSystem{world};
+    InputSystem inputSystem{world};
+    MovementSystem movementSystem{world};
+
     flecs::entity player = world.entity();
     flecs::entity enemy = world.entity();
     //std::cout << "Player entity: " << entt::to_integral(player) << "\n";
@@ -54,9 +55,9 @@ int main()
         
     while (!WindowShouldClose())
     {
-        inputSystem.update(world);
-        movementSystem.update(world);
-        graphicalRenderSystem.update(world);
+        inputSystem.update();
+        movementSystem.update();
+        graphicalRenderSystem.update();
     }
 
     CloseWindow();

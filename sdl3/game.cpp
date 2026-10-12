@@ -31,8 +31,7 @@ void Update(
 
     // Normalize movement so diagonal movement
     // isn't faster.
-    const float length =
-        std::sqrt(
+    const float length = std::sqrt(
             direction.x * direction.x +
             direction.y * direction.y);
 
@@ -42,17 +41,9 @@ void Update(
         direction.y /= length;
     }
 
-    const float movement =
-        GAME_SPEED * deltaTime;
+    circle.position.x += direction.x * GAME_SPEED * deltaTime;
+    circle.position.y += direction.y * GAME_SPEED * deltaTime;
 
-    const SDL_FPoint delta{
-        direction.x * movement,
-        direction.y * movement
-    };
-
-    circle.position.x += delta.x;
-    circle.position.y += delta.y;
-
-    rectangle.position.x += delta.x;
-    rectangle.position.y += delta.y;
+    rectangle.position.x += direction.x * GAME_SPEED * deltaTime;
+    rectangle.position.y += direction.y * GAME_SPEED * deltaTime;
 }

@@ -21,9 +21,10 @@ int main()
     SetTargetFPS(60);
 
     entt::registry registry{};
-    GraphicalRenderSystem graphicalRenderSystem{};
-    InputSystem inputSystem{};
-    MovementSystem movementSystem{};
+    GraphicalRenderSystem graphicalRenderSystem{registry};
+    InputSystem inputSystem{registry};
+    MovementSystem movementSystem{registry};
+
     entt::entity player = registry.create();
     entt::entity enemy = registry.create();
     std::cout << "Player entity: " << entt::to_integral(player) << "\n";
@@ -54,9 +55,9 @@ int main()
         
     while (!WindowShouldClose())
     {
-        inputSystem.update(registry);
-        movementSystem.update(registry);
-        graphicalRenderSystem.update(registry);
+        inputSystem.update();
+        movementSystem.update();
+        graphicalRenderSystem.update();
     }
 
     CloseWindow();

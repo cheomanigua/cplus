@@ -1,39 +1,42 @@
 #include "InputSystem.h"
-#include "Input.h"
-#include "Position.h"
-#include "Tags.h"
-#include "SelectionBounds.h"
 #include <raylib.h>
 
-void InputSystem::update(flecs::world& world)
+InputSystem::InputSystem(flecs::world& world)
+    : world{world},
+      selectionQuery{world.query<Position, SelectionBounds>()},
+      inputQuery{world.query<Input, TagSelected>()}
 {
-    // 1. Handle Mouse Selection using selection bounds
+}
+
+void InputSystem::update()
+{
+    // 1. Handle mouse selection
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         Vector2 mousePos = GetMousePosition();
-    
-        // Remove TagSelected from all entities in a single batch operation
+
+        // Deselect all entities
         world.remove_all<TagSelected>();
-    
-        // Query only entities that have both Position and SelectionBounds
-        auto query = world.query<Position, SelectionBounds>();
-        auto entity = query.find([&](Position& position, SelectionBounds& bounds)
-        {
-            return CheckCollisionPointCircle(mousePos, position.position, bounds.radius);
-        });
+
+        // Select the first entity under the mouse
+        auto entity = selectionQuery.find(
+            [&](Position& position, SelectionBounds& bounds)
+            {
+                return CheckCollisionPointCircle(mousePos, position.position, bounds.radius);
+            });
 
         if (entity)
             entity.add<TagSelected>();
     }
-    // 2. Read keyboard states using Raylib
-    bool up = IsKeyDown(KEY_UP) || IsKeyDown(KEY_W);
-    bool down = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
-    bool left = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
-    bool right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
 
-    // 3. Pass raw intent to all entities that have an InputComponent
-    auto query = world.query<Input, TagSelected>();
-    query.each([&](Input& input, TagSelected)
+    // 2. Read keyboard states
+    const bool up = IsKeyDown(KEY_UP) || IsKeyDown(KEY_W);
+    const bool down = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
+    const bool left = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
+    const bool right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
+
+    // 3. Update input for selected entities
+    inputQuery.each([&](Input& input, TagSelected)
     {
         input.moveUp = up;
         input.moveDown = down;

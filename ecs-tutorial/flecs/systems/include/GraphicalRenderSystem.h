@@ -1,8 +1,14 @@
 #pragma once
+
 #include <flecs.h>
+#include "Position.h"
 
 class GraphicalRenderSystem
 {
 public:
-    void update(flecs::world& world);
+    explicit GraphicalRenderSystem(flecs::world& world);
+    void update();
+
+private:
+    flecs::query<Position> positionQuery;
 };

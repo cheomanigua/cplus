@@ -6,13 +6,22 @@
 #include <raylib.h>
 #include <raymath.h>
 
-void MovementSystem::update(entt::registry& registry)
+MovementSystem::MovementSystem(entt::registry& registry)
+    : registry{registry},
+      inputView{registry.view<Position, Speed, Input>()},
+      autoView{
+          registry.view<Position, Speed, Direction>(
+              entt::exclude<Input>)
+      }
+{
+}
+
+void MovementSystem::update()
 {
     float deltaTime = GetFrameTime();
 
     // 1. Process player/input-controlled entities
     // Requires: Position, Speed, Input
-    auto inputView = registry.view<Position, Speed, Input>();
     for (auto [entity, pos, spd, input] : inputView.each())
     {
         Vector2 direction{
@@ -31,7 +40,6 @@ void MovementSystem::update(entt::registry& registry)
     // 2. Process autonomous entities (e.g., enemies)
     // Requires: Position, Speed, Direction
     // Excludes: Input
-    auto autoView = registry.view<Position, Speed, Direction>(entt::exclude<Input>);
     for (auto [entity, pos, spd, dir] : autoView.each())
     {
         Vector2 direction = dir.direction;

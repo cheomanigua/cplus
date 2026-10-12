@@ -1,14 +1,17 @@
 #include "GraphicalRenderSystem.h"
-#include "Position.h"
 #include <raylib.h>
 
-void GraphicalRenderSystem::update(entt::registry& registry)
+GraphicalRenderSystem::GraphicalRenderSystem(entt::registry& registry)
+    : positionView{registry.view<Position>()}
+{
+}
+
+void GraphicalRenderSystem::update()
 {
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    auto view = registry.view<Position>();
-    for (auto [entity, pos] : view.each())
+    for (auto [entity, pos] : positionView.each())
     {
         // Draw the entities as a circles
         DrawCircle(static_cast<int>(pos.position.x), static_cast<int>(pos.position.y), 20.0f, BLUE);

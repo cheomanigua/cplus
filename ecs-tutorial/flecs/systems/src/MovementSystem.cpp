@@ -1,17 +1,18 @@
 #include "MovementSystem.h"
-#include "Position.h"
-#include "Direction.h"
-#include "Speed.h"
-#include "Input.h"
 #include <raylib.h>
 #include <raymath.h>
 
-void MovementSystem::update(flecs::world& world)
+MovementSystem::MovementSystem(flecs::world& world)
+    : inputQuery(world.query<Position, Speed, Input>()),
+      autoQuery(world.query_builder<Position, Speed, Direction>().without<Input>().build())
+{
+}
+
+void MovementSystem::update()
 {
     float deltaTime = GetFrameTime();
 
     // 1. Process player/input-controlled entities
-    auto inputQuery = world.query<Position, Speed, Input>();
     inputQuery.each([&](Position& pos, Speed& spd, Input& input)
     {
         Vector2 direction{
@@ -28,7 +29,6 @@ void MovementSystem::update(flecs::world& world)
     });
 
     // 2. Process autonomous entities
-    auto autoQuery = world.query_builder<Position, Speed, Direction>().without<Input>().build();
     autoQuery.each([&](Position& pos, Speed& spd, Direction& dir)
     {
         Vector2 direction = dir.direction;
