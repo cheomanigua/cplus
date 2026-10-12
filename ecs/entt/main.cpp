@@ -1,39 +1,55 @@
-#include <iostream>
+#include <cstddef>
+#include <print>
+
 #include "entt.hpp"
 
 struct Position {
     float x{}, y{};
 };
 
-void printPos(entt::registry& reg)
+struct Velocity {
+    float x{}, y{};
+};
+
+void movementSystem(entt::view<entt::get_t<Position, Velocity>>& v, float dt)
 {
-    auto view = reg.view<Position>();
-    for(auto [entity, pos] : view.each()) {
-        std::cout << "Entity "
-            << entt::to_entity(entity) << ": "
-            << pos.x << ", "
-            << pos.y << "\n";
+    for(auto [entity, pos, vel] : v.each()) {
+        pos.x += vel.x * dt;
+        pos.y += vel.y * dt;
     }
-    std::cout << "\n";
+}
+
+void printPos(entt::view<entt::get_t<Position>>& v)
+{
+    for(auto [entity, pos] : v.each()) {
+        std::println("Entity {}: {}, {}", entt::to_integral(entity), pos.x, pos.y);
+    }
+    std::println();
 }
 
 int main() {
     entt::registry reg{};
+    constexpr float dt {1.0f / 60.0f};
+    auto posV = reg.view<Position>();
+    auto movV = reg.view<Position, Velocity>();
 
     for(std::size_t i = 0; i < 5; ++i) {
         auto entity = reg.create();
-
-        reg.emplace<Position>(entity,
-                static_cast<float>(i),
-                static_cast<float>(i)
-                );
+        float value = static_cast<float>(i);
+        reg.emplace<Position>(entity, value, value);
+        reg.emplace<Velocity>(entity, value, value);
     }
-    printPos(reg);
+    printPos(posV);
+
+    for(std::size_t frame = 0; frame < 60; ++frame) {
+        movementSystem(movV, dt);
+    }
+    printPos(posV);
 
     reg.destroy(static_cast<entt::entity>(3));
-    printPos(reg);
+    printPos(posV);
 
     auto entity = reg.create();
     reg.emplace<Position>(entity, 5.0f, 5.0f);
-    printPos(reg);
+    printPos(posV);
 }

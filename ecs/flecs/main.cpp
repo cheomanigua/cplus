@@ -1,4 +1,6 @@
+#include <cstddef>
 #include <print>
+
 #include "flecs.h"
 
 struct Position {
@@ -9,7 +11,7 @@ struct Velocity {
     float x{}, y{};
 };
 
-void movementSys(flecs::query<Position, Velocity>& q, float dt)
+void movementSystem(flecs::query<Position, Velocity>& q, float dt)
 {
     q.each([dt](Position& pos, Velocity& vel) {
         pos.x += vel.x * dt;
@@ -22,10 +24,11 @@ void printPos(flecs::query<const Position>& q)
     q.each([](flecs::entity e, const Position& pos) {
         std::println("Entity {}: {}, {}", e.id(), pos.x, pos.y);
     });
+    std::println();
 }
 
 int main() {
-    flecs::world world;
+    flecs::world world{};
     constexpr float dt {1.0f / 60.0f};
     auto posQ = world.query<const Position>();
     auto movQ = world.query_builder<Position, Velocity>().cached().build();
@@ -39,7 +42,14 @@ int main() {
     printPos(posQ);
 
     for(std::size_t frame = 0; frame < 60; ++frame) {
-        movementSys(movQ, dt);
+        movementSystem(movQ, dt);
     }
+    printPos(posQ);
+
+    world.entity(523).destruct();
+    printPos(posQ);
+
+    auto e = world.entity();
+    e.set<Position>({5.0f, 5.0f});
     printPos(posQ);
 }
