@@ -8,9 +8,9 @@ Input GetInput()
         SDL_GetKeyboardState(nullptr);
 
     return {
-        keyboard[SDL_SCANCODE_A],
-        keyboard[SDL_SCANCODE_D],
-        keyboard[SDL_SCANCODE_W],
-        keyboard[SDL_SCANCODE_S]
+        keyboard[SDL_SCANCODE_LEFT],
+        keyboard[SDL_SCANCODE_RIGHT],
+        keyboard[SDL_SCANCODE_UP],
+        keyboard[SDL_SCANCODE_DOWN]
     };
 }

@@ -1,11 +1,10 @@
 #include "game.h"
 #include "input.h"
 
-#include <cmath>
-
 namespace
 {
-    constexpr float GAME_SPEED = 100.0f;
+    constexpr float GAME_SPEED {100.0f};
+    constexpr float DIAGONAL {0.70710678118f};
 }
 
 SDL_FRect Rectangle::GetBounds() const
@@ -29,16 +28,11 @@ void Update(
         static_cast<float>(input.down - input.up)
     };
 
-    // Normalize movement so diagonal movement
-    // isn't faster.
-    const float length = std::sqrt(
-            direction.x * direction.x +
-            direction.y * direction.y);
-
-    if (length > 0.0f)
+    // Normalize movement so diagonal movement isn't faster.
+    if (direction.x != 0.0f && direction.y != 0.0f)
     {
-        direction.x /= length;
-        direction.y /= length;
+        direction.x *= DIAGONAL;
+        direction.y *= DIAGONAL;
     }
 
     circle.position.x += direction.x * GAME_SPEED * deltaTime;

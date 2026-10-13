@@ -6,6 +6,10 @@ struct Circle {
 	float radius;
 };
 
+struct Bunny {
+    sf::Vector2f position;
+};
+
 sf::Vector2f getMovementDirection()
 {
 	sf::Vector2f direction = {
@@ -36,12 +40,23 @@ int main()
     window.setFramerateLimit(60);
     constexpr float speed { 200.0f };
 
-	Circle circle{{400.0f, 215.0f}, 20.0f};
-    sf::CircleShape draw(circle.radius);
-	draw.setOrigin({circle.radius, circle.radius});
-	draw.setPosition(circle.position);
-    draw.setFillColor(sf::Color::Green);
+    // Load a sprite to display
+    const sf::Texture texture("raybunny.png");
+    Bunny bunny1{{200.0f, 215.0f}};
+    sf::Sprite bunny01(texture);
 
+	Circle circle1{{400.0f, 215.0f}, 20.0f};
+    sf::CircleShape circle01(circle1.radius, 3);
+	circle01.setOrigin({circle1.radius, circle1.radius});
+    circle01.setRotation(sf::degrees(90.0f));
+    circle01.setFillColor(sf::Color::Red);
+    circle01.setOutlineColor(sf::Color::Green);
+    circle01.setOutlineThickness(1);
+
+	Circle circle2{{600.0f, 215.0f}, 20.0f};
+    sf::CircleShape circle02(circle2.radius);
+	circle02.setOrigin({circle2.radius, circle2.radius});
+    circle02.setFillColor(sf::Color::Green);
 
     sf::Clock clock;
 
@@ -56,12 +71,18 @@ int main()
         }
 
         const sf::Vector2f direction = getMovementDirection();
-        circle.position += direction * speed * deltaTime;
+        bunny1.position += direction * speed * deltaTime;
+        circle2.position.x += 0.0f * speed * deltaTime;
+        circle2.position.y += 1.0f * 10.0f * deltaTime;
 
-        draw.setPosition(circle.position);
+        bunny01.setPosition(bunny1.position);
+        circle01.setPosition(circle1.position);
+        circle02.setPosition(circle2.position);
 
         window.clear();
-        window.draw(draw);
+        window.draw(circle01);
+        window.draw(circle02);
+        window.draw(bunny01);
         window.display();
     }
 }
