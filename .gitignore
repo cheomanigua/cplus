@@ -7,3 +7,4 @@ flecs.h
 flecs.c
 flecs.o
 main.o
+.swp

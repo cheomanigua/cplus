@@ -10,6 +10,16 @@
 
 namespace wp
 {
+    // -------------------------------------------------------------
+    // Colors
+    // -------------------------------------------------------------
+
+    inline const SDL_Color Blue {0, 121, 241, 255};
+    inline const SDL_Color Red {230, 41, 55, 0};
+    inline const SDL_Color White {255, 255, 255};
+    inline const SDL_Color Black {0, 0, 0, 255};
+    inline const SDL_Color Gray {80, 80, 80, 255};
+
     // -----------------------------------------------------------------
     // Types & Structs
     // -----------------------------------------------------------------
@@ -313,7 +323,7 @@ namespace wp
         return true;
     }
 
-    inline SDL_Texture* load(const char* path)
+    inline SDL_Texture* loadTexture(const char* path)
     {
         if (!ctx.textureCache)
             return nullptr;
@@ -453,7 +463,7 @@ namespace wp
     // Drawing Overloads API
     // -----------------------------------------------------------------
 
-    inline void draw(const Circle& circle, SDL_Color color = {0, 121, 241, 255})
+    inline void draw(const Circle& circle, SDL_Color color = White)
     {
         SDL_SetRenderDrawColor(ctx.renderer, color.r, color.g, color.b, color.a);
         const int cx {static_cast<int>(circle.position.x)};
@@ -479,29 +489,19 @@ namespace wp
         }
     }
 
-    inline void draw(const Rectangle& rect, SDL_Color color = {230, 41, 55, 255})
+    inline void draw(const Rectangle& rect, SDL_Color color = White)
     {
         SDL_SetRenderDrawColor(ctx.renderer, color.r, color.g, color.b, color.a);
         SDL_FRect frect {rect.GetBounds()};
         SDL_RenderRect(ctx.renderer, &frect);
     }
 
-    inline void drawText(const char* text, float x, float y, SDL_Color color = {80, 80, 80, 255})
+    inline void drawText(const char* text, float x, float y, SDL_Color color = White)
     {
         if (ctx.textCache)
         {
             ctx.textCache->Draw(text, x, y, color);
         }
-    }
-
-    inline SDL_Texture* loadTexture(const char* path)
-    {
-        SDL_Texture* texture {IMG_LoadTexture(ctx.renderer, path)};
-    
-        if (!texture)
-            SDL_Log("Failed to load texture '%s': %s", path, SDL_GetError());
-    
-        return texture;
     }
 
     inline void draw(const Sprite& sprite)

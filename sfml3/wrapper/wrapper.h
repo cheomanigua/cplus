@@ -10,15 +10,23 @@ namespace wp
     // Colors
     // -------------------------------------------------------------
 
-    inline const sf::Color Blue{0, 121, 241};
-    inline const sf::Color Red{230, 41, 55};
-    inline const sf::Color White{255, 255, 255};
-    inline const sf::Color Black{0, 0, 0};
-    inline const sf::Color Gray{80, 80, 80};
+    inline const sf::Color Blue {0, 121, 241, 255};
+    inline const sf::Color Red {230, 41, 55, 255};
+    inline const sf::Color White {255, 255, 255, 255};
+    inline const sf::Color Black {0, 0, 0, 255};
+    inline const sf::Color Gray {80, 80, 80, 255};
 
     // -------------------------------------------------------------
-    // Game Objects
+    // Game Objects and Types
     // -------------------------------------------------------------
+
+    struct Input
+    {
+        bool left {false};
+        bool right {false};
+        bool up {false};
+        bool down {false};
+    };
 
     struct Circle
     {
@@ -78,7 +86,7 @@ namespace wp
     inline void draw(
         sf::RenderTarget& target,
         const Circle& circle,
-        sf::Color color = Blue)
+        sf::Color color = White)
     {
         sf::CircleShape shape(circle.radius);
 
@@ -98,7 +106,7 @@ namespace wp
     inline void draw(
         sf::RenderTarget& target,
         const Rectangle& rectangle,
-        sf::Color color = Red)
+        sf::Color color = White)
     {
         sf::RectangleShape shape(rectangle.size);
 
@@ -145,6 +153,23 @@ namespace wp
     {
         draw(target, Rectangle{position, size}, color);
     }
+    
+
+    // -----------------------------------------------------------------
+    // Input API
+    // -----------------------------------------------------------------
+
+    inline Input GetInput()
+    {
+        return {
+            sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left),
+            sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right),
+            sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up),
+            sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)
+        };
+    }
+
+
 
     // -------------------------------------------------------------
     // Collision Detection
