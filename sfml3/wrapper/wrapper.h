@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-namespace ss
+namespace wp
 {
     // -------------------------------------------------------------
     // Colors
@@ -244,4 +244,4 @@ namespace ss
         );
     }
 
-} // namespace ss
+} // namespace wp

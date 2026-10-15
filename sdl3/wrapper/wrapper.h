@@ -2,11 +2,13 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
+#include <SDL3_image/SDL_image.h>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <algorithm>
 
-namespace mv
+namespace wp
 {
     // -----------------------------------------------------------------
     // Types & Structs
@@ -14,10 +16,10 @@ namespace mv
 
     struct Input
     {
-        bool left = false;
-        bool right = false;
-        bool up = false;
-        bool down = false;
+        bool left {false};
+        bool right {false};
+        bool up {false};
+        bool down {false};
     };
 
     struct Circle
@@ -34,6 +36,25 @@ namespace mv
         SDL_FRect GetBounds() const
         {
             return {position.x, position.y, size.x, size.y};
+        }
+    };
+
+    struct Sprite
+    {
+        SDL_FPoint position{};
+        SDL_Texture* texture {nullptr};
+
+        Sprite(SDL_FPoint position, SDL_Texture* texture)
+            : position(position), texture(texture)
+        {
+        }
+
+        SDL_FRect GetBounds() const
+        {
+            if (!texture) return {};
+            float w{}, h{};
+            SDL_GetTextureSize(texture, &w, &h);
+            return {position.x, position.y, w, h};
         }
     };
 
@@ -161,28 +182,93 @@ namespace mv
         std::unordered_map<TextKey, CachedText, TextKeyHash> cache_;
     };
 
+
+    // -----------------------------------------------------------------
+    // Texture Caching
+    // -----------------------------------------------------------------
+    
+    class TextureCache
+    {
+    public:
+        explicit TextureCache(SDL_Renderer* renderer)
+            : renderer_(renderer)
+        {
+        }
+    
+        ~TextureCache()
+        {
+            Clear();
+        }
+    
+        TextureCache(const TextureCache&) = delete;
+        TextureCache& operator=(const TextureCache&) = delete;
+    
+        SDL_Texture* Get(const char* path)
+        {
+            if (!renderer_ || !path)
+                return nullptr;
+    
+            auto it = textures_.find(path);
+    
+            if (it != textures_.end())
+                return it->second;
+    
+            SDL_Texture* texture = IMG_LoadTexture(renderer_, path);
+    
+            if (!texture)
+            {
+                SDL_Log(
+                    "Failed to load texture '%s': %s",
+                    path,
+                    SDL_GetError()
+                );
+                return nullptr;
+            }
+    
+            textures_.emplace(path, texture);
+            return texture;
+        }
+    
+        void Clear()
+        {
+            for (auto& [path, texture] : textures_)
+            {
+                if (texture)
+                    SDL_DestroyTexture(texture);
+            }
+    
+            textures_.clear();
+        }
+    
+    private:
+        SDL_Renderer* renderer_;
+        std::unordered_map<std::string, SDL_Texture*> textures_;
+    };
+
     // -----------------------------------------------------------------
     // Global Context (Internal Timing & State)
     // -----------------------------------------------------------------
     inline struct Context
     {
-        SDL_Window* window = nullptr;
-        SDL_Renderer* renderer = nullptr;
-        TTF_Font* font = nullptr;
-        TextCache* textCache = nullptr;
-        bool running = false;
+        SDL_Window* window {nullptr};
+        SDL_Renderer* renderer {nullptr};
+        TTF_Font* font {nullptr};
+        TextCache* textCache {nullptr};
+        TextureCache* textureCache {nullptr};
+        bool running {false};
 
         const Uint64 performanceFrequency = SDL_GetPerformanceFrequency();
-        Uint64 previousCounter = 0;
-        Uint64 frameStart = 0;
-        float deltaTime = 0.0f;
+        Uint64 previousCounter {0};
+        Uint64 frameStart {0};
+        float deltaTime {0.0f};
 
-        const float maxDeltaTime = 0.1f;
-        const double targetFrameTime = 1.0 / 60.0;
+        const float maxDeltaTime {0.1f};
+        const double targetFrameTime {1.0 / 60.0};
 
         ~Context()
         {
             delete textCache;
+            delete textureCache;
             if (font) TTF_CloseFont(font);
             if (renderer) SDL_DestroyRenderer(renderer);
             if (window) SDL_DestroyWindow(window);
@@ -211,6 +297,8 @@ namespace mv
             return false;
         }
 
+        ctx.textureCache = new TextureCache(ctx.renderer);
+
         if (fontPath)
         {
             ctx.font = TTF_OpenFont(fontPath, fontSize);
@@ -223,6 +311,14 @@ namespace mv
         ctx.running = true;
         ctx.previousCounter = SDL_GetPerformanceCounter();
         return true;
+    }
+
+    inline SDL_Texture* load(const char* path)
+    {
+        if (!ctx.textureCache)
+            return nullptr;
+
+        return ctx.textureCache->Get(path);
     }
 
     inline bool IsRunning()
@@ -280,7 +376,7 @@ namespace mv
             keyboard[SDL_SCANCODE_UP],
             keyboard[SDL_SCANCODE_DOWN]
         };
-    } //[cite: 4, 5]
+    }
 
     // -----------------------------------------------------------------
     // Collision Detection API
@@ -288,10 +384,10 @@ namespace mv
 
     inline bool CheckCollision(SDL_FPoint point, SDL_FPoint circleCenter, float circleRadius)
     {
-        const float dx = point.x - circleCenter.x;
-        const float dy = point.y - circleCenter.y;
+        const float dx {point.x - circleCenter.x};
+        const float dy {point.y - circleCenter.y};
         return (dx * dx + dy * dy) <= (circleRadius * circleRadius);
-    } //[cite: 14, 15]
+    }
 
     inline bool CheckCollision(SDL_FPoint point, const SDL_FRect& rectangle)
     {
@@ -299,15 +395,15 @@ namespace mv
                point.x < rectangle.x + rectangle.w &&
                point.y >= rectangle.y &&
                point.y < rectangle.y + rectangle.h;
-    } //[cite: 14, 15]
+    }
 
     inline bool CheckCollision(SDL_FPoint centerA, float radiusA, SDL_FPoint centerB, float radiusB)
     {
-        const float dx = centerA.x - centerB.x;
-        const float dy = centerA.y - centerB.y;
-        const float radiusSum = radiusA + radiusB;
+        const float dx {centerA.x - centerB.x};
+        const float dy {centerA.y - centerB.y};
+        const float radiusSum {radiusA + radiusB};
         return (dx * dx + dy * dy) <= (radiusSum * radiusSum);
-    } //[cite: 14, 15]
+    }
 
     inline bool CheckCollision(const SDL_FRect& rectangleA, const SDL_FRect& rectangleB)
     {
@@ -315,33 +411,43 @@ namespace mv
                rectangleA.x + rectangleA.w > rectangleB.x &&
                rectangleA.y < rectangleB.y + rectangleB.h &&
                rectangleA.y + rectangleA.h > rectangleB.y;
-    } //[cite: 14, 15]
+    }
 
     inline bool CheckCollision(SDL_FPoint circleCenter, float circleRadius, const SDL_FRect& rectangle)
     {
         const float closestX = std::clamp(circleCenter.x, rectangle.x, rectangle.x + rectangle.w);
         const float closestY = std::clamp(circleCenter.y, rectangle.y, rectangle.y + rectangle.h);
-        const float dx = circleCenter.x - closestX;
-        const float dy = circleCenter.y - closestY;
+        const float dx {circleCenter.x - closestX};
+        const float dy {circleCenter.y - closestY};
         return (dx * dx + dy * dy) <= (circleRadius * circleRadius);
-    } //[cite: 14, 15]
+    }
 
     inline bool CheckCollision(const Circle& a, const Circle& b)
     {
         return CheckCollision(a.position, a.radius, b.position, b.radius);
-    } //[cite: 14, 15]
+    }
 
     inline bool CheckCollision(const Rectangle& a, const Rectangle& b)
     {
         SDL_FRect rectA = a.GetBounds();
         SDL_FRect rectB = b.GetBounds();
         return CheckCollision(rectA, rectB);
-    } //[cite: 14, 15]
+    }
 
     inline bool CheckCollision(const Circle& circle, const Rectangle& rect)
     {
         return CheckCollision(circle.position, circle.radius, rect.GetBounds());
-    } //[cite: 14, 15]
+    }
+
+    inline bool CheckCollision(const Sprite& sprite, const Rectangle& rect)
+    {
+        return CheckCollision(sprite.GetBounds(), rect.GetBounds());
+    }
+
+    inline bool CheckCollision(const Sprite& a, const Sprite& b)
+    {
+        return CheckCollision(a.GetBounds(), b.GetBounds());
+    }
 
     // -----------------------------------------------------------------
     // Drawing Overloads API
@@ -350,11 +456,11 @@ namespace mv
     inline void draw(const Circle& circle, SDL_Color color = {0, 121, 241, 255})
     {
         SDL_SetRenderDrawColor(ctx.renderer, color.r, color.g, color.b, color.a);
-        const int cx = static_cast<int>(circle.position.x);
-        const int cy = static_cast<int>(circle.position.y);
-        int x = static_cast<int>(circle.radius);
-        int y = 0;
-        int error = 1 - x;
+        const int cx {static_cast<int>(circle.position.x)};
+        const int cy {static_cast<int>(circle.position.y)};
+        int x {static_cast<int>(circle.radius)};
+        int y {0};
+        int error {1 - x};
 
         while (x >= y)
         {
@@ -376,7 +482,7 @@ namespace mv
     inline void draw(const Rectangle& rect, SDL_Color color = {230, 41, 55, 255})
     {
         SDL_SetRenderDrawColor(ctx.renderer, color.r, color.g, color.b, color.a);
-        SDL_FRect frect = rect.GetBounds();
+        SDL_FRect frect {rect.GetBounds()};
         SDL_RenderRect(ctx.renderer, &frect);
     }
 
@@ -388,4 +494,21 @@ namespace mv
         }
     }
 
-} // namespace mv
+    inline SDL_Texture* loadTexture(const char* path)
+    {
+        SDL_Texture* texture {IMG_LoadTexture(ctx.renderer, path)};
+    
+        if (!texture)
+            SDL_Log("Failed to load texture '%s': %s", path, SDL_GetError());
+    
+        return texture;
+    }
+
+    inline void draw(const Sprite& sprite)
+    {
+        if (!ctx.renderer || !sprite.texture) return;
+    
+        SDL_FRect destination = sprite.GetBounds();
+        SDL_RenderTexture(ctx.renderer, sprite.texture, nullptr, &destination);
+    }
+} // namespace wp

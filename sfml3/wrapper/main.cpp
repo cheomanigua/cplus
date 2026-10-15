@@ -1,4 +1,4 @@
-#include "ss.hpp"
+#include "wrapper.h"
 
 int main()
 {
@@ -10,20 +10,11 @@ int main()
     sf::Text coll(font);
     coll.setPosition({0.0f, 20.0f});
 
-    //text.setString({});
-    //text.setFillColor(sf::Color::Red);
-    //sf::Font font;
-    //if (!font.openFromFile("/usr/share/fonts/xscreensaver/clacon.ttf")) return 1;
-    //ss::Text::defaultFont = &font;
-    //ss::Text text("Hello SFML 3", 20, {20.0f, 20.0f});
-    //ss::Text text1({}, 20, {20.0f, 35.0f});
-
-    //ss::Circle player{{100.f, 100.f}, 20.f};
-    sf::Texture texture = ss::loadTexture("raybunny.png");
-    ss::Sprite player{{100.f, 100.f}, &texture};
-    ss::Sprite orc{{150.f, 150.f}, &texture};
-    ss::Rectangle wall{{250.f, 150.f}, {100.f, 40.f}};
-    ss::Rectangle wall2{{450.f, 250.f}, {150.f, 80.f}};
+    sf::Texture texture = wp::loadTexture("raybunny.png");
+    wp::Sprite player{{100.f, 100.f}, &texture};
+    wp::Sprite orc{{150.f, 150.f}, &texture};
+    wp::Rectangle wall{{250.f, 150.f}, {100.f, 40.f}};
+    wp::Rectangle wall2{{450.f, 250.f}, {150.f, 80.f}};
 
     while (window.isOpen())
     {
@@ -44,19 +35,16 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
             player.position.y -= 200.f * dt;
 
-        bool isColliding = ss::CheckCollision(player.GetBounds(), wall.GetBounds());
+        bool isColliding = wp::CheckCollision(player.GetBounds(), wall.GetBounds());
         coll.setString(isColliding ? "Collided: YES" : "Collided: NO");
 
         window.clear(sf::Color::Black);
         window.draw(coll);
 
-        ss::draw(window, player);
-        ss::draw(window, orc);
-        ss::draw(window, wall);
-        ss::draw(window, wall2);
-
-        //ss::draw(window, text);
-        //ss::draw(window, text1);
+        wp::draw(window, player);
+        wp::draw(window, orc);
+        wp::draw(window, wall);
+        wp::draw(window, wall2);
 
         window.display();
     }
