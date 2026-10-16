@@ -9,7 +9,8 @@ A lightweight, header-only C++ library built on SFML 3 for creating simple 2D ga
 
 ## Installation
 
-Copy `wrapper.h` into your project and include it:
+- Download [wrapper.h](https://raw.githubusercontent.com/cheomanigua/cplus/refs/heads/main/sfml3/wrapper/wrapper.h)
+- Copy `wrapper.h` into your project and include it:
 
 ```cpp
 #include "wrapper.h"
@@ -22,7 +23,6 @@ All functions, types, and constants are defined in the `wp` namespace.
 ### Colors
 
 Predefined `sf::Color` constants for quick styling.
-
 
 | **Constant** | **RGBA Values** | 
 |-|-| 
@@ -40,8 +40,8 @@ Predefined `sf::Color` constants for quick styling.
 | `Rectangle` | Rectangle defined by top-left position and size. | `wp::Rectangle wall{{100.f, 100.f}, {50.f, 30.f}};` | 
 | `Sprite` | Textured image defined by position and `const sf::Texture*`. | `wp::Texture tex = wp::loadTexture("bunny.png");` <br>  `wp::Sprite bunny{{100.f, 100.f}, &tex};` | 
 
-* `Rectangle::GetBounds()` returns its `sf::FloatRect` bounding box.
-* `Sprite::GetBounds()` returns its texture-sized `sf::FloatRect`, or an empty rectangle if its texture pointer is null.
+- `Rectangle::GetBounds()` returns its `sf::FloatRect` bounding box.
+- `Sprite::GetBounds()` returns its texture-sized `sf::FloatRect`, or an empty rectangle if its texture pointer is null.
 
 ### Textures
 
@@ -55,8 +55,8 @@ Pass your `sf::RenderTarget` (like an `sf::RenderWindow`) as the first argument 
 
 | **Function** | **Description** | **Example** | 
 |-|-|-|  
-| `draw(window, circle, color)` | Draws an outlined circle. Default color is `wp::Blue`. | `wp::draw(window, ball, wp::Red);` | 
-| `draw(window, rectangle, color)` | Draws an outlined rectangle. Default color is `wp::Red`. | `wp::draw(window, wall, wp::Blue);` | 
+| `draw(window, circle, color)` | Draws an outlined circle. | `wp::draw(window, ball, wp::Red);` | 
+| `draw(window, rectangle, color)` | Draws an outlined rectangle. | `wp::draw(window, wall, wp::Blue);` | 
 | `draw(window, sprite)` | Draws a sprite at its position. | `wp::draw(window, bunny);` | 
 | `drawCircle(window, pos, radius, color)` | Immediate-style primitive circle draw. | `wp::drawCircle(window, {100.f, 100.f}, 15.f);` | 
 | `drawRect(window, pos, size, color)` | Immediate-style primitive rectangle draw. | `wp::drawRect(window, {50.f, 50.f}, {40.f, 40.f});` | 
@@ -67,23 +67,23 @@ Pass your `sf::RenderTarget` (like an `sf::RenderWindow`) as the first argument 
 All collision functions return `true` on collision and `false` otherwise.
 
 | **Overload** | **Description** | **Example** | 
-|-|-|-|  
-| `CheckCollision(point, circleCenter, radius)` | Point vs. circle. | `wp::CheckCollision(mousePos, ball.position, ball.radius);` | 
-| `CheckCollision(point, sf::FloatRect)` | Point vs. rectangle bounds. | `wp::CheckCollision(mousePos, wall.GetBounds());` | 
-| `CheckCollision(centerA, radiusA, centerB, radiusB)` | Circle vs. circle (manual coords/radii). | `wp::CheckCollision(posA, rA, posB, rB);` | 
-| `CheckCollision(sf::FloatRect, sf::FloatRect)` | Rectangle bounds vs. rectangle bounds. | `wp::CheckCollision(rectA, rectB);` | 
-| `CheckCollision(center, radius, sf::FloatRect)` | Circle vs. rectangle bounds. | `wp::CheckCollision(ball.position, ball.radius, wall.GetBounds());` | 
-| `CheckCollision(Circle, Circle)` | Circle vs. circle structs. | `wp::CheckCollision(ballA, ballB);` | 
-| `CheckCollision(Rectangle, Rectangle)` | Rectangle vs. rectangle structs. | `wp::CheckCollision(wall1, wall2);` | 
-| `CheckCollision(Circle, Rectangle)` | Circle vs. rectangle structs. | `wp::CheckCollision(ball, wall);` | 
+| --- | --- | --- |
+| `CheckCollision(point, circleCenter, radius)` | Point vs. circle | `wp::CheckCollision(mousePos, ball.position, ball.radius);` |
+| `CheckCollision(point, sf::FloatRect)` | Point vs. rectangle bounds | `wp::CheckCollision(mousePos, wall.GetBounds());` |
+| `CheckCollision(centerA, radiusA, centerB, radiusB)` | Circle vs. circle using positions and radii | `wp::CheckCollision(posA, rA, posB, rB);` |
+| `CheckCollision(sf::FloatRect, sf::FloatRect)` | Rectangle bounds vs. rectangle bounds | `wp::CheckCollision(rectA, rectB);` |
+| `CheckCollision(center, radius, sf::FloatRect)` | Circle vs. rectangle bounds | `wp::CheckCollision(ball.position, ball.radius, wall.GetBounds());` |
+| `CheckCollision(Circle, Circle)` | Circle vs. circle using `Circle` structs | `wp::CheckCollision(ballA, ballB);` |
+| `CheckCollision(Rectangle, Rectangle)` | Rectangle vs. rectangle using `Rectangle` structs | `wp::CheckCollision(wall1, wall2);` |
+| `CheckCollision(Circle, Rectangle)` | Circle vs. rectangle using `Circle` and `Rectangle` structs | `wp::CheckCollision(ball, wall);` |
 
 Sprite collisions can be checked using their bounding boxes:
 
-```
-if (wp::CheckCollision(player.GetBounds(), wall.GetBounds())) {
-    // Collision handled
-}
-```
+| **Usage** | **Description** | **Example** |
+|-|-|-|
+| `CheckCollision(Sprite.GetBounds(), sf::FloatRect)` | Sprite bounds vs. rectangle bounds | `wp::CheckCollision(bunny.GetBounds(), wall.GetBounds());` |
+| `CheckCollision(Sprite.GetBounds(), Sprite.GetBounds())` | Sprite bounds vs. sprite bounds | `wp::CheckCollision(bunny.GetBounds(), bunny2.GetBounds());` |
+
 
 ## Example Usage
 
@@ -96,14 +96,15 @@ int main()
     window.setFramerateLimit(60);
     sf::Clock clock;
 
+    constexpr float speed {200.0f};
+
     sf::Font font("/usr/share/fonts/xscreensaver/clacon.ttf");
-    sf::Text coll(font);
-    coll.setPosition({0.0f, 20.0f});
+    sf::Text my_text(font);
+    //my_text.setPosition({0.0f, 20.0f});
 
     sf::Texture texture = wp::loadTexture("raybunny.png");
     wp::Sprite player{{100.f, 100.f}, &texture};
-    wp::Sprite orc{{150.f, 150.f}, &texture};
-    wp::Rectangle wall{{250.f, 150.f}, {100.f, 40.f}};
+    wp::Rectangle wall1{{250.f, 150.f}, {100.f, 40.f}};
     wp::Rectangle wall2{{450.f, 250.f}, {150.f, 80.f}};
 
     while (window.isOpen())
@@ -114,33 +115,37 @@ int main()
                 window.close();
         }
 
+        wp::Input input = wp::GetInput();
+
+        sf::Vector2f direction{
+            static_cast<float>(input.right - input.left),
+            static_cast<float>(input.down - input.up)
+        };
+
         const float dt = clock.restart().asSeconds();
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-            player.position.x += 200.f * dt;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-            player.position.x -= 200.f * dt;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
-            player.position.y += 200.f * dt;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-            player.position.y -= 200.f * dt;
+        // Normalize diagonal movement if moving horizontally & vertically
+        if (direction.x != 0.0f && direction.y != 0.0f)
+        {
+            direction.x *= 0.70710678f;
+            direction.y *= 0.70710678f;
+        }
 
-        bool isColliding = wp::CheckCollision(player.GetBounds(), wall.GetBounds());
-        coll.setString(isColliding ? "Collided: YES" : "Collided: NO");
+        player.position.x += direction.x * speed * dt;
+        player.position.y += direction.y * speed * dt;
+
+        bool isColliding = wp::CheckCollision(player.GetBounds(), wall1.GetBounds());
 
         window.clear(sf::Color::Black);
-        window.draw(coll);
+        window.draw(my_text);
 
         wp::draw(window, player);
-        wp::draw(window, orc);
-        wp::draw(window, wall);
+        wp::draw(window, wall1, (isColliding ? wp::Red : wp::White));
         wp::draw(window, wall2);
+
+        my_text.setString(isColliding ? "Collided: YES" : "Collided: NO");
 
         window.display();
     }
 }
 ```
-
-## License
-
-Specify your project's license before distributing the library.
