@@ -5,8 +5,8 @@
 
 constexpr int SCREEN_WIDTH = 1280;
 constexpr int SCREEN_HEIGHT = 720;
-constexpr std::size_t ENTITY_COUNT = 1000;
-constexpr int SPRITE_SIZE = 4;
+constexpr std::size_t ENTITY_COUNT = 200;
+constexpr int SPRITE_SIZE = 16;
 
 struct Position {
     float x{}, y{};
