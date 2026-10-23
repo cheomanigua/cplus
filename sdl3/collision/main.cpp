@@ -16,7 +16,7 @@ namespace
     constexpr double TARGET_FRAME_TIME = 1.0 / 60.0;
 
     constexpr float FONT_SIZE = 20.0f;
-    constexpr const char* FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+    constexpr const char* FONT_PATH = "/usr/share/fonts/xscreensaver/clacon.ttf";
 
     constexpr SDL_Color DARK_GRAY{80, 80, 80, 255};
     constexpr SDL_Color RED{230, 41, 55, 255};
@@ -231,19 +231,19 @@ int main()
         textCache.Draw(pointCircleText, 10.0f, 35.0f, hasCollidedPC ? RED : DARK_GRAY);
 
         const char* pointRectText = hasCollidedPR ? "PointInRect: YES" : "PointInRect: NO";
-        textCache.Draw(pointRectText, 10.0f, 60.0f, hasCollidedPR ? RED : DARK_GRAY);
+        textCache.Draw(pointRectText, 10.0f, 50.0f, hasCollidedPR ? RED : DARK_GRAY);
 
         const char* circleCircleText = hasCollidedCC ? "CirclevsCircle: YES" : "CirclevsCircle: NO";
-        textCache.Draw(circleCircleText, 10.0f, 85.0f, hasCollidedCC ? RED : DARK_GRAY);
+        textCache.Draw(circleCircleText, 10.0f, 65.0f, hasCollidedCC ? RED : DARK_GRAY);
 
         const char* rectRectText = hasCollidedRR ? "RectvsRect: YES" : "RectvsRect: NO";
-        textCache.Draw(rectRectText, 10.0f, 110.0f, hasCollidedRR ? RED : DARK_GRAY);
+        textCache.Draw(rectRectText, 10.0f, 80.0f, hasCollidedRR ? RED : DARK_GRAY);
 
         const char* circleRectText = hasCollidedCR ? "CirclevsRect: YES" : "CirclevsRect: NO";
-        textCache.Draw(circleRectText, 10.0f, 135.0f, hasCollidedCR ? RED : DARK_GRAY);
+        textCache.Draw(circleRectText, 10.0f, 95.0f, hasCollidedCR ? RED : DARK_GRAY);
 
         const char* rectCircleText = hasCollidedRC ? "RectvsCircle: YES" : "RectvsCircle: NO";
-        textCache.Draw(rectCircleText, 10.0f, 160.0f, hasCollidedRC ? RED : DARK_GRAY);
+        textCache.Draw(rectCircleText, 10.0f, 110.0f, hasCollidedRC ? RED : DARK_GRAY);
 
         // Present
         SDL_RenderPresent(renderer);
