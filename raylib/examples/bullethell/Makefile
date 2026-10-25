@@ -2,7 +2,7 @@ CXX = g++
 TARGET = MyApp
 
 CXXFLAGS = -O2 -Wall -std=c++20
-LIBS = -lraylib -lm -lpthread -ldl -lrt
+LIBS = -lraylib -lm -lpthread -ldl
 
 SRCS = main.cpp
 

@@ -1,38 +1,50 @@
 {
   "Human": {
-    "RaceStr": 5,
-    "RaceInt": 5,
-    "RaceDex": 3,
-    "RaceCha": 7
+    "Str": 5,
+    "Int": 5,
+    "Dex": 3,
+    "Cha": 7,
+    "Health": 20,
+    "Mana": 20
   },
   "Orc": {
-    "RaceStr": 8,
-    "RaceInt": 2,
-    "RaceDex": 3,
-    "RaceCha": 2
+    "Str": 8,
+    "Int": 2,
+    "Dex": 3,
+    "Cha": 2,
+    "Health": 40,
+    "Mana": 5
   },
   "Elf": {
-    "RaceStr": 4,
-    "RaceInt": 7,
-    "RaceDex": 7,
-    "RaceCha": 4
+    "Str": 4,
+    "Int": 7,
+    "Dex": 7,
+    "Cha": 4,
+    "Health": 15,
+    "Mana": 40
   },
   "Goblin": {
-    "RaceStr": 5,
-    "RaceInt": 5,
-    "RaceDex": 5,
-    "RaceCha": 2
+    "Str": 5,
+    "Int": 5,
+    "Dex": 5,
+    "Cha": 2,
+    "Health": 20,
+    "Mana": 15
   },
   "Dwarf": {
-    "RaceStr": 7,
-    "RaceInt": 5,
-    "RaceDex": 5,
-    "RaceCha": 5
+    "Str": 7,
+    "Int": 5,
+    "Dex": 5,
+    "Cha": 5,
+    "Health": 35,
+    "Mana": 20
   },
   "Hobbit": {
-    "RaceStr": 2,
-    "RaceInt": 8,
-    "RaceDex": 6,
-    "RaceCha": 6
+    "Str": 2,
+    "Int": 8,
+    "Dex": 6,
+    "Cha": 6,
+    "Health": 10,
+    "Mana": 25
   }
 }

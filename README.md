@@ -53,7 +53,7 @@ Everytime you edit your source code, run these:
 
 ```
 g++ -std=c++17 -c main.cpp -o main.o
-g++ main.o flecs.o -lrt -lpthread -lm -o myapp
+g++ main.o flecs.o -lpthread -lm -o myapp
 ```
 
 ## 4. Run the executable

@@ -19,7 +19,7 @@ else ifeq ($(UNAME_S), Linux)
     # --- Linux Settings ---
     # No extra include paths needed if installed via package manager/source, 
     # but you can add -I/path/to/include here if necessary.
-    LIBS = -lraylib -lm -lpthread -ldl -lrt
+    LIBS = -lraylib -lm -lpthread -ldl
 endif
 
 # Build target
