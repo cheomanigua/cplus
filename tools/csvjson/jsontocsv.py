@@ -1,66 +1,72 @@
 #!/usr/bin/env python3
 """
-JSON to CSV Converter (No dependencies)
+JSON to CSV Converter (No dependencies).
 
-Converts skills.json, races.json, and classes.json 
-(assumed to be in the same directory as this script) 
-into clean CSV files using only standard library.
+Converts JSON files from the json/ directory into CSV files
+in the csv/ directory using only the Python standard library.
 """
 
-import json
 import csv
+import json
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any
 
-def load_json(file_path: str) -> Dict[str, Any]:
-    """Load JSON file."""
-    with open(file_path, 'r', encoding='utf-8') as f:
-        return json.load(f)
 
-def json_to_csv(json_data: Dict[str, Any], output_path: Path):
-    """Convert JSON dict to CSV file."""
+def load_json(file_path: Path) -> dict[str, Any]:
+    """Load a JSON file."""
+    with file_path.open("r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def json_to_csv(json_data: dict[str, Any], output_path: Path) -> None:
+    """Convert a JSON dictionary to a CSV file."""
     if not json_data:
         return
-    
-    # Get all keys for headers
-    first_item = next(iter(json_data.values()))
-    headers = ['Name'] + list(first_item.keys())
-    
-    with open(output_path, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=headers)
+
+    # Collect headers from all entries to handle differing attributes.
+    headers = ["Name"]
+    for attributes in json_data.values():
+        for key in attributes:
+            if key not in headers:
+                headers.append(key)
+
+    with output_path.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=headers)
         writer.writeheader()
-        
+
         for name, attributes in json_data.items():
-            row = {'Name': name}
+            row = {"Name": name}
             row.update(attributes)
             writer.writerow(row)
 
-def main():
-    """Main conversion function."""
-    script_dir = Path(__file__).parent.resolve()
-    
-    # Input files
-    input_files = {
-        'skills': script_dir / 'skills.json',
-        'races': script_dir / 'races.json',
-        'classes': script_dir / 'classes.json'
-    }
-    
-    output_dir = script_dir / 'game_data_csv'
-    output_dir.mkdir(exist_ok=True)
-    
-    for name, json_path in input_files.items():
+
+def main() -> None:
+    """Convert all JSON files into their corresponding CSV files."""
+    project_dir = Path(__file__).resolve().parent
+    json_dir = project_dir / "json"
+    csv_dir = project_dir / "csv"
+
+    # Ensure the output directory exists.
+    csv_dir.mkdir(parents=True, exist_ok=True)
+
+    for name in ("skills", "races", "classes"):
+        json_path = json_dir / f"{name}.json"
+        csv_path = csv_dir / f"{name}.csv"
+
         try:
             data = load_json(json_path)
-            output_path = output_dir / f"{name}.csv"
-            
-            json_to_csv(data, output_path)
-            print(f"✅ Created: {output_path.name} ({len(data)} rows)")
-            
-        except Exception as e:
-            print(f"❌ Error processing {name}: {e}")
+            json_to_csv(data, csv_path)
 
-    print(f"\n🎉 Conversion complete! Files saved to ./{output_dir.name}/")
+            print(f"✅ Created: {csv_path.relative_to(project_dir)} "
+                  f"({len(data)} rows)")
+
+        except (OSError, json.JSONDecodeError, csv.Error, ValueError,
+                AttributeError, TypeError) as error:
+            print(f"❌ Error processing {json_path.name}: {error}")
+
+    print("\n🎉 Conversion complete!")
+
 
 if __name__ == "__main__":
     main()
+
