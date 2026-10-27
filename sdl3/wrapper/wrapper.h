@@ -14,11 +14,43 @@ namespace wp
     // Colors
     // -------------------------------------------------------------
 
-    inline const SDL_Color Blue {0, 121, 241, 255};
-    inline const SDL_Color Red {230, 41, 55, 0};
-    inline const SDL_Color White {255, 255, 255};
-    inline const SDL_Color Black {0, 0, 0, 255};
-    inline const SDL_Color Gray {80, 80, 80, 255};
+	inline const SDL_Color Black             {  0,   0,   0, 255};
+	inline const SDL_Color Navy              {  0,   0, 128, 255};
+	inline const SDL_Color Blue              {  0,   0, 255, 255};
+
+	inline const SDL_Color DarkGreen         {  0, 128,   0, 255};
+	inline const SDL_Color Teal              {  0, 128, 128, 255};
+	inline const SDL_Color DeepSkyBlue       {  0, 128, 255, 255};
+
+	inline const SDL_Color Green             {  0, 255,   0, 255};
+	inline const SDL_Color SpringGreen       {  0, 255, 128, 255};
+	inline const SDL_Color Cyan              {  0, 255, 255, 255};
+
+
+	inline const SDL_Color Maroon            {128,   0,   0, 255};
+	inline const SDL_Color Purple            {128,   0, 128, 255};
+	inline const SDL_Color MediumPurple      {128,   0, 255, 255};
+
+	inline const SDL_Color Olive             {128, 128,   0, 255};
+	inline const SDL_Color Gray              {128, 128, 128, 255};
+	inline const SDL_Color LightSteelBlue    {128, 128, 255, 255};
+
+	inline const SDL_Color YellowGreen       {128, 255,   0, 255};
+	inline const SDL_Color LightGreen        {128, 255, 128, 255};
+	inline const SDL_Color LightCyan         {128, 255, 255, 255};
+
+
+	inline const SDL_Color Red               {255,   0,   0, 255};
+	inline const SDL_Color Crimson           {255,   0, 128, 255};
+	inline const SDL_Color Magenta           {255,   0, 255, 255};
+
+	inline const SDL_Color Orange            {255, 128,   0, 255};
+	inline const SDL_Color Salmon            {255, 128, 128, 255};
+	inline const SDL_Color Pink              {255, 128, 255, 255};
+
+	inline const SDL_Color Yellow            {255, 255,   0, 255};
+	inline const SDL_Color Khaki             {255, 255, 128, 255};
+	inline const SDL_Color White             {255, 255, 255, 255};
 
     // -----------------------------------------------------------------
     // Types & Structs
