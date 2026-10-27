@@ -61,3 +61,4 @@ g++ main.o flecs.o -lpthread -lm -o myapp
 ```
 ./myapp
 ```
+

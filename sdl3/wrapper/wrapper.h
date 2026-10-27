@@ -481,10 +481,20 @@ namespace wp
         return CheckCollision(circle.position, circle.radius, rect.GetBounds());
     }
 
+	inline bool CheckCollision(const Rectangle& rect, const Circle& circle)
+	{
+		return CheckCollision(circle.position, circle.radius, rect.GetBounds());
+	}
+
     inline bool CheckCollision(const Sprite& sprite, const Rectangle& rect)
     {
         return CheckCollision(sprite.GetBounds(), rect.GetBounds());
     }
+
+	inline bool CheckCollision(const Sprite& sprite, const Circle& circle)
+	{
+		return CheckCollision(circle.position, circle.radius, sprite.GetBounds());
+	}
 
     inline bool CheckCollision(const Sprite& a, const Sprite& b)
     {
