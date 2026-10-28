@@ -26,10 +26,10 @@ int main() {
 
 	// Create 5 entities
     for(std::size_t i = 0; i < 5; ++i) {
-        auto e = world.entity();
         float value = static_cast<float>(i);
-        e.set<Position>({value, value});
-        e.set<Velocity>({value, value});
+		world.entity()
+			.set(Position{value, value})
+			.set(Velocity{value, value});
     }
     printPos(posQ);
 
@@ -49,7 +49,7 @@ int main() {
     world.entity(521).destruct();
     printPos(posQ);
 
-    auto e = world.entity();
-    e.set<Position>({5.0f, 5.0f});
+    world.entity()
+		.set<Position>({5.0f, 5.0f});
     printPos(posQ);
 }

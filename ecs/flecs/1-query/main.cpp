@@ -17,8 +17,9 @@ int main() {
 	auto posQuery = world.query_builder<const Position>().cached().build();
 
 	for(std::size_t i{0} ; i < 5; ++i) {
-		auto  entity = world.entity();
-		entity.set<Position>({static_cast<float>(entity.id()), static_cast<float>(entity.id())});
+		float value {static_cast<float>(i)};
+		world.entity()
+			.set(Position{value, value});
 	}
 	printPos(posQuery);
 
