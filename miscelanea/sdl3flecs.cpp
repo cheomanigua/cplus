@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <random>
 
@@ -13,9 +14,6 @@ constexpr int SCREEN_WIDTH = 1280;
 constexpr int SCREEN_HEIGHT = 720;
 constexpr std::size_t ENTITY_COUNT = 200;
 constexpr int SPRITE_SIZE = 32;
-
-constexpr double TARGET_FPS = 60.0;
-constexpr double TARGET_FRAME_TIME = 1.0 / TARGET_FPS;
 
 constexpr const char* WINDOW_TITLE = "Flecs + SDL3";
 constexpr const char* TEXTURE_PATH = "raybunny.png";
@@ -111,10 +109,12 @@ int main()
         return 1;
     }
 
-    // Disable VSync because we apply our own 60 FPS limiter.
-    SDL_SetRenderVSync(renderer, 0);
+    // Enable VSync.
+    if (!SDL_SetRenderVSync(renderer, 1)) {
+        SDL_Log("Could not enable VSync: %s", SDL_GetError());
+    }
 
-    // Load raybunny.png from the working directory.
+    // Load texture.
     SDL_Texture* texture = IMG_LoadTexture(
         renderer,
         TEXTURE_PATH
@@ -178,8 +178,7 @@ int main()
 
     bool running = true;
 
-    const Uint64 performanceFrequency =
-        SDL_GetPerformanceFrequency();
+    const Uint64 performanceFrequency = SDL_GetPerformanceFrequency();
 
     Uint64 previousCounter = SDL_GetPerformanceCounter();
 
@@ -188,16 +187,14 @@ int main()
     std::uint32_t frames = 0;
 
     while (running) {
-        // Start frame timer.
-        const Uint64 frameStart = SDL_GetPerformanceCounter();
 
         // Process events.
         SDL_Event event;
 
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT ||
-					event.type == SDL_EVENT_KEY_DOWN &&
-					event.key.key == SDLK_ESCAPE) {
+                (event.type == SDL_EVENT_KEY_DOWN &&
+                 event.key.key == SDLK_ESCAPE)) {
                 running = false;
             }
         }
@@ -206,21 +203,18 @@ int main()
             break;
         }
 
-        // Calculate delta time.
-        const Uint64 currentCounter =
-            SDL_GetPerformanceCounter();
+        // Calculate actual delta time.
+        const Uint64 currentCounter = SDL_GetPerformanceCounter();
 
-        float deltaTime = static_cast<float>(
-            static_cast<double>(
-                currentCounter - previousCounter
-            ) /
+        const float rawDeltaTime = static_cast<float>(
+            static_cast<double>(currentCounter - previousCounter) /
             static_cast<double>(performanceFrequency)
         );
 
         previousCounter = currentCounter;
 
         // Prevent large simulation jumps after a pause.
-        deltaTime = std::min(deltaTime, 0.05f);
+        const float deltaTime = std::min(rawDeltaTime, 0.05f);
 
         // Update ECS.
         updateEntities(
@@ -240,7 +234,7 @@ int main()
 
         // Update FPS in the window title once per second.
         ++frames;
-        fpsElapsed += deltaTime;
+        fpsElapsed += rawDeltaTime;
 
         if (fpsElapsed >= 1.0f) {
             char title[128];
@@ -259,26 +253,6 @@ int main()
             frames = 0;
             fpsElapsed = 0.0f;
         }
-
-        // Limit frame rate to 60 FPS.
-        const Uint64 frameEnd = SDL_GetPerformanceCounter();
-
-        const double frameTime =
-            static_cast<double>(frameEnd - frameStart) /
-            static_cast<double>(performanceFrequency);
-
-        if (frameTime < TARGET_FRAME_TIME) {
-            const double remainingTime =
-                TARGET_FRAME_TIME - frameTime;
-
-            // Sleep for most of the remaining time.
-            // SDL_Delay uses millisecond granularity.
-            if (remainingTime > 0.002) {
-                SDL_Delay(static_cast<Uint32>(
-                    (remainingTime - 0.001) * 1000.0
-                ));
-            }
-        }
     }
 
     // Cleanup.
@@ -287,5 +261,5 @@ int main()
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    return 0;
+	return 0;
 }
