@@ -2,7 +2,7 @@
 
 int main()
 {
-    if (!wp::Init("Collision Demo", 800, 450, "/usr/share/fonts/xscreensaver/clacon.ttf"))
+    if (!wp::Init("Collision Demo", 800, 600, "/usr/share/fonts/xscreensaver/clacon.ttf"))
     {
         return 1;
     }

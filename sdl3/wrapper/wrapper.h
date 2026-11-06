@@ -1,12 +1,12 @@
 #pragma once
 
+#include <algorithm>
+#include <memory>
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
 #include <string>
-#include <string_view>
 #include <unordered_map>
-#include <algorithm>
 
 namespace wp
 {
@@ -228,7 +228,7 @@ namespace wp
     // -----------------------------------------------------------------
     // Texture Caching
     // -----------------------------------------------------------------
-    
+
     class TextureCache
     {
     public:
@@ -236,27 +236,27 @@ namespace wp
             : renderer_(renderer)
         {
         }
-    
+
         ~TextureCache()
         {
             Clear();
         }
-    
+
         TextureCache(const TextureCache&) = delete;
         TextureCache& operator=(const TextureCache&) = delete;
-    
+
         SDL_Texture* Get(const char* path)
         {
             if (!renderer_ || !path)
                 return nullptr;
-    
+
             auto it = textures_.find(path);
-    
+
             if (it != textures_.end())
                 return it->second;
-    
+
             SDL_Texture* texture = IMG_LoadTexture(renderer_, path);
-    
+
             if (!texture)
             {
                 SDL_Log(
@@ -266,11 +266,11 @@ namespace wp
                 );
                 return nullptr;
             }
-    
+
             textures_.emplace(path, texture);
             return texture;
         }
-    
+
         void Clear()
         {
             for (auto& [path, texture] : textures_)
@@ -278,10 +278,10 @@ namespace wp
                 if (texture)
                     SDL_DestroyTexture(texture);
             }
-    
+
             textures_.clear();
         }
-    
+
     private:
         SDL_Renderer* renderer_;
         std::unordered_map<std::string, SDL_Texture*> textures_;
@@ -295,8 +295,10 @@ namespace wp
         SDL_Window* window {nullptr};
         SDL_Renderer* renderer {nullptr};
         TTF_Font* font {nullptr};
-        TextCache* textCache {nullptr};
-        TextureCache* textureCache {nullptr};
+        std::unique_ptr<TextCache> textCache;
+        std::unique_ptr<TextureCache> textureCache;
+        //TextCache* textCache {nullptr};
+        //TextureCache* textureCache {nullptr};
         bool running {false};
 
         const Uint64 performanceFrequency = SDL_GetPerformanceFrequency();
@@ -309,8 +311,10 @@ namespace wp
 
         ~Context()
         {
-            delete textCache;
-            delete textureCache;
+            //delete textCache;
+            //delete textureCache;
+            textCache.reset();
+            textureCache.reset();
             if (font) TTF_CloseFont(font);
             if (renderer) SDL_DestroyRenderer(renderer);
             if (window) SDL_DestroyWindow(window);
@@ -339,14 +343,21 @@ namespace wp
             return false;
         }
 
-        ctx.textureCache = new TextureCache(ctx.renderer);
+        if (!SDL_SetRenderVSync(ctx.renderer, 1))
+        {
+            SDL_Log("Failed to enable VSync: %s", SDL_GetError());
+        }
+
+        //ctx.textureCache = new TextureCache(ctx.renderer);
+        ctx.textureCache = std::make_unique<TextureCache>(ctx.renderer);
 
         if (fontPath)
         {
             ctx.font = TTF_OpenFont(fontPath, fontSize);
             if (ctx.font)
             {
-                ctx.textCache = new TextCache(ctx.renderer, ctx.font);
+                //ctx.textCache = new TextCache(ctx.renderer, ctx.font);
+                ctx.textCache = std::make_unique<TextCache>(ctx.renderer, ctx.font);
             }
         }
 
@@ -390,16 +401,6 @@ namespace wp
     inline void EndFrame()
     {
         SDL_RenderPresent(ctx.renderer);
-
-        const Uint64 frameEnd = SDL_GetPerformanceCounter();
-        const double frameTime = static_cast<double>(frameEnd - ctx.frameStart) / static_cast<double>(ctx.performanceFrequency);
-        const double remaining = ctx.targetFrameTime - frameTime;
-
-        if (remaining > 0.0)
-        {
-            const Uint32 delayMilliseconds = static_cast<Uint32>(remaining * 1000.0);
-            if (delayMilliseconds > 0) SDL_Delay(delayMilliseconds);
-        }
     }
 
     inline float GetDeltaTime() { return ctx.deltaTime; }
@@ -549,7 +550,7 @@ namespace wp
     inline void draw(const Sprite& sprite)
     {
         if (!ctx.renderer || !sprite.texture) return;
-    
+
         SDL_FRect destination = sprite.GetBounds();
         SDL_RenderTexture(ctx.renderer, sprite.texture, nullptr, &destination);
     }
