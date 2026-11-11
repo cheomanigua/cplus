@@ -1,3 +1,4 @@
+
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
@@ -16,6 +17,7 @@ void addCompleteMovementComponents(flecs::entity entity)
     entity.set<navalsim::movement::TurnRate>(navalsim::movement::TurnRate(2.0));
     entity.set<navalsim::movement::TurnDirection>(navalsim::movement::TurnDirection::None);
     entity.set<navalsim::movement::Speed>(navalsim::movement::Speed(10.0));
+    entity.set<navalsim::movement::MaximumSpeed>(navalsim::movement::MaximumSpeed(25.0));
     entity.set<navalsim::movement::MovementStatus>(navalsim::movement::MovementStatus::Underway);
 }
 
@@ -92,6 +94,48 @@ TEST_CASE("SetSpeedCommand with zero speed stops a vessel")
     CHECK(results[0].status == navalsim::movement::MovementCommandStatus::Applied);
     CHECK(vessel.get<navalsim::movement::Speed>().metersPerSecond() == doctest::Approx(0.0));
     CHECK(vessel.get<navalsim::movement::MovementStatus>() == navalsim::movement::MovementStatus::Stopped);
+}
+
+TEST_CASE("SetSpeedCommand accepts a speed equal to the vessel's maximum speed")
+{
+    flecs::world world;
+    auto vessel = createVessel(world);
+
+    navalsim::movement::MovementCommandProcessor processor;
+    const std::vector<navalsim::movement::QueuedMovementCommand> commands = {
+        {1, navalsim::movement::SetSpeedCommand{
+            vessel.id(),
+            navalsim::movement::Speed(25.0)
+        }}
+    };
+
+    const auto results = processor.process(world, commands);
+
+    REQUIRE(results.size() == 1);
+    CHECK(results[0].status == navalsim::movement::MovementCommandStatus::Applied);
+    CHECK(vessel.get<navalsim::movement::Speed>().metersPerSecond() == doctest::Approx(25.0));
+    CHECK(vessel.get<navalsim::movement::MovementStatus>() == navalsim::movement::MovementStatus::Underway);
+}
+
+TEST_CASE("SetSpeedCommand rejects a speed above the vessel's maximum speed")
+{
+    flecs::world world;
+    auto vessel = createVessel(world);
+
+    navalsim::movement::MovementCommandProcessor processor;
+    const std::vector<navalsim::movement::QueuedMovementCommand> commands = {
+        {1, navalsim::movement::SetSpeedCommand{
+            vessel.id(),
+            navalsim::movement::Speed(30.0)
+        }}
+    };
+
+    const auto results = processor.process(world, commands);
+
+    REQUIRE(results.size() == 1);
+    CHECK(results[0].status == navalsim::movement::MovementCommandStatus::MaximumSpeedExceeded);
+    CHECK(vessel.get<navalsim::movement::Speed>().metersPerSecond() == doctest::Approx(10.0));
+    CHECK(vessel.get<navalsim::movement::MovementStatus>() == navalsim::movement::MovementStatus::Underway);
 }
 
 TEST_CASE("StopMovementCommand stops a vessel")
@@ -202,6 +246,28 @@ TEST_CASE("SetSpeedCommand rejects vessels missing required components")
     REQUIRE(results.size() == 1);
     CHECK(results[0].commandId == 1);
     CHECK(results[0].status == navalsim::movement::MovementCommandStatus::MissingRequiredComponent);
+}
+
+TEST_CASE("SetSpeedCommand rejects vessels missing the maximum speed component")
+{
+    flecs::world world;
+    auto vessel = createVessel(world);
+    vessel.remove<navalsim::movement::MaximumSpeed>();
+
+    navalsim::movement::MovementCommandProcessor processor;
+    const std::vector<navalsim::movement::QueuedMovementCommand> commands = {
+        {1, navalsim::movement::SetSpeedCommand{
+            vessel.id(),
+            navalsim::movement::Speed(15.0)
+        }}
+    };
+
+    const auto results = processor.process(world, commands);
+
+    REQUIRE(results.size() == 1);
+    CHECK(results[0].status == navalsim::movement::MovementCommandStatus::MissingRequiredComponent);
+    CHECK(vessel.get<navalsim::movement::Speed>().metersPerSecond() == doctest::Approx(10.0));
+    CHECK(vessel.get<navalsim::movement::MovementStatus>() == navalsim::movement::MovementStatus::Underway);
 }
 
 TEST_CASE("StopMovementCommand rejects vessels missing required components")
@@ -317,3 +383,4 @@ TEST_CASE("Multiple movement commands are processed in submission order")
     CHECK(vessel.get<navalsim::movement::Speed>().metersPerSecond() == doctest::Approx(0.0));
     CHECK(vessel.get<navalsim::movement::MovementStatus>() == navalsim::movement::MovementStatus::Stopped);
 }
+

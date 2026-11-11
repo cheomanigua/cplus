@@ -1,3 +1,4 @@
+
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include <cmath>
@@ -29,18 +30,16 @@ TEST_CASE("Underway vessel moves according to its heading and speed")
     });
     vessel.set<Heading>(Heading(90.0));
     vessel.set<Speed>(Speed(10.0));
+    vessel.set<MaximumSpeed>(MaximumSpeed(25.0));
     vessel.set<MovementStatus>(MovementStatus::Underway);
 
-    const auto initialPosition =
-        vessel.get<GeographicPosition>();
+    const auto initialPosition = vessel.get<GeographicPosition>();
 
     world.run_pipeline(0, 1.0);
 
-    const auto& finalPosition =
-        vessel.get<GeographicPosition>();
+    const auto& finalPosition = vessel.get<GeographicPosition>();
 
-    const auto distance =
-        horizontalDistance(initialPosition, finalPosition);
+    const auto distance = horizontalDistance(initialPosition, finalPosition);
 
     CHECK(std::abs(distance.meters() - 10.0) < 1e-6);
 }
@@ -60,15 +59,14 @@ TEST_CASE("Stopped vessel does not move")
     });
     vessel.set<Heading>(Heading(90.0));
     vessel.set<Speed>(Speed(10.0));
+    vessel.set<MaximumSpeed>(MaximumSpeed(25.0));
     vessel.set<MovementStatus>(MovementStatus::Stopped);
 
-    const auto initialPosition =
-        vessel.get<GeographicPosition>();
+    const auto initialPosition = vessel.get<GeographicPosition>();
 
     world.run_pipeline(0, 1.0);
 
-    const auto& finalPosition =
-        vessel.get<GeographicPosition>();
+    const auto& finalPosition = vessel.get<GeographicPosition>();
 
     CHECK(
         horizontalDistance(initialPosition, finalPosition).meters()
@@ -91,6 +89,7 @@ TEST_CASE("Movement preserves elevation")
     });
     vessel.set<Heading>(Heading(90.0));
     vessel.set<Speed>(Speed(10.0));
+    vessel.set<MaximumSpeed>(MaximumSpeed(25.0));
     vessel.set<MovementStatus>(MovementStatus::Underway);
 
     world.run_pipeline(0, 1.0);
@@ -116,20 +115,79 @@ TEST_CASE("Movement uses the supplied timestep")
     });
     vessel.set<Heading>(Heading(90.0));
     vessel.set<Speed>(Speed(10.0));
+    vessel.set<MaximumSpeed>(MaximumSpeed(25.0));
     vessel.set<MovementStatus>(MovementStatus::Underway);
 
-    const auto initialPosition =
-        vessel.get<GeographicPosition>();
+    const auto initialPosition = vessel.get<GeographicPosition>();
 
     world.run_pipeline(0, 2.5);
 
-    const auto& finalPosition =
-        vessel.get<GeographicPosition>();
+    const auto& finalPosition = vessel.get<GeographicPosition>();
 
-    const auto distance =
-        horizontalDistance(initialPosition, finalPosition);
+    const auto distance = horizontalDistance(initialPosition, finalPosition);
 
     CHECK(std::abs(distance.meters() - 25.0) < 1e-6);
+}
+
+TEST_CASE("Movement clamps vessel speed to its maximum speed")
+{
+    flecs::world world;
+    registerMovementSystems(world);
+
+    auto vessel = world.entity();
+
+    vessel.add<navalsim::world::Vessel>();
+    vessel.set<GeographicPosition>(GeographicPosition{
+        Latitude(0.0),
+        Longitude(0.0),
+        Elevation(0.0)
+    });
+    vessel.set<Heading>(Heading(90.0));
+    vessel.set<Speed>(Speed(20.0));
+    vessel.set<MaximumSpeed>(MaximumSpeed(10.0));
+    vessel.set<MovementStatus>(MovementStatus::Underway);
+
+    const auto initialPosition = vessel.get<GeographicPosition>();
+
+    world.run_pipeline(0, 1.0);
+
+    const auto& finalPosition = vessel.get<GeographicPosition>();
+
+    CHECK(
+        vessel.get<Speed>().metersPerSecond()
+        == doctest::Approx(10.0)
+    );
+
+    CHECK(
+        horizontalDistance(initialPosition, finalPosition).meters()
+        == doctest::Approx(10.0)
+    );
+}
+
+TEST_CASE("Movement does not change speed below the maximum")
+{
+    flecs::world world;
+    registerMovementSystems(world);
+
+    auto vessel = world.entity();
+
+    vessel.add<navalsim::world::Vessel>();
+    vessel.set<GeographicPosition>(GeographicPosition{
+        Latitude(0.0),
+        Longitude(0.0),
+        Elevation(0.0)
+    });
+    vessel.set<Heading>(Heading(90.0));
+    vessel.set<Speed>(Speed(10.0));
+    vessel.set<MaximumSpeed>(MaximumSpeed(25.0));
+    vessel.set<MovementStatus>(MovementStatus::Underway);
+
+    world.run_pipeline(0, 1.0);
+
+    CHECK(
+        vessel.get<Speed>().metersPerSecond()
+        == doctest::Approx(10.0)
+    );
 }
 
 // -----------------------------------------------------------------------------
@@ -394,6 +452,7 @@ TEST_CASE("Turning happens before movement in the same simulation step")
     vessel.set<Heading>(Heading(0.0));
     vessel.set<DesiredHeading>(DesiredHeading(90.0));
     vessel.set<Speed>(Speed(10.0));
+    vessel.set<MaximumSpeed>(MaximumSpeed(25.0));
     vessel.set<MovementStatus>(MovementStatus::Underway);
     vessel.set<TurnRate>(TurnRate(90.0));
     vessel.set<TurnDirection>(TurnDirection::None);
@@ -407,13 +466,11 @@ TEST_CASE("Turning happens before movement in the same simulation step")
         std::abs(finalHeading.degrees() - 90.0) < 1e-9
     );
 
-    const auto distance =
-        horizontalDistance(initialPosition, finalPosition);
+    const auto distance = horizontalDistance(initialPosition, finalPosition);
 
     CHECK(std::abs(distance.meters() - 10.0) < 1e-6);
 
-    const auto travelBearing =
-        initialBearing(initialPosition, finalPosition);
+    const auto travelBearing = initialBearing(initialPosition, finalPosition);
 
     CHECK(
         std::abs(travelBearing.degrees() - 90.0) < 1e-6

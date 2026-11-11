@@ -1,4 +1,3 @@
-
 #include "domains/movement/movement_command_processor.hpp"
 
 #include "world/components/tags/entity_type_tags.hpp"
@@ -65,12 +64,18 @@ MovementCommandStatus processCommand(
 
     const auto validationStatus = validateVesselTarget<
         Speed,
+        MaximumSpeed,
         MovementStatus
     >(entity);
 
     if (validationStatus != MovementCommandStatus::Applied)
     {
         return validationStatus;
+    }
+
+    if (command.speed.metersPerSecond() > entity.get<MaximumSpeed>().metersPerSecond())
+    {
+        return MovementCommandStatus::MaximumSpeedExceeded;
     }
 
     entity.set<Speed>(command.speed);

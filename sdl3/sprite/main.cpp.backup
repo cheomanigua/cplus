@@ -1,0 +1,34 @@
+#include <SDL3/SDL.h>
+
+int main() {
+	SDL_Window *window;
+	SDL_Renderer *renderer;
+	SDL_Event event;
+
+	bool done = false;
+
+	SDL_Init(SDL_INIT_VIDEO);
+	window = SDL_CreateWindow("Event example", 400, 200, 0);
+	renderer = SDL_CreateRenderer(window, NULL);
+	//SDL_CreateWindowAndRenderer("Event example", 400, 200, SDL_WINDOW_RESIZABLE, &window, &renderer);
+
+	while(!done) {
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_EVENT_QUIT) {
+				done = true;
+			} else if (event.type == SDL_EVENT_KEY_DOWN) {
+				if (event.key.key == SDLK_ESCAPE)
+						done = true;
+			}
+		}
+
+		SDL_SetRenderDrawColor(renderer, 255, 128, 128, 255);
+		SDL_RenderClear(renderer);
+		SDL_RenderPresent(renderer);
+	}
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	return 0;
+}

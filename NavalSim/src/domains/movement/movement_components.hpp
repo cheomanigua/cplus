@@ -33,6 +33,8 @@ private:
     geography::Bearing bearing_;
 };
 
+
+
 class DesiredHeading
 {
 public:
@@ -56,6 +58,8 @@ public:
 private:
     geography::Bearing bearing_;
 };
+
+
 
 class Speed
 {
@@ -83,6 +87,22 @@ private:
     double metersPerSecond_ = 0.0;
 };
 
+
+
+class MaximumSpeed {
+public:
+    MaximumSpeed() = default;
+    explicit MaximumSpeed(double metersPerSecond) : metersPerSecond_(metersPerSecond) {
+        if (!std::isfinite(metersPerSecond_) || metersPerSecond_ < 0.0)
+            throw std::invalid_argument("Maximum speed must be finite and non-negative.");
+    }
+    double metersPerSecond() const noexcept { return metersPerSecond_; }
+private:
+    double metersPerSecond_ = 0.0;
+};
+
+
+
 class TurnRate
 {
 public:
@@ -108,6 +128,8 @@ public:
 private:
     double degreesPerSecond_ = 0.0;
 };
+
+
 
 enum class TurnDirection
 {

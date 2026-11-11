@@ -1,18 +1,17 @@
 #pragma once
 
-#include <cstddef>
-#include <cstdint>
 #include <variant>
 
 #include <flecs.h>
 
 #include "core/geography/geographic_types.hpp"
 #include "domains/movement/movement_components.hpp"
+#include "simulation/commands/command.hpp"
 
 namespace navalsim::movement
 {
 
-using MovementCommandId = std::uint64_t;
+using MovementCommandId = navalsim::simulation::CommandId;
 
 struct SetDesiredHeadingCommand
 {
@@ -37,25 +36,20 @@ using MovementCommand = std::variant<
     StopMovementCommand
 >;
 
-struct QueuedMovementCommand
-{
-    MovementCommandId id;
-    MovementCommand command;
-};
+using QueuedMovementCommand =
+    navalsim::simulation::QueuedCommand<MovementCommand>;
 
 enum class MovementCommandStatus
 {
     Applied,
     InvalidTarget,
     NotAVessel,
-    MissingRequiredComponent
+    MissingRequiredComponent,
+	MaximumSpeedExceeded
 };
 
-struct MovementCommandResult
-{
-    MovementCommandId commandId;
-    MovementCommandStatus status;
-};
+using MovementCommandResult =
+    navalsim::simulation::CommandResult<MovementCommandStatus>;
 
 } // namespace navalsim::movement
 

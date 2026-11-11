@@ -1,175 +1,336 @@
 
 #include "simulation/simulation.hpp"
 
+#include <exception>
+#include <iterator>
 #include <limits>
-#include <memory>
 #include <stdexcept>
+#include <string>
+#include <type_traits>
 #include <utility>
+#include <variant>
+#include <vector>
 
+#include "data/definitions/definition_database.hpp"
+#include "data/definitions/vessel_definition.hpp"
+#include "domains/movement/movement_components.hpp"
 #include "domains/movement/movement_systems.hpp"
+#include "world/components/tags/entity_type_tags.hpp"
 
-Simulation::Simulation() = default;
+namespace {
 
-Simulation::~Simulation()
-{
+template <typename Command>
+navalsim::movement::MovementCommandStatus processSingleMovementCommand(
+    flecs::world& world,
+    navalsim::movement::MovementCommandProcessor& processor,
+    const Command& command
+) {
+    using namespace navalsim::movement;
+
+    std::vector<QueuedMovementCommand> singleCommand;
+    singleCommand.push_back({
+        1,
+        MovementCommand{command}
+    });
+
+    const auto results = processor.process(world, singleCommand);
+
+    if (results.size() != 1) {
+        throw std::logic_error(
+            "Movement command processor returned an unexpected number of results."
+        );
+    }
+
+    return results.front().status;
+}
+
+std::string describeCommandException(const std::exception_ptr& exception) {
+    try {
+        std::rethrow_exception(exception);
+    } catch (const std::exception& error) {
+        return error.what();
+    } catch (...) {
+        return "Command handler threw a non-standard exception.";
+    }
+}
+
+} // namespace
+
+Simulation::Simulation() {
+    registerMovementCommandHandlers();
+}
+
+Simulation::~Simulation() {
     shutdown();
 }
 
-bool Simulation::initialize(const WorldConfiguration& configureWorld)
-{
-    if (initialized_)
-    {
+void Simulation::registerMovementCommandHandlers() {
+    using namespace navalsim::movement;
+
+    registerCommandHandler<SetDesiredHeadingCommand, MovementCommandStatus>(
+        [this](Simulation&, const SetDesiredHeadingCommand& command) {
+            if (!world_) {
+                throw std::logic_error("Cannot process a movement command without a world.");
+            }
+
+            return processSingleMovementCommand(
+                world_->ecs(),
+                movementCommandProcessor_,
+                command
+            );
+        }
+    );
+
+    registerCommandHandler<SetSpeedCommand, MovementCommandStatus>(
+        [this](Simulation&, const SetSpeedCommand& command) {
+            if (!world_) {
+                throw std::logic_error("Cannot process a movement command without a world.");
+            }
+
+            return processSingleMovementCommand(
+                world_->ecs(),
+                movementCommandProcessor_,
+                command
+            );
+        }
+    );
+
+    registerCommandHandler<StopMovementCommand, MovementCommandStatus>(
+        [this](Simulation&, const StopMovementCommand& command) {
+            if (!world_) {
+                throw std::logic_error("Cannot process a movement command without a world.");
+            }
+
+            return processSingleMovementCommand(
+                world_->ecs(),
+                movementCommandProcessor_,
+                command
+            );
+        }
+    );
+}
+
+bool Simulation::initialize(const WorldConfiguration& configureWorld) {
+    if (initialized_) {
         return true;
     }
 
-    // Construct a new world before changing simulation state.
     auto newWorld = std::make_unique<World>();
 
-    // Register simulation domain systems.
     navalsim::movement::registerMovementSystems(newWorld->ecs());
 
-    // Allow systems and other ECS configuration to be registered.
-    if (configureWorld)
-    {
+    if (configureWorld) {
         configureWorld(*newWorld);
     }
 
-    // Commit the newly configured world.
     world_ = std::move(newWorld);
     initialized_ = true;
 
     return true;
 }
 
-void Simulation::shutdown()
-{
-    // Destroy runtime world state first.
+bool Simulation::initialize(
+    const navalsim::data::DefinitionDatabase& definitions,
+    const WorldConfiguration& configureWorld
+) {
+    if (initialized_) {
+        if (definitions_ != &definitions) {
+            throw std::logic_error(
+                "Cannot change the definition database while the simulation is initialized."
+            );
+        }
+
+        return true;
+    }
+
+    definitions_ = &definitions;
+
+    try {
+        const bool result = initialize(configureWorld);
+
+        if (!result) {
+            definitions_ = nullptr;
+        }
+
+        return result;
+    } catch (...) {
+        definitions_ = nullptr;
+        throw;
+    }
+}
+
+flecs::entity_t Simulation::createVessel(
+    const navalsim::data::DefinitionId& definitionId,
+    navalsim::geography::GeographicPosition position,
+    double initialHeadingDegrees
+) {
+    if (!initialized_ || !world_) {
+        throw std::logic_error("Cannot create a vessel in an uninitialized simulation.");
+    }
+
+    if (!definitions_) {
+        throw std::logic_error("Cannot create a vessel without an initialized definition database.");
+    }
+
+    const auto* definition = definitions_->find<navalsim::data::VesselDefinition>(definitionId);
+
+    if (!definition) {
+        throw std::invalid_argument("Vessel definition was not found: " + definitionId.value());
+    }
+
+    auto vessel = world_->ecs().entity();
+
+    vessel.add<navalsim::world::Vessel>();
+    vessel.set<navalsim::geography::GeographicPosition>(std::move(position));
+    vessel.set<navalsim::movement::Heading>(
+        navalsim::movement::Heading(initialHeadingDegrees)
+    );
+    vessel.set<navalsim::movement::DesiredHeading>(
+        navalsim::movement::DesiredHeading(initialHeadingDegrees)
+    );
+    vessel.set<navalsim::movement::Speed>(
+        navalsim::movement::Speed(0.0)
+    );
+    vessel.set<navalsim::movement::MaximumSpeed>(
+        navalsim::movement::MaximumSpeed(
+            definition->propulsion().maximumSpeedMetersPerSecond()
+        )
+    );
+    vessel.set<navalsim::movement::TurnRate>(
+        navalsim::movement::TurnRate(0.0)
+    );
+    vessel.set<navalsim::movement::TurnDirection>(
+        navalsim::movement::TurnDirection::None
+    );
+    vessel.set<navalsim::movement::MovementStatus>(
+        navalsim::movement::MovementStatus::Stopped
+    );
+
+    return vessel.id();
+}
+
+void Simulation::shutdown() {
     world_.reset();
+    definitions_ = nullptr;
 
-    // Clear commands and results from the previous session.
-    pendingMovementCommands_.clear();
-    movementCommandResults_.clear();
+    commandQueue_.clear();
+    commandResults_.clear();
+    commandFailures_.clear();
 
-    // Reset the simulation session.
     clock_.reset();
     scheduler_.reset();
 
     initialized_ = false;
 }
 
-std::size_t Simulation::advance(double realDeltaSeconds)
-{
-    if (!initialized_)
-    {
+std::size_t Simulation::advance(double realDeltaSeconds) {
+    if (!initialized_) {
         throw std::logic_error("Cannot advance an uninitialized simulation.");
     }
 
-    // Validate the clock advance without modifying the clock.
     const double elapsedSimulationSeconds = clock_.previewAdvance(realDeltaSeconds);
 
-    // Validate scheduler capacity before committing either side.
     scheduler_.validateAdvance(elapsedSimulationSeconds);
 
-    // Both validations succeeded. Commit elapsed simulation time.
     clock_.advance(realDeltaSeconds);
 
-    // Execute as many fixed steps as the scheduler can process.
-    return scheduler_.advance(elapsedSimulationSeconds, [this](double fixedStepSeconds)
-    {
+    return scheduler_.advance(elapsedSimulationSeconds, [this](double fixedStepSeconds) {
         update(fixedStepSeconds);
     });
 }
 
-void Simulation::setTimeScale(double timeScale)
-{
+void Simulation::setTimeScale(double timeScale) {
     clock_.setTimeScale(timeScale);
 }
 
-double Simulation::simulationTime() const noexcept
-{
+double Simulation::simulationTime() const noexcept {
     return clock_.simulationTime();
 }
 
-double Simulation::timeScale() const noexcept
-{
+double Simulation::timeScale() const noexcept {
     return clock_.timeScale();
+}
+
+navalsim::simulation::SimulationCommandId Simulation::submitCommand(
+    navalsim::simulation::SimulationCommand command
+) {
+    return submitMovementCommand(std::move(command));
+}
+
+std::vector<navalsim::simulation::SimulationCommandResult>
+Simulation::takeCommandResults() {
+    return takeMovementCommandResults();
+}
+
+std::vector<navalsim::simulation::CommandExecutionFailure>
+Simulation::takeCommandFailures() {
+    auto failures = std::move(commandFailures_);
+    commandFailures_.clear();
+    return failures;
 }
 
 navalsim::movement::MovementCommandId Simulation::submitMovementCommand(
     navalsim::movement::MovementCommand command
-)
-{
-    if (!initialized_)
-    {
-        throw std::logic_error("Cannot submit a movement command to an uninitialized simulation.");
-    }
+) {
+    using namespace navalsim::movement;
 
-    // ID zero is reserved to indicate that the ID counter is exhausted.
-    if (nextMovementCommandId_ == 0)
-    {
-        throw std::overflow_error("Movement command ID space is exhausted.");
-    }
+    return std::visit(
+        [this](const auto& concreteCommand) {
+            using Command = std::decay_t<decltype(concreteCommand)>;
 
-    const auto commandId = nextMovementCommandId_;
-
-    // Queue the command before advancing the counter. If allocation fails,
-    // the ID remains available for the next submission.
-    pendingMovementCommands_.push_back({
-        commandId,
-        std::move(command)
-    });
-
-    // Preserve unique IDs, including across shutdown and reinitialization.
-    nextMovementCommandId_ =
-        commandId == std::numeric_limits<navalsim::movement::MovementCommandId>::max()
-            ? 0
-            : commandId + 1;
-
-    return commandId;
+            return submitCommand<Command, MovementCommandStatus>(concreteCommand);
+        },
+        command
+    );
 }
 
 std::vector<navalsim::movement::MovementCommandResult>
-Simulation::takeMovementCommandResults()
-{
-    auto results = std::move(movementCommandResults_);
-    movementCommandResults_.clear();
-
-    return results;
+Simulation::takeMovementCommandResults() {
+    return takeCommandResults<navalsim::movement::MovementCommandStatus>();
 }
 
-void Simulation::update(double fixedStepSeconds)
-{
-    // Phase 1: Process pending movement commands.
-    processMovementCommandPhase();
-
-    // Phase 2: Run simulation systems.
+void Simulation::update(double fixedStepSeconds) {
+    processCommandPhase();
     runSimulationSystemsPhase(fixedStepSeconds);
 }
 
-void Simulation::processMovementCommandPhase()
-{
-    if (pendingMovementCommands_.empty())
-    {
+void Simulation::processCommandPhase() {
+    if (commandQueue_.empty()) {
         return;
     }
 
-    auto results = movementCommandProcessor_.process(
-        world_->ecs(),
-        pendingMovementCommands_
-    );
+    const std::size_t pendingCount = commandQueue_.size();
 
-    movementCommandResults_.insert(
-        movementCommandResults_.end(),
-        results.begin(),
-        results.end()
-    );
+    if (pendingCount > commandResults_.max_size() - commandResults_.size()
+        || pendingCount > commandFailures_.max_size() - commandFailures_.size()) {
+        throw std::length_error("Command result storage capacity is exhausted.");
+    }
 
-    pendingMovementCommands_.clear();
+    // Reserve before taking the batch, so a reserve failure leaves the queue intact.
+    commandResults_.reserve(commandResults_.size() + pendingCount);
+    commandFailures_.reserve(commandFailures_.size() + pendingCount);
+
+    // Taking the batch removes it from the queue. Each command is now attempted
+    // once, and a handler failure will not cause earlier commands to be retried.
+    auto pendingCommands = commandQueue_.takePending();
+
+    for (const auto& queuedCommand : pendingCommands) {
+        try {
+            auto result = queuedCommand.command(queuedCommand.id);
+            commandResults_.push_back(std::move(result));
+        } catch (...) {
+            const auto exception = std::current_exception();
+
+            commandFailures_.push_back({
+                queuedCommand.id,
+                describeCommandException(exception),
+                exception
+            });
+        }
+    }
 }
 
-void Simulation::runSimulationSystemsPhase(double fixedStepSeconds)
-{
-    // Run Flecs' default pipeline for this fixed simulation step.
+void Simulation::runSimulationSystemsPhase(double fixedStepSeconds) {
     world_->ecs().run_pipeline(0, fixedStepSeconds);
 }
 

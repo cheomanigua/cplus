@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.24)
 
 project(NavalSim
@@ -78,6 +77,21 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(doctest)
 
 # --------------------------------------------------
+# nlohmann/json
+# --------------------------------------------------
+
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.12.0
+    GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(nlohmann_json)
+
+# --------------------------------------------------
 # Common compiler configuration
 # --------------------------------------------------
 
@@ -112,6 +126,28 @@ target_compile_features(navalsim_core INTERFACE
 )
 
 # --------------------------------------------------
+# Data
+# --------------------------------------------------
+
+add_library(navalsim_data STATIC
+    src/data/json/json_reader.cpp
+	src/data/json/json_object_validator.cpp
+	src/data/definitions/vessel_definition.cpp
+	src/data/definitions/unit_definition.cpp
+	src/data/definitions/component_definition.cpp
+	src/data/definitions/vessel_definition_loader.cpp
+	src/data/definitions/definition_loading_configuration_loader.cpp
+    src/data/definitions/definition_loading_service.cpp
+)
+
+target_link_libraries(navalsim_data PUBLIC
+    navalsim_core
+    nlohmann_json::nlohmann_json
+)
+
+navalsim_set_warnings(navalsim_data)
+
+# --------------------------------------------------
 # World
 # --------------------------------------------------
 
@@ -134,13 +170,14 @@ navalsim_set_warnings(navalsim_world)
 add_library(navalsim_simulation STATIC
     src/simulation/simulation.cpp
     src/simulation/clock/simulation_clock.cpp
-	src/simulation/scheduler/simulation_scheduler.cpp
+    src/simulation/scheduler/simulation_scheduler.cpp
 )
 
 target_link_libraries(navalsim_simulation PUBLIC
     navalsim_core
+    navalsim_data
     navalsim_world
-	navalsim_movement
+    navalsim_movement
 )
 
 navalsim_set_warnings(navalsim_simulation)
@@ -167,7 +204,7 @@ navalsim_set_warnings(navalsim_client)
 
 add_library(navalsim_movement STATIC
     src/domains/movement/movement_systems.cpp
-	src/domains/movement/movement_command_processor.cpp
+    src/domains/movement/movement_command_processor.cpp
 )
 
 target_link_libraries(navalsim_movement PUBLIC
@@ -176,7 +213,6 @@ target_link_libraries(navalsim_movement PUBLIC
 )
 
 navalsim_set_warnings(navalsim_movement)
-
 
 # --------------------------------------------------
 # Executable
