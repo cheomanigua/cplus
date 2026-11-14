@@ -37,7 +37,8 @@ struct DefinitionBatchResult {
     }
 };
 
-template<DefinitionLoader Loader>
+template<typename Loader>
+requires (DefinitionLoader<Loader> || DefinitionCollectionLoader<Loader>)
 DefinitionBatchResult loadDefinitionFiles(
     const std::vector<std::filesystem::path>& paths,
     DefinitionDatabase& database
@@ -52,40 +53,70 @@ DefinitionBatchResult loadDefinitionFiles(
     stagedIds.reserve(paths.size());
 
     for (const auto& path : paths) {
-        auto result = loadDefinitionFile<Loader>(path);
+        std::vector<Definition> fileDefinitions;
 
-        if (auto* error = std::get_if<DataError>(&result)) {
-            errors.push_back({path.string(), std::move(*error)});
-            continue;
+        if constexpr (DefinitionLoader<Loader>) {
+            auto result = loadDefinitionFile<Loader>(path);
+
+            if (auto* error = std::get_if<DataError>(&result)) {
+                errors.push_back({path.string(), std::move(*error)});
+                continue;
+            }
+
+            if (auto* validation =
+                    std::get_if<JsonValidationResult>(&result)) {
+                errors.push_back({path.string(), std::move(*validation)});
+                continue;
+            }
+
+            fileDefinitions.push_back(
+                std::move(std::get<Definition>(result))
+            );
+        } else {
+            auto result = loadDefinitionCollectionFile<Loader>(path);
+
+            if (auto* error = std::get_if<DataError>(&result)) {
+                errors.push_back({path.string(), std::move(*error)});
+                continue;
+            }
+
+            if (auto* validation =
+                    std::get_if<JsonValidationResult>(&result)) {
+                errors.push_back({path.string(), std::move(*validation)});
+                continue;
+            }
+
+            fileDefinitions =
+                std::move(std::get<std::vector<Definition>>(result));
         }
 
-        if (auto* validation = std::get_if<JsonValidationResult>(&result)) {
-            errors.push_back({path.string(), std::move(*validation)});
-            continue;
+        for (auto& definition : fileDefinitions) {
+            const std::string id = definition.id().value();
+
+            const auto [iterator, inserted] =
+                stagedIds.try_emplace(id, path.string());
+
+            if (!inserted) {
+                errors.push_back({
+                    path.string(),
+                    DuplicateDefinitionIdError{id, iterator->second}
+                });
+                continue;
+            }
+
+            if (database.contains(definition.id())) {
+                errors.push_back({
+                    path.string(),
+                    DuplicateDefinitionIdError{
+                        id,
+                        "<existing database>"
+                    }
+                });
+                continue;
+            }
+
+            stagedDefinitions.push_back(std::move(definition));
         }
-
-        Definition definition = std::move(std::get<Definition>(result));
-        const std::string id = definition.id().value();
-
-        const auto [iterator, inserted] = stagedIds.try_emplace(id, path.string());
-
-        if (!inserted) {
-            errors.push_back({
-                path.string(),
-                DuplicateDefinitionIdError{id, iterator->second}
-            });
-            continue;
-        }
-
-        if (database.contains(definition.id())) {
-            errors.push_back({
-                path.string(),
-                DuplicateDefinitionIdError{id, "<existing database>"}
-            });
-            continue;
-        }
-
-        stagedDefinitions.push_back(std::move(definition));
     }
 
     if (!errors.empty()) {
@@ -98,4 +129,4 @@ DefinitionBatchResult loadDefinitionFiles(
     return DefinitionBatchResult{loadedCount, {}};
 }
 
-} // namespace
+} // namespace navalsim::data

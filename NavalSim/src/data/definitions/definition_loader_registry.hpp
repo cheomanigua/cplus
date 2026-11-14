@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <algorithm>
@@ -29,7 +28,8 @@ using DefinitionRegistryLoadResult = std::variant<
 
 class DefinitionLoaderRegistry {
 public:
-    template<DefinitionLoader Loader>
+    template<typename Loader>
+    requires (DefinitionLoader<Loader> || DefinitionCollectionLoader<Loader>)
     void registerLoader(DefinitionCategory category) {
         const std::string categoryName = category.value();
 
@@ -43,7 +43,8 @@ public:
 
         if (!inserted) {
             throw std::invalid_argument(
-                "Definition category is already registered: " + categoryName
+                "Definition category is already registered: " +
+                categoryName
             );
         }
     }
@@ -99,7 +100,8 @@ private:
         BatchLoaderFunction loadFiles;
     };
 
-    template<DefinitionLoader Loader>
+    template<typename Loader>
+    requires (DefinitionLoader<Loader> || DefinitionCollectionLoader<Loader>)
     static DefinitionBatchResult loadFilesWithLoader(
         const std::vector<std::filesystem::path>& paths,
         DefinitionDatabase& database
@@ -110,4 +112,4 @@ private:
     std::unordered_map<std::string, Entry> loaders_;
 };
 
-} // namespace
+} // namespace navalsim::data

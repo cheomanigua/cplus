@@ -31,11 +31,25 @@ option(NAVALSIM_WARNINGS_AS_ERRORS
     OFF
 )
 
+option(NAVALSIM_BUILD_CLIENT
+    "Build the SDL3 application when SDL3 is available"
+    ON
+)
+
 # --------------------------------------------------
 # External dependencies
 # --------------------------------------------------
 
-find_package(SDL3 3.2.18 CONFIG REQUIRED COMPONENTS SDL3)
+if(NAVALSIM_BUILD_CLIENT)
+    find_package(SDL3 3.2.18 CONFIG QUIET COMPONENTS SDL3)
+    if(NOT TARGET SDL3::SDL3)
+        message(WARNING
+            "SDL3 3.2.18 or newer was not found; the client executable will be skipped. "
+            "Core, data, world, simulation, and test targets remain available."
+        )
+        set(NAVALSIM_BUILD_CLIENT OFF)
+    endif()
+endif()
 
 # Flecs
 set(FLECS_ROOT
@@ -132,12 +146,14 @@ target_compile_features(navalsim_core INTERFACE
 add_library(navalsim_data STATIC
     src/data/json/json_reader.cpp
 	src/data/json/json_object_validator.cpp
-	src/data/definitions/vessel_definition.cpp
-	src/data/definitions/unit_definition.cpp
 	src/data/definitions/component_definition.cpp
-	src/data/definitions/vessel_definition_loader.cpp
+	src/data/definitions/component_collection_loader.cpp
 	src/data/definitions/definition_loading_configuration_loader.cpp
     src/data/definitions/definition_loading_service.cpp
+	src/data/definitions/unit_definition.cpp
+	src/data/definitions/unit_collection_loader.cpp
+	src/data/definitions/ammunition_definition.cpp
+	src/data/definitions/ammunition_collection_loader.cpp
 )
 
 target_link_libraries(navalsim_data PUBLIC
@@ -186,17 +202,19 @@ navalsim_set_warnings(navalsim_simulation)
 # Client
 # --------------------------------------------------
 
-add_library(navalsim_client STATIC
-    src/client/application.cpp
-)
+if(NAVALSIM_BUILD_CLIENT)
+    add_library(navalsim_client STATIC
+        src/client/application.cpp
+    )
 
-target_link_libraries(navalsim_client PUBLIC
-    navalsim_core
-    navalsim_simulation
-    SDL3::SDL3
-)
+    target_link_libraries(navalsim_client PUBLIC
+        navalsim_core
+        navalsim_simulation
+        SDL3::SDL3
+    )
 
-navalsim_set_warnings(navalsim_client)
+    navalsim_set_warnings(navalsim_client)
+endif()
 
 # --------------------------------------------------
 # Domains
@@ -218,15 +236,17 @@ navalsim_set_warnings(navalsim_movement)
 # Executable
 # --------------------------------------------------
 
-add_executable(navalsim
-    src/main.cpp
-)
+if(NAVALSIM_BUILD_CLIENT)
+    add_executable(navalsim
+        src/main.cpp
+    )
 
-target_link_libraries(navalsim PRIVATE
-    navalsim_client
-)
+    target_link_libraries(navalsim PRIVATE
+        navalsim_client
+    )
 
-navalsim_set_warnings(navalsim)
+    navalsim_set_warnings(navalsim)
+endif()
 
 # --------------------------------------------------
 # Tests

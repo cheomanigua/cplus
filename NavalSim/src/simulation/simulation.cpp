@@ -12,12 +12,14 @@
 #include <vector>
 
 #include "data/definitions/definition_database.hpp"
-#include "data/definitions/vessel_definition.hpp"
+#include "data/definitions/unit_definition.hpp"
 #include "domains/movement/movement_components.hpp"
 #include "domains/movement/movement_systems.hpp"
 #include "world/components/tags/entity_type_tags.hpp"
 
 namespace {
+
+constexpr double metersPerSecondPerKnot = 1852.0 / 3600.0;
 
 template <typename Command>
 navalsim::movement::MovementCommandStatus processSingleMovementCommand(
@@ -172,11 +174,22 @@ flecs::entity_t Simulation::createVessel(
         throw std::logic_error("Cannot create a vessel without an initialized definition database.");
     }
 
-    const auto* definition = definitions_->find<navalsim::data::VesselDefinition>(definitionId);
+    const auto* definition =
+        definitions_->find<navalsim::data::UnitDefinition>(definitionId);
 
     if (!definition) {
-        throw std::invalid_argument("Vessel definition was not found: " + definitionId.value());
+        throw std::invalid_argument("Unit definition was not found: " + definitionId.value());
     }
+
+    if (definition->environment() != navalsim::data::UnitEnvironment::Water) {
+        throw std::invalid_argument(
+            "Cannot create a vessel from a unit definition outside the water environment: "
+            + definitionId.value()
+        );
+    }
+
+    const double maximumSpeedMetersPerSecond =
+        definition->maxSpeedKnots() * metersPerSecondPerKnot;
 
     auto vessel = world_->ecs().entity();
 
@@ -192,9 +205,7 @@ flecs::entity_t Simulation::createVessel(
         navalsim::movement::Speed(0.0)
     );
     vessel.set<navalsim::movement::MaximumSpeed>(
-        navalsim::movement::MaximumSpeed(
-            definition->propulsion().maximumSpeedMetersPerSecond()
-        )
+        navalsim::movement::MaximumSpeed(maximumSpeedMetersPerSecond)
     );
     vessel.set<navalsim::movement::TurnRate>(
         navalsim::movement::TurnRate(0.0)

@@ -3,13 +3,24 @@
 #include <cmath>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace navalsim::data {
 namespace {
 
 void requirePositiveFinite(double value, const char* fieldName) {
     if (!std::isfinite(value) || value <= 0.0) {
-        throw std::invalid_argument(std::string(fieldName) + " must be finite and greater than zero.");
+        throw std::invalid_argument(
+            std::string(fieldName) + " must be finite and greater than zero."
+        );
+    }
+}
+
+void requireNonNegativeFinite(double value, const char* fieldName) {
+    if (!std::isfinite(value) || value < 0.0) {
+        throw std::invalid_argument(
+            std::string(fieldName) + " must be finite and non-negative."
+        );
     }
 }
 
@@ -24,13 +35,6 @@ const char* toString(UnitEnvironment environment) noexcept {
     return "unknown";
 }
 
-UnitPhysicalProperties::UnitPhysicalProperties(double massKg, double lengthMeters, double widthMeters)
-    : massKg_(massKg), lengthMeters_(lengthMeters), widthMeters_(widthMeters) {
-    requirePositiveFinite(massKg_, "Unit mass");
-    requirePositiveFinite(lengthMeters_, "Unit length");
-    requirePositiveFinite(widthMeters_, "Unit width");
-}
-
 UnitComponentReference::UnitComponentReference(DefinitionId componentId, std::size_t quantity)
     : componentId_(std::move(componentId)), quantity_(quantity) {
     if (quantity_ == 0) {
@@ -43,14 +47,16 @@ UnitDefinition::UnitDefinition(
     std::string name,
     std::string type,
     UnitEnvironment environment,
-    UnitPhysicalProperties physicalProperties,
+    double maxSpeedKnots,
+    std::optional<FuelProperties> fuel,
     std::vector<UnitComponentReference> components
 )
     : id_(std::move(id)),
       name_(std::move(name)),
       type_(std::move(type)),
       environment_(environment),
-      physicalProperties_(std::move(physicalProperties)),
+      maxSpeedKnots_(maxSpeedKnots),
+      fuel_(std::move(fuel)),
       components_(std::move(components)) {
     if (name_.empty()) {
         throw std::invalid_argument("Unit definition name cannot be empty.");
@@ -62,6 +68,14 @@ UnitDefinition::UnitDefinition(
         environment_ != UnitEnvironment::Air &&
         environment_ != UnitEnvironment::Land) {
         throw std::invalid_argument("Unit environment is invalid.");
+    }
+
+    requireNonNegativeFinite(maxSpeedKnots_, "Unit maximum speed");
+
+    if (fuel_) {
+        requirePositiveFinite(fuel_->capacity, "Unit fuel capacity");
+        requirePositiveFinite(fuel_->referenceSpeedKnots, "Unit fuel reference speed");
+        requirePositiveFinite(fuel_->consumptionPerHour, "Unit fuel consumption per hour");
     }
 }
 

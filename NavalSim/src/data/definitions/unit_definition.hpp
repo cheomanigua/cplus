@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -17,18 +18,10 @@ enum class UnitEnvironment {
 
 const char* toString(UnitEnvironment environment) noexcept;
 
-class UnitPhysicalProperties {
-public:
-    UnitPhysicalProperties(double massKg, double lengthMeters, double widthMeters);
-
-    double massKg() const noexcept { return massKg_; }
-    double lengthMeters() const noexcept { return lengthMeters_; }
-    double widthMeters() const noexcept { return widthMeters_; }
-
-private:
-    double massKg_;
-    double lengthMeters_;
-    double widthMeters_;
+struct FuelProperties {
+    double capacity;
+    double referenceSpeedKnots;
+    double consumptionPerHour;
 };
 
 class UnitComponentReference {
@@ -50,7 +43,8 @@ public:
         std::string name,
         std::string type,
         UnitEnvironment environment,
-        UnitPhysicalProperties physicalProperties,
+        double maxSpeedKnots,
+        std::optional<FuelProperties> fuel,
         std::vector<UnitComponentReference> components
     );
 
@@ -58,7 +52,8 @@ public:
     const std::string& name() const noexcept { return name_; }
     const std::string& type() const noexcept { return type_; }
     UnitEnvironment environment() const noexcept { return environment_; }
-    const UnitPhysicalProperties& physicalProperties() const noexcept { return physicalProperties_; }
+    double maxSpeedKnots() const noexcept { return maxSpeedKnots_; }
+    const std::optional<FuelProperties>& fuel() const noexcept { return fuel_; }
     const std::vector<UnitComponentReference>& components() const noexcept { return components_; }
 
 private:
@@ -66,7 +61,8 @@ private:
     std::string name_;
     std::string type_;
     UnitEnvironment environment_;
-    UnitPhysicalProperties physicalProperties_;
+    double maxSpeedKnots_;
+    std::optional<FuelProperties> fuel_;
     std::vector<UnitComponentReference> components_;
 };
 

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <exception>
 #include <limits>
+#include <optional>
 #include <stdexcept>
 #include <vector>
 
@@ -12,7 +13,7 @@
 #include "core/geography/geographic_types.hpp"
 #include "core/geography/geographic_calculations.hpp"
 #include "data/definitions/definition_database.hpp"
-#include "data/definitions/vessel_definition.hpp"
+#include "data/definitions/unit_definition.hpp"
 #include "domains/movement/movement_components.hpp"
 #include "simulation/simulation.hpp"
 #include "world/components/tags/entity_type_tags.hpp"
@@ -352,24 +353,27 @@ TEST_CASE("Simulation automatically registers movement systems")
     );
 }
 
-TEST_CASE("Simulation creates a vessel from its loaded definition")
+
+TEST_CASE("Simulation creates a vessel from its loaded unit definition")
 {
     using namespace navalsim::data;
     using namespace navalsim::geography;
     using namespace navalsim::movement;
 
+    constexpr double metersPerSecondPerKnot = 1852.0 / 3600.0;
+    constexpr double maximumSpeedKnots = 30.0;
+
     DefinitionDatabase definitions;
 
     definitions.add(
-        VesselDefinition(
+        UnitDefinition(
             DefinitionId("destroyer.ddg51"),
             "Arleigh Burke-class Destroyer",
-            VesselDimensions(
-                Distance(155.0),
-                Distance(20.0),
-                Distance(9.5)
-            ),
-            VesselPropulsion(30.0)
+            "destroyer",
+            UnitEnvironment::Water,
+            maximumSpeedKnots,
+            std::nullopt,
+            {}
         )
     );
 
@@ -419,7 +423,10 @@ TEST_CASE("Simulation creates a vessel from its loaded definition")
     CHECK(vessel.get<Speed>().metersPerSecond() == doctest::Approx(0.0));
 
     REQUIRE(vessel.has<MaximumSpeed>());
-    CHECK(vessel.get<MaximumSpeed>().metersPerSecond() == doctest::Approx(30.0));
+    CHECK(
+        vessel.get<MaximumSpeed>().metersPerSecond()
+        == doctest::Approx(maximumSpeedKnots * metersPerSecondPerKnot)
+    );
 
     REQUIRE(vessel.has<TurnRate>());
     CHECK(vessel.get<TurnRate>().degreesPerSecond() == doctest::Approx(0.0));
@@ -429,6 +436,42 @@ TEST_CASE("Simulation creates a vessel from its loaded definition")
 
     CHECK(vessel.has<MovementStatus>());
     CHECK(vessel.get<MovementStatus>() == MovementStatus::Stopped);
+}
+
+
+TEST_CASE("Simulation rejects vessel creation from a non-water unit definition")
+{
+    using namespace navalsim::data;
+    using namespace navalsim::geography;
+
+    DefinitionDatabase definitions;
+
+    definitions.add(
+        UnitDefinition(
+            DefinitionId("aircraft.fighter"),
+            "Fighter",
+            "fighter",
+            UnitEnvironment::Air,
+            1200.0,
+            std::nullopt,
+            {}
+        )
+    );
+
+    Simulation simulation;
+    REQUIRE(simulation.initialize(definitions));
+
+    CHECK_THROWS_AS(
+        simulation.createVessel(
+            DefinitionId("aircraft.fighter"),
+            GeographicPosition(
+                Latitude(0.0),
+                Longitude(0.0),
+                Elevation(0.0)
+            )
+        ),
+        std::invalid_argument
+    );
 }
 
 TEST_CASE("Simulation rejects vessel creation with an unknown definition")

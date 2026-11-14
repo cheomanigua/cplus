@@ -224,22 +224,6 @@ navalsim_set_warnings(navalsim_json_object_validator_tests)
 
 doctest_discover_tests(navalsim_json_object_validator_tests)
 
-# --------------------------------------------------
-# Vessel definition tests
-# --------------------------------------------------
-
-add_executable(navalsim_vessel_definition_tests
-    data/vessel_definition_tests.cpp
-)
-
-target_link_libraries(navalsim_vessel_definition_tests PRIVATE
-    navalsim_data
-    doctest::doctest
-)
-
-navalsim_set_warnings(navalsim_vessel_definition_tests)
-
-doctest_discover_tests(navalsim_vessel_definition_tests)
 
 # --------------------------------------------------
 # Generic unit definition tests
@@ -273,6 +257,58 @@ target_link_libraries(navalsim_component_definition_tests PRIVATE
 navalsim_set_warnings(navalsim_component_definition_tests)
 doctest_discover_tests(navalsim_component_definition_tests)
 
+
+# --------------------------------------------------
+# Component collection loader tests
+# --------------------------------------------------
+
+add_executable(navalsim_component_collection_loader_tests
+    data/component_collection_loader_tests.cpp
+)
+
+target_link_libraries(navalsim_component_collection_loader_tests PRIVATE
+    navalsim_data
+    doctest::doctest
+)
+
+navalsim_set_warnings(navalsim_component_collection_loader_tests)
+doctest_discover_tests(navalsim_component_collection_loader_tests)
+
+
+# --------------------------------------------------
+# Ammunition definition tests
+# --------------------------------------------------
+
+add_executable(navalsim_ammunition_definition_tests
+    data/ammunition_definition_tests.cpp
+)
+
+target_link_libraries(navalsim_ammunition_definition_tests PRIVATE
+    navalsim_data
+    doctest::doctest
+)
+
+navalsim_set_warnings(navalsim_ammunition_definition_tests)
+doctest_discover_tests(navalsim_ammunition_definition_tests)
+
+# --------------------------------------------------
+# Ammunition collection loader tests
+# --------------------------------------------------
+
+
+add_executable(navalsim_ammunition_collection_loader_tests
+    data/ammunition_collection_loader_tests.cpp
+)
+
+target_link_libraries(navalsim_ammunition_collection_loader_tests PRIVATE
+    navalsim_data
+    doctest::doctest
+)
+
+navalsim_set_warnings(navalsim_ammunition_collection_loader_tests)
+doctest_discover_tests(navalsim_ammunition_collection_loader_tests)
+
+
 # --------------------------------------------------
 # Definition database tests
 # --------------------------------------------------
@@ -290,22 +326,22 @@ navalsim_set_warnings(navalsim_definition_database_tests)
 
 doctest_discover_tests(navalsim_definition_database_tests)
 
+
 # --------------------------------------------------
-# Vessel definition loader tests
+# Unit collection loader tests
 # --------------------------------------------------
 
-add_executable(navalsim_vessel_definition_loader_tests
-    data/vessel_definition_loader_tests.cpp
+add_executable(navalsim_unit_collection_loader_tests
+    data/unit_collection_loader_tests.cpp
 )
 
-target_link_libraries(navalsim_vessel_definition_loader_tests PRIVATE
+target_link_libraries(navalsim_unit_collection_loader_tests PRIVATE
     navalsim_data
     doctest::doctest
 )
 
-navalsim_set_warnings(navalsim_vessel_definition_loader_tests)
-
-doctest_discover_tests(navalsim_vessel_definition_loader_tests)
+navalsim_set_warnings(navalsim_unit_collection_loader_tests)
+doctest_discover_tests(navalsim_unit_collection_loader_tests)
 
 # --------------------------------------------------
 # Definition batch loader tests
