@@ -3,7 +3,7 @@
 namespace navalsim::world
 {
 
-struct Vessel {};
+//struct Vessel {};
 //struct Aircraft {};
 //struct Weapon {};
 //struct Sensor {};

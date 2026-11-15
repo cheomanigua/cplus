@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.24)
 
 project(NavalSim
@@ -145,15 +146,15 @@ target_compile_features(navalsim_core INTERFACE
 
 add_library(navalsim_data STATIC
     src/data/json/json_reader.cpp
-	src/data/json/json_object_validator.cpp
-	src/data/definitions/component_definition.cpp
-	src/data/definitions/component_collection_loader.cpp
-	src/data/definitions/definition_loading_configuration_loader.cpp
+    src/data/json/json_object_validator.cpp
+    src/data/definitions/component_definition.cpp
+    src/data/definitions/component_collection_loader.cpp
+    src/data/definitions/definition_loading_configuration_loader.cpp
     src/data/definitions/definition_loading_service.cpp
-	src/data/definitions/unit_definition.cpp
-	src/data/definitions/unit_collection_loader.cpp
-	src/data/definitions/ammunition_definition.cpp
-	src/data/definitions/ammunition_collection_loader.cpp
+    src/data/definitions/unit_definition.cpp
+    src/data/definitions/unit_collection_loader.cpp
+    src/data/definitions/ammunition_definition.cpp
+    src/data/definitions/ammunition_collection_loader.cpp
 )
 
 target_link_libraries(navalsim_data PUBLIC
@@ -185,6 +186,7 @@ navalsim_set_warnings(navalsim_world)
 
 add_library(navalsim_simulation STATIC
     src/simulation/simulation.cpp
+    src/simulation/units/unit_assembler.cpp
     src/simulation/clock/simulation_clock.cpp
     src/simulation/scheduler/simulation_scheduler.cpp
 )

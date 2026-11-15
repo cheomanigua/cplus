@@ -1,4 +1,3 @@
-
 #include "domains/movement/movement_systems.hpp"
 
 #include <algorithm>
@@ -7,7 +6,6 @@
 
 #include "core/geography/geographic_calculations.hpp"
 #include "domains/movement/movement_components.hpp"
-#include "world/components/tags/entity_type_tags.hpp"
 
 namespace navalsim::movement
 {
@@ -19,8 +17,7 @@ void registerMovementSystems(flecs::world& world)
         Heading,
         DesiredHeading,
         TurnRate,
-        TurnDirection,
-        navalsim::world::Vessel
+        TurnDirection
     >()
     .kind(flecs::PreUpdate)
     .run(
@@ -96,8 +93,7 @@ void registerMovementSystems(flecs::world& world)
         Heading,
         Speed,
         MaximumSpeed,
-        MovementStatus,
-        navalsim::world::Vessel
+        MovementStatus
     >()
     .kind(flecs::OnUpdate)
     .run(
@@ -123,7 +119,7 @@ void registerMovementSystems(flecs::world& world)
                     const double maximumSpeed =
                         maximumSpeeds[i].metersPerSecond();
 
-                    // Enforce the vessel's maximum speed.
+                    // Enforce the unit's maximum speed.
                     if (speeds[i].metersPerSecond() > maximumSpeed)
                     {
                         speeds[i] = Speed(maximumSpeed);
@@ -146,4 +142,3 @@ void registerMovementSystems(flecs::world& world)
 }
 
 } // namespace navalsim::movement
-

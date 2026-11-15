@@ -1,6 +1,5 @@
 #include "domains/movement/movement_command_processor.hpp"
 
-#include "world/components/tags/entity_type_tags.hpp"
 
 namespace navalsim::movement
 {
@@ -9,16 +8,11 @@ namespace
 {
 
 template <typename... RequiredComponents>
-MovementCommandStatus validateVesselTarget(flecs::entity entity)
+MovementCommandStatus validateMovementTarget(flecs::entity entity)
 {
     if (!entity.is_alive())
     {
         return MovementCommandStatus::InvalidTarget;
-    }
-
-    if (!entity.has<navalsim::world::Vessel>())
-    {
-        return MovementCommandStatus::NotAVessel;
     }
 
     if (!(entity.has<RequiredComponents>() && ...))
@@ -36,7 +30,7 @@ MovementCommandStatus processCommand(
 {
     auto entity = world.entity(command.target);
 
-    const auto validationStatus = validateVesselTarget<
+    const auto validationStatus = validateMovementTarget<
         Heading,
         DesiredHeading,
         TurnRate,
@@ -62,7 +56,7 @@ MovementCommandStatus processCommand(
 {
     auto entity = world.entity(command.target);
 
-    const auto validationStatus = validateVesselTarget<
+    const auto validationStatus = validateMovementTarget<
         Speed,
         MaximumSpeed,
         MovementStatus
@@ -96,7 +90,7 @@ MovementCommandStatus processCommand(
 {
     auto entity = world.entity(command.target);
 
-    const auto validationStatus = validateVesselTarget<
+    const auto validationStatus = validateMovementTarget<
         Speed,
         MovementStatus
     >(entity);
@@ -140,4 +134,3 @@ MovementCommandProcessor::process(
 }
 
 } // namespace navalsim::movement
-

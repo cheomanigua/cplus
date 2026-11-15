@@ -1,3 +1,4 @@
+
 # --------------------------------------------------
 # doctest integration
 # --------------------------------------------------
@@ -58,6 +59,26 @@ doctest_discover_tests(navalsim_simulation_tests)
 
 navalsim_set_warnings(navalsim_simulation_tests)
 
+
+# --------------------------------------------------
+# Unit assembler tests
+# --------------------------------------------------
+
+add_executable(navalsim_unit_assembler_tests
+    simulation/units/unit_assembler_tests.cpp
+    simulation/units/unit_assembler_ammunition_tests.cpp
+)
+
+target_link_libraries(navalsim_unit_assembler_tests PRIVATE
+    navalsim_simulation
+    doctest::doctest
+)
+
+doctest_discover_tests(navalsim_unit_assembler_tests)
+
+navalsim_set_warnings(navalsim_unit_assembler_tests)
+
+
 # --------------------------------------------------
 # Command queue tests
 # --------------------------------------------------
@@ -74,6 +95,7 @@ target_link_libraries(navalsim_command_queue_tests
 
 navalsim_set_warnings(navalsim_command_queue_tests)
 doctest_discover_tests(navalsim_command_queue_tests)
+
 
 # --------------------------------------------------
 # Geographic types tests
@@ -207,6 +229,7 @@ navalsim_set_warnings(navalsim_json_reader_tests)
 
 doctest_discover_tests(navalsim_json_reader_tests)
 
+
 # --------------------------------------------------
 # JSON object validator tests
 # --------------------------------------------------
@@ -240,6 +263,7 @@ target_link_libraries(navalsim_unit_definition_tests PRIVATE
 
 navalsim_set_warnings(navalsim_unit_definition_tests)
 doctest_discover_tests(navalsim_unit_definition_tests)
+
 
 # --------------------------------------------------
 # Generic component definition tests
@@ -291,10 +315,10 @@ target_link_libraries(navalsim_ammunition_definition_tests PRIVATE
 navalsim_set_warnings(navalsim_ammunition_definition_tests)
 doctest_discover_tests(navalsim_ammunition_definition_tests)
 
+
 # --------------------------------------------------
 # Ammunition collection loader tests
 # --------------------------------------------------
-
 
 add_executable(navalsim_ammunition_collection_loader_tests
     data/ammunition_collection_loader_tests.cpp
@@ -314,12 +338,12 @@ doctest_discover_tests(navalsim_ammunition_collection_loader_tests)
 # --------------------------------------------------
 
 add_executable(navalsim_definition_database_tests
-	data/definition_database_tests.cpp
+    data/definition_database_tests.cpp
 )
 
 target_link_libraries(navalsim_definition_database_tests PRIVATE
-	navalsim_data
-	doctest::doctest
+    navalsim_data
+    doctest::doctest
 )
 
 navalsim_set_warnings(navalsim_definition_database_tests)
@@ -343,6 +367,7 @@ target_link_libraries(navalsim_unit_collection_loader_tests PRIVATE
 navalsim_set_warnings(navalsim_unit_collection_loader_tests)
 doctest_discover_tests(navalsim_unit_collection_loader_tests)
 
+
 # --------------------------------------------------
 # Definition batch loader tests
 # --------------------------------------------------
@@ -359,6 +384,7 @@ target_link_libraries(navalsim_definition_batch_loader_tests
 
 navalsim_set_warnings(navalsim_definition_batch_loader_tests)
 doctest_discover_tests(navalsim_definition_batch_loader_tests)
+
 
 # --------------------------------------------------
 # Definition loader registry tests
@@ -377,6 +403,7 @@ target_link_libraries(navalsim_definition_loader_registry_tests
 navalsim_set_warnings(navalsim_definition_loader_registry_tests)
 doctest_discover_tests(navalsim_definition_loader_registry_tests)
 
+
 # --------------------------------------------------
 # Definition loading configuration tests
 # --------------------------------------------------
@@ -394,6 +421,7 @@ target_link_libraries(navalsim_definition_loading_configuration_tests
 navalsim_set_warnings(navalsim_definition_loading_configuration_tests)
 doctest_discover_tests(navalsim_definition_loading_configuration_tests)
 
+
 # --------------------------------------------------
 # Definition loading integration tests
 # --------------------------------------------------
@@ -401,8 +429,13 @@ doctest_discover_tests(navalsim_definition_loading_configuration_tests)
 add_executable(navalsim_definition_loading_integration_tests
     data/definition_loading_integration_tests.cpp
 )
+
 target_link_libraries(navalsim_definition_loading_integration_tests
-    PRIVATE navalsim_data doctest::doctest
+    PRIVATE
+        navalsim_data
+        doctest::doctest
 )
+
 navalsim_set_warnings(navalsim_definition_loading_integration_tests)
 doctest_discover_tests(navalsim_definition_loading_integration_tests)
+

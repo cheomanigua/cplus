@@ -43,7 +43,6 @@ enum class MovementCommandStatus
 {
     Applied,
     InvalidTarget,
-    NotAVessel,
     MissingRequiredComponent,
 	MaximumSpeedExceeded
 };
@@ -52,4 +51,3 @@ using MovementCommandResult =
     navalsim::simulation::CommandResult<MovementCommandStatus>;
 
 } // namespace navalsim::movement
-

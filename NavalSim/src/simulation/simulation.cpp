@@ -11,15 +11,9 @@
 #include <variant>
 #include <vector>
 
-#include "data/definitions/definition_database.hpp"
-#include "data/definitions/unit_definition.hpp"
-#include "domains/movement/movement_components.hpp"
 #include "domains/movement/movement_systems.hpp"
-#include "world/components/tags/entity_type_tags.hpp"
 
 namespace {
-
-constexpr double metersPerSecondPerKnot = 1852.0 / 3600.0;
 
 template <typename Command>
 navalsim::movement::MovementCommandStatus processSingleMovementCommand(
@@ -161,63 +155,26 @@ bool Simulation::initialize(
     }
 }
 
-flecs::entity_t Simulation::createVessel(
+flecs::entity_t Simulation::createUnit(
     const navalsim::data::DefinitionId& definitionId,
     navalsim::geography::GeographicPosition position,
     double initialHeadingDegrees
 ) {
     if (!initialized_ || !world_) {
-        throw std::logic_error("Cannot create a vessel in an uninitialized simulation.");
+        throw std::logic_error("Cannot create a unit in an uninitialized simulation.");
     }
 
     if (!definitions_) {
-        throw std::logic_error("Cannot create a vessel without an initialized definition database.");
+        throw std::logic_error("Cannot create a unit without an initialized definition database.");
     }
 
-    const auto* definition =
-        definitions_->find<navalsim::data::UnitDefinition>(definitionId);
-
-    if (!definition) {
-        throw std::invalid_argument("Unit definition was not found: " + definitionId.value());
-    }
-
-    if (definition->environment() != navalsim::data::UnitEnvironment::Water) {
-        throw std::invalid_argument(
-            "Cannot create a vessel from a unit definition outside the water environment: "
-            + definitionId.value()
-        );
-    }
-
-    const double maximumSpeedMetersPerSecond =
-        definition->maxSpeedKnots() * metersPerSecondPerKnot;
-
-    auto vessel = world_->ecs().entity();
-
-    vessel.add<navalsim::world::Vessel>();
-    vessel.set<navalsim::geography::GeographicPosition>(std::move(position));
-    vessel.set<navalsim::movement::Heading>(
-        navalsim::movement::Heading(initialHeadingDegrees)
+    return unitAssembler_.assemble(
+        *definitions_,
+        *world_,
+        definitionId,
+        std::move(position),
+        initialHeadingDegrees
     );
-    vessel.set<navalsim::movement::DesiredHeading>(
-        navalsim::movement::DesiredHeading(initialHeadingDegrees)
-    );
-    vessel.set<navalsim::movement::Speed>(
-        navalsim::movement::Speed(0.0)
-    );
-    vessel.set<navalsim::movement::MaximumSpeed>(
-        navalsim::movement::MaximumSpeed(maximumSpeedMetersPerSecond)
-    );
-    vessel.set<navalsim::movement::TurnRate>(
-        navalsim::movement::TurnRate(0.0)
-    );
-    vessel.set<navalsim::movement::TurnDirection>(
-        navalsim::movement::TurnDirection::None
-    );
-    vessel.set<navalsim::movement::MovementStatus>(
-        navalsim::movement::MovementStatus::Stopped
-    );
-
-    return vessel.id();
 }
 
 void Simulation::shutdown() {

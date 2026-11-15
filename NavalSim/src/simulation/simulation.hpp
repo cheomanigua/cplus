@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <any>
@@ -18,6 +19,7 @@
 #include "simulation/commands/command_dispatcher.hpp"
 #include "simulation/commands/command_queue.hpp"
 #include "simulation/scheduler/simulation_scheduler.hpp"
+#include "simulation/units/unit_assembler.hpp"
 #include "world/world.hpp"
 
 namespace navalsim::data {
@@ -45,9 +47,12 @@ public:
     Simulation& operator=(const Simulation&) = delete;
 
     bool initialize(const WorldConfiguration& configureWorld = {});
-    bool initialize(const navalsim::data::DefinitionDatabase& definitions, const WorldConfiguration& configureWorld = {});
+    bool initialize(
+        const navalsim::data::DefinitionDatabase& definitions,
+        const WorldConfiguration& configureWorld = {}
+    );
 
-    flecs::entity_t createVessel(
+    flecs::entity_t createUnit(
         const navalsim::data::DefinitionId& definitionId,
         navalsim::geography::GeographicPosition position,
         double initialHeadingDegrees = 0.0
@@ -93,7 +98,9 @@ public:
         }
 
         return commandQueue_.submit(
-            [this, command = std::move(command)](navalsim::simulation::CommandId commandId) -> std::any {
+            [this, command = std::move(command)](
+                navalsim::simulation::CommandId commandId
+            ) -> std::any {
                 return std::any(
                     commandDispatcher_.dispatch<Simulation, Command, Status>(
                         *this,
@@ -154,6 +161,8 @@ private:
 
     std::unique_ptr<World> world_;
     const navalsim::data::DefinitionDatabase* definitions_ = nullptr;
+
+    navalsim::simulation::UnitAssembler unitAssembler_;
 
     SimulationClock clock_;
     SimulationScheduler scheduler_;

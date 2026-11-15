@@ -9,18 +9,16 @@
 
 #include "core/geography/geographic_types.hpp"
 #include "domains/movement/movement_components.hpp"
-#include "world/components/tags/entity_type_tags.hpp"
 
 using namespace navalsim::geography;
 using namespace navalsim::movement;
 
 
-TEST_CASE("Movement components can be attached to a vessel entity")
+TEST_CASE("Movement components can be attached to an entity")
 {
     flecs::world world;
 
-    const auto vessel = world.entity("Test Vessel")
-        .add<navalsim::world::Vessel>()
+    const auto entity = world.entity("Test Entity")
         .set<GeographicPosition>({
             Latitude(51.5),
             Longitude(-0.1),
@@ -29,14 +27,13 @@ TEST_CASE("Movement components can be attached to a vessel entity")
         .set<Heading>(Heading(90.0))
         .set<Speed>(Speed(12.0));
 
-    CHECK(vessel.has<navalsim::world::Vessel>());
-    CHECK(vessel.has<GeographicPosition>());
-    CHECK(vessel.has<Heading>());
-    CHECK(vessel.has<Speed>());
+    CHECK(entity.has<GeographicPosition>());
+    CHECK(entity.has<Heading>());
+    CHECK(entity.has<Speed>());
 
-    const auto& position = vessel.get<GeographicPosition>();
-    const auto& heading = vessel.get<Heading>();
-    const auto& speed = vessel.get<Speed>();
+    const auto& position = entity.get<GeographicPosition>();
+    const auto& heading = entity.get<Heading>();
+    const auto& speed = entity.get<Speed>();
 
     CHECK(
         position.latitude().degrees() ==
@@ -154,4 +151,3 @@ TEST_CASE("Turn rate rejects non-finite values")
         std::invalid_argument
     );
 }
-

@@ -16,7 +16,6 @@
 #include "data/definitions/unit_definition.hpp"
 #include "domains/movement/movement_components.hpp"
 #include "simulation/simulation.hpp"
-#include "world/components/tags/entity_type_tags.hpp"
 
 
 TEST_CASE("Simulation starts with zero simulation time")
@@ -301,7 +300,7 @@ TEST_CASE("Simulation automatically registers movement systems")
 {
     Simulation simulation;
 
-    flecs::entity vessel;
+    flecs::entity unit;
 
     const navalsim::geography::GeographicPosition initialPosition(
         navalsim::geography::Latitude(0.0),
@@ -310,26 +309,25 @@ TEST_CASE("Simulation automatically registers movement systems")
     );
 
     REQUIRE(simulation.initialize(
-        [&vessel, &initialPosition](World& world)
+        [&unit, &initialPosition](World& world)
         {
-            vessel = world.ecs().entity("TestVessel");
+            unit = world.ecs().entity("TestUnit");
 
-            vessel.add<navalsim::world::Vessel>();
-            vessel.set<navalsim::geography::GeographicPosition>(
+            unit.set<navalsim::geography::GeographicPosition>(
                 initialPosition
             );
-            vessel.set<navalsim::movement::Heading>(
+            unit.set<navalsim::movement::Heading>(
                 navalsim::movement::Heading(90.0)
             );
-            vessel.set<navalsim::movement::Speed>(
+            unit.set<navalsim::movement::Speed>(
                 navalsim::movement::Speed(10.0)
             );
 
-			vessel.set<navalsim::movement::MaximumSpeed>(
+			unit.set<navalsim::movement::MaximumSpeed>(
 			    navalsim::movement::MaximumSpeed(25.0)
 			);
 
-            vessel.set<navalsim::movement::MovementStatus>(
+            unit.set<navalsim::movement::MovementStatus>(
                 navalsim::movement::MovementStatus::Underway
             );
         }
@@ -338,7 +336,7 @@ TEST_CASE("Simulation automatically registers movement systems")
     REQUIRE(simulation.advance(1.0) == 1);
 
     const auto& finalPosition =
-        vessel.get<navalsim::geography::GeographicPosition>();
+        unit.get<navalsim::geography::GeographicPosition>();
 
     CHECK(
         navalsim::geography::horizontalDistance(
@@ -354,7 +352,7 @@ TEST_CASE("Simulation automatically registers movement systems")
 }
 
 
-TEST_CASE("Simulation creates a vessel from its loaded unit definition")
+TEST_CASE("Simulation creates a unit from its loaded unit definition")
 {
     using namespace navalsim::data;
     using namespace navalsim::geography;
@@ -394,7 +392,7 @@ TEST_CASE("Simulation creates a vessel from its loaded unit definition")
         Elevation(15.0)
     );
 
-    const flecs::entity_t vesselId = simulation.createVessel(
+    const flecs::entity_t unitId = simulation.createUnit(
         DefinitionId("destroyer.ddg51"),
         initialPosition,
         45.0
@@ -402,79 +400,135 @@ TEST_CASE("Simulation creates a vessel from its loaded unit definition")
 
     REQUIRE(runtimeWorld != nullptr);
 
-    const flecs::entity vessel = runtimeWorld->ecs().entity(vesselId);
+    const flecs::entity unit = runtimeWorld->ecs().entity(unitId);
 
-    CHECK(vessel.is_alive());
-    CHECK(vessel.has<navalsim::world::Vessel>());
+    CHECK(unit.is_alive());
 
-    REQUIRE(vessel.has<GeographicPosition>());
-    const auto& position = vessel.get<GeographicPosition>();
+    REQUIRE(unit.has<GeographicPosition>());
+    const auto& position = unit.get<GeographicPosition>();
     CHECK(position.latitude().degrees() == doctest::Approx(35.0));
     CHECK(position.longitude().degrees() == doctest::Approx(-10.0));
     CHECK(position.elevation().meters() == doctest::Approx(15.0));
 
-    REQUIRE(vessel.has<Heading>());
-    CHECK(vessel.get<Heading>().degrees() == doctest::Approx(45.0));
+    REQUIRE(unit.has<Heading>());
+    CHECK(unit.get<Heading>().degrees() == doctest::Approx(45.0));
 
-    REQUIRE(vessel.has<DesiredHeading>());
-    CHECK(vessel.get<DesiredHeading>().degrees() == doctest::Approx(45.0));
+    REQUIRE(unit.has<DesiredHeading>());
+    CHECK(unit.get<DesiredHeading>().degrees() == doctest::Approx(45.0));
 
-    REQUIRE(vessel.has<Speed>());
-    CHECK(vessel.get<Speed>().metersPerSecond() == doctest::Approx(0.0));
+    REQUIRE(unit.has<Speed>());
+    CHECK(unit.get<Speed>().metersPerSecond() == doctest::Approx(0.0));
 
-    REQUIRE(vessel.has<MaximumSpeed>());
+    REQUIRE(unit.has<MaximumSpeed>());
     CHECK(
-        vessel.get<MaximumSpeed>().metersPerSecond()
+        unit.get<MaximumSpeed>().metersPerSecond()
         == doctest::Approx(maximumSpeedKnots * metersPerSecondPerKnot)
     );
 
-    REQUIRE(vessel.has<TurnRate>());
-    CHECK(vessel.get<TurnRate>().degreesPerSecond() == doctest::Approx(0.0));
+    REQUIRE(unit.has<TurnRate>());
+    CHECK(unit.get<TurnRate>().degreesPerSecond() == doctest::Approx(0.0));
 
-    CHECK(vessel.has<TurnDirection>());
-    CHECK(vessel.get<TurnDirection>() == TurnDirection::None);
+    CHECK(unit.has<TurnDirection>());
+    CHECK(unit.get<TurnDirection>() == TurnDirection::None);
 
-    CHECK(vessel.has<MovementStatus>());
-    CHECK(vessel.get<MovementStatus>() == MovementStatus::Stopped);
+    CHECK(unit.has<MovementStatus>());
+    CHECK(unit.get<MovementStatus>() == MovementStatus::Stopped);
 }
 
 
-TEST_CASE("Simulation rejects vessel creation from a non-water unit definition")
+TEST_CASE("Simulation creates a unit from an air definition")
 {
     using namespace navalsim::data;
     using namespace navalsim::geography;
+    using namespace navalsim::movement;
+
+    constexpr double metersPerSecondPerKnot = 1852.0 / 3600.0;
+    constexpr double maximumSpeedKnots = 1200.0;
 
     DefinitionDatabase definitions;
-
     definitions.add(
         UnitDefinition(
             DefinitionId("aircraft.fighter"),
             "Fighter",
             "fighter",
             UnitEnvironment::Air,
-            1200.0,
+            maximumSpeedKnots,
             std::nullopt,
             {}
         )
     );
 
     Simulation simulation;
-    REQUIRE(simulation.initialize(definitions));
+    World* runtimeWorld = nullptr;
+    REQUIRE(simulation.initialize(
+        definitions,
+        [&runtimeWorld](World& world) { runtimeWorld = &world; }
+    ));
 
-    CHECK_THROWS_AS(
-        simulation.createVessel(
-            DefinitionId("aircraft.fighter"),
-            GeographicPosition(
-                Latitude(0.0),
-                Longitude(0.0),
-                Elevation(0.0)
-            )
-        ),
-        std::invalid_argument
+    const GeographicPosition position(
+        Latitude(0.0), Longitude(0.0), Elevation(1000.0)
+    );
+    const auto unitId = simulation.createUnit(
+        DefinitionId("aircraft.fighter"), position, 90.0
+    );
+
+    REQUIRE(runtimeWorld != nullptr);
+    const flecs::entity unit = runtimeWorld->ecs().entity(unitId);
+    CHECK(unit.is_alive());
+    CHECK(unit.has<GeographicPosition>());
+    CHECK(unit.has<Heading>());
+    CHECK(unit.get<Heading>().degrees() == doctest::Approx(90.0));
+    CHECK(unit.has<MaximumSpeed>());
+    CHECK(
+        unit.get<MaximumSpeed>().metersPerSecond()
+        == doctest::Approx(maximumSpeedKnots * metersPerSecondPerKnot)
     );
 }
 
-TEST_CASE("Simulation rejects vessel creation with an unknown definition")
+TEST_CASE("Simulation creates a unit from a land definition")
+{
+    using namespace navalsim::data;
+    using namespace navalsim::geography;
+    using namespace navalsim::movement;
+
+    DefinitionDatabase definitions;
+    definitions.add(
+        UnitDefinition(
+            DefinitionId("land.vehicle"),
+            "Land Vehicle",
+            "vehicle",
+            UnitEnvironment::Land,
+            40.0,
+            std::nullopt,
+            {}
+        )
+    );
+
+    Simulation simulation;
+    World* runtimeWorld = nullptr;
+    REQUIRE(simulation.initialize(
+        definitions,
+        [&runtimeWorld](World& world) { runtimeWorld = &world; }
+    ));
+
+    const auto unitId = simulation.createUnit(
+        DefinitionId("land.vehicle"),
+        GeographicPosition(Latitude(0.0), Longitude(0.0), Elevation(0.0))
+    );
+
+    REQUIRE(runtimeWorld != nullptr);
+    const flecs::entity unit = runtimeWorld->ecs().entity(unitId);
+    CHECK(unit.is_alive());
+    CHECK(unit.has<GeographicPosition>());
+    CHECK(unit.has<Heading>());
+    CHECK(unit.has<Speed>());
+    CHECK(unit.has<MaximumSpeed>());
+    CHECK(unit.has<TurnRate>());
+    CHECK(unit.has<TurnDirection>());
+    CHECK(unit.has<MovementStatus>());
+}
+
+TEST_CASE("Simulation rejects unit creation with an unknown definition")
 {
     using namespace navalsim::data;
     using namespace navalsim::geography;
@@ -485,8 +539,8 @@ TEST_CASE("Simulation rejects vessel creation with an unknown definition")
     REQUIRE(simulation.initialize(definitions));
 
     CHECK_THROWS_AS(
-        simulation.createVessel(
-            DefinitionId("unknown.vessel"),
+        simulation.createUnit(
+            DefinitionId("unknown.unit"),
             GeographicPosition(
                 Latitude(0.0),
                 Longitude(0.0),
@@ -497,7 +551,7 @@ TEST_CASE("Simulation rejects vessel creation with an unknown definition")
     );
 }
 
-TEST_CASE("Simulation rejects vessel creation without a definition database")
+TEST_CASE("Simulation rejects unit creation without a definition database")
 {
     using namespace navalsim::data;
     using namespace navalsim::geography;
@@ -507,7 +561,7 @@ TEST_CASE("Simulation rejects vessel creation without a definition database")
     REQUIRE(simulation.initialize());
 
     CHECK_THROWS_AS(
-        simulation.createVessel(
+        simulation.createUnit(
             DefinitionId("destroyer.ddg51"),
             GeographicPosition(
                 Latitude(0.0),
@@ -519,11 +573,11 @@ TEST_CASE("Simulation rejects vessel creation without a definition database")
     );
 }
 
-TEST_CASE("Simulation time acceleration affects vessel movement")
+TEST_CASE("Simulation time acceleration affects unit movement")
 {
     Simulation simulation;
 
-    flecs::entity vessel;
+    flecs::entity unit;
 
     const navalsim::geography::GeographicPosition initialPosition(
         navalsim::geography::Latitude(0.0),
@@ -532,29 +586,28 @@ TEST_CASE("Simulation time acceleration affects vessel movement")
     );
 
     REQUIRE(simulation.initialize(
-        [&vessel, &initialPosition](World& world)
+        [&unit, &initialPosition](World& world)
         {
-            vessel = world.ecs().entity("TestVessel");
+            unit = world.ecs().entity("TestUnit");
 
-            vessel.add<navalsim::world::Vessel>();
 
-            vessel.set<navalsim::geography::GeographicPosition>(
+            unit.set<navalsim::geography::GeographicPosition>(
                 initialPosition
             );
 
-            vessel.set<navalsim::movement::Heading>(
+            unit.set<navalsim::movement::Heading>(
                 navalsim::movement::Heading(90.0)
             );
 
-            vessel.set<navalsim::movement::Speed>(
+            unit.set<navalsim::movement::Speed>(
                 navalsim::movement::Speed(10.0)
             );
 
-			vessel.set<navalsim::movement::MaximumSpeed>(
+			unit.set<navalsim::movement::MaximumSpeed>(
 			    navalsim::movement::MaximumSpeed(25.0)
 			);
 
-            vessel.set<navalsim::movement::MovementStatus>(
+            unit.set<navalsim::movement::MovementStatus>(
                 navalsim::movement::MovementStatus::Underway
             );
         }
@@ -573,9 +626,9 @@ TEST_CASE("Simulation time acceleration affects vessel movement")
     CHECK(simulation.simulationTime() == doctest::Approx(5.0));
 
     const auto& finalPosition =
-        vessel.get<navalsim::geography::GeographicPosition>();
+        unit.get<navalsim::geography::GeographicPosition>();
 
-    // At 10 m/s for five simulation seconds, the vessel travels 50 metres.
+    // At 10 m/s for five simulation seconds, the unit travels 50 metres.
     CHECK(
         navalsim::geography::horizontalDistance(
             initialPosition,
@@ -590,23 +643,22 @@ TEST_CASE("Simulation time acceleration affects vessel movement")
     );
 }
 
-TEST_CASE("Simulation integrates vessel heading control and movement")
+TEST_CASE("Simulation integrates unit heading control and movement")
 {
     using namespace navalsim::geography;
     using namespace navalsim::movement;
 
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE_NOTHROW(
         simulation.initialize(
-            [&vessel](World& world)
+            [&unit](World& world)
             {
-                vessel = world.ecs().entity();
+                unit = world.ecs().entity();
 
-                vessel.add<navalsim::world::Vessel>();
-
-                vessel.set<GeographicPosition>(
+    
+                unit.set<GeographicPosition>(
                     GeographicPosition(
                         Latitude(0.0),
                         Longitude(0.0),
@@ -614,22 +666,22 @@ TEST_CASE("Simulation integrates vessel heading control and movement")
                     )
                 );
 
-                vessel.set<Heading>(Heading(0.0));
-                vessel.set<DesiredHeading>(DesiredHeading(90.0));
-                vessel.set<Speed>(Speed(10.0));
-				vessel.set<MaximumSpeed>(MaximumSpeed(25.0));
-                vessel.set<TurnRate>(TurnRate(90.0));
-                vessel.set<TurnDirection>(TurnDirection::None);
-                vessel.set<MovementStatus>(MovementStatus::Underway);
+                unit.set<Heading>(Heading(0.0));
+                unit.set<DesiredHeading>(DesiredHeading(90.0));
+                unit.set<Speed>(Speed(10.0));
+				unit.set<MaximumSpeed>(MaximumSpeed(25.0));
+                unit.set<TurnRate>(TurnRate(90.0));
+                unit.set<TurnDirection>(TurnDirection::None);
+                unit.set<MovementStatus>(MovementStatus::Underway);
             }
         )
     );
 
     REQUIRE_NOTHROW(simulation.advance(1.0));
 
-    const auto& heading = vessel.get<Heading>();
-    const auto& position = vessel.get<GeographicPosition>();
-    const auto& turnDirection = vessel.get<TurnDirection>();
+    const auto& heading = unit.get<Heading>();
+    const auto& position = unit.get<GeographicPosition>();
+    const auto& turnDirection = unit.get<TurnDirection>();
 
     CHECK(std::abs(heading.degrees() - 90.0) < 1e-9);
     CHECK(turnDirection == TurnDirection::None);
@@ -653,13 +705,12 @@ TEST_CASE("Simulation integrates vessel heading control and movement")
 namespace
 {
 
-flecs::entity createCommandTestVessel(World& world)
+flecs::entity createCommandTestUnit(World& world)
 {
-    auto vessel = world.ecs().entity("CommandTestVessel");
+    auto unit = world.ecs().entity("CommandTestUnit");
 
-    vessel.add<navalsim::world::Vessel>();
 
-    vessel.set<navalsim::geography::GeographicPosition>(
+    unit.set<navalsim::geography::GeographicPosition>(
         navalsim::geography::GeographicPosition(
             navalsim::geography::Latitude(0.0),
             navalsim::geography::Longitude(0.0),
@@ -667,29 +718,29 @@ flecs::entity createCommandTestVessel(World& world)
         )
     );
 
-    vessel.set<navalsim::movement::Heading>(
+    unit.set<navalsim::movement::Heading>(
         navalsim::movement::Heading(90.0)
     );
-    vessel.set<navalsim::movement::DesiredHeading>(
+    unit.set<navalsim::movement::DesiredHeading>(
         navalsim::movement::DesiredHeading(90.0)
     );
-    vessel.set<navalsim::movement::TurnRate>(
+    unit.set<navalsim::movement::TurnRate>(
         navalsim::movement::TurnRate(90.0)
     );
-    vessel.set<navalsim::movement::TurnDirection>(
+    unit.set<navalsim::movement::TurnDirection>(
         navalsim::movement::TurnDirection::None
     );
-    vessel.set<navalsim::movement::Speed>(
+    unit.set<navalsim::movement::Speed>(
         navalsim::movement::Speed(10.0)
     );
-    vessel.set<navalsim::movement::MaximumSpeed>(
+    unit.set<navalsim::movement::MaximumSpeed>(
         navalsim::movement::MaximumSpeed(25.0)
     );
-    vessel.set<navalsim::movement::MovementStatus>(
+    unit.set<navalsim::movement::MovementStatus>(
         navalsim::movement::MovementStatus::Underway
     );
 
-    return vessel;
+    return unit;
 }
 
 } // namespace
@@ -697,18 +748,18 @@ flecs::entity createCommandTestVessel(World& world)
 TEST_CASE("Simulation processes heading commands on the next fixed step")
 {
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
     simulation.submitMovementCommand(
         navalsim::movement::SetDesiredHeadingCommand{
-            vessel.id(),
+            unit.id(),
             navalsim::geography::Bearing(180.0)
         }
     );
@@ -721,11 +772,11 @@ TEST_CASE("Simulation processes heading commands on the next fixed step")
     CHECK(simulation.advance(0.5) == 1);
 
     CHECK(
-        vessel.get<navalsim::movement::DesiredHeading>().degrees()
+        unit.get<navalsim::movement::DesiredHeading>().degrees()
         == doctest::Approx(180.0)
     );
     CHECK(
-        vessel.get<navalsim::movement::Heading>().degrees()
+        unit.get<navalsim::movement::Heading>().degrees()
         == doctest::Approx(180.0)
     );
 
@@ -739,24 +790,24 @@ TEST_CASE("Simulation processes heading commands on the next fixed step")
     CHECK(simulation.takeMovementCommandResults().empty());
 }
 
-TEST_CASE("Simulation processes speed commands before vessel movement")
+TEST_CASE("Simulation processes speed commands before unit movement")
 {
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
     const auto initialPosition =
-        vessel.get<navalsim::geography::GeographicPosition>();
+        unit.get<navalsim::geography::GeographicPosition>();
 
     simulation.submitMovementCommand(
         navalsim::movement::SetSpeedCommand{
-            vessel.id(),
+            unit.id(),
             navalsim::movement::Speed(20.0)
         }
     );
@@ -764,16 +815,16 @@ TEST_CASE("Simulation processes speed commands before vessel movement")
     REQUIRE(simulation.advance(1.0) == 1);
 
     CHECK(
-        vessel.get<navalsim::movement::Speed>().metersPerSecond()
+        unit.get<navalsim::movement::Speed>().metersPerSecond()
         == doctest::Approx(20.0)
     );
     CHECK(
-        vessel.get<navalsim::movement::MovementStatus>()
+        unit.get<navalsim::movement::MovementStatus>()
         == navalsim::movement::MovementStatus::Underway
     );
 
     const auto finalPosition =
-        vessel.get<navalsim::geography::GeographicPosition>();
+        unit.get<navalsim::geography::GeographicPosition>();
 
     CHECK(
         navalsim::geography::horizontalDistance(
@@ -788,38 +839,38 @@ TEST_CASE("Simulation processes speed commands before vessel movement")
     CHECK(results[0].status == navalsim::movement::MovementCommandStatus::Applied);
 }
 
-TEST_CASE("Simulation processes stop commands before vessel movement")
+TEST_CASE("Simulation processes stop commands before unit movement")
 {
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
     const auto initialPosition =
-        vessel.get<navalsim::geography::GeographicPosition>();
+        unit.get<navalsim::geography::GeographicPosition>();
 
     simulation.submitMovementCommand(
-        navalsim::movement::StopMovementCommand{vessel.id()}
+        navalsim::movement::StopMovementCommand{unit.id()}
     );
 
     REQUIRE(simulation.advance(1.0) == 1);
 
     CHECK(
-        vessel.get<navalsim::movement::Speed>().metersPerSecond()
+        unit.get<navalsim::movement::Speed>().metersPerSecond()
         == doctest::Approx(0.0)
     );
     CHECK(
-        vessel.get<navalsim::movement::MovementStatus>()
+        unit.get<navalsim::movement::MovementStatus>()
         == navalsim::movement::MovementStatus::Stopped
     );
 
     const auto finalPosition =
-        vessel.get<navalsim::geography::GeographicPosition>();
+        unit.get<navalsim::geography::GeographicPosition>();
 
     CHECK(
         navalsim::geography::horizontalDistance(
@@ -837,12 +888,12 @@ TEST_CASE("Simulation processes stop commands before vessel movement")
 TEST_CASE("Simulation processes queued commands once and in submission order")
 {
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
@@ -850,13 +901,13 @@ TEST_CASE("Simulation processes queued commands once and in submission order")
 
     const auto setSpeedId = simulation.submitMovementCommand(
         SetSpeedCommand{
-            vessel.id(),
+            unit.id(),
             Speed(20.0)
         }
     );
 
     const auto stopId = simulation.submitMovementCommand(
-        StopMovementCommand{vessel.id()}
+        StopMovementCommand{unit.id()}
     );
 
     // Three fixed steps execute, but both commands should be processed
@@ -864,8 +915,8 @@ TEST_CASE("Simulation processes queued commands once and in submission order")
     REQUIRE(simulation.advance(3.0) == 3);
 
     // The second command must take effect after the first command.
-    CHECK(vessel.get<Speed>().metersPerSecond() == doctest::Approx(0.0));
-    CHECK(vessel.get<MovementStatus>() == MovementStatus::Stopped);
+    CHECK(unit.get<Speed>().metersPerSecond() == doctest::Approx(0.0));
+    CHECK(unit.get<MovementStatus>() == MovementStatus::Stopped);
 
     // Both commands must produce exactly one result in submission order.
     const auto results = simulation.takeMovementCommandResults();
@@ -885,12 +936,12 @@ TEST_CASE("Simulation processes queued commands once and in submission order")
 TEST_CASE("Simulation discards pending movement commands on shutdown")
 {
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
@@ -898,7 +949,7 @@ TEST_CASE("Simulation discards pending movement commands on shutdown")
 
     const auto commandId = simulation.submitMovementCommand(
         SetSpeedCommand{
-            vessel.id(),
+            unit.id(),
             Speed(30.0)
         }
     );
@@ -908,19 +959,19 @@ TEST_CASE("Simulation discards pending movement commands on shutdown")
     // Shut down before the command can be processed.
     simulation.shutdown();
 
-    // Reinitialize with a fresh world and vessel.
+    // Reinitialize with a fresh world and unit.
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
     REQUIRE(simulation.advance(1.0) == 1);
 
     // The old command must not affect the new world.
-    CHECK(vessel.get<Speed>().metersPerSecond() == doctest::Approx(10.0));
-    CHECK(vessel.get<MovementStatus>() == MovementStatus::Underway);
+    CHECK(unit.get<Speed>().metersPerSecond() == doctest::Approx(10.0));
+    CHECK(unit.get<MovementStatus>() == MovementStatus::Underway);
 
     // No result should be produced for the discarded command.
     CHECK(simulation.takeMovementCommandResults().empty());
@@ -944,18 +995,18 @@ TEST_CASE("Simulation rejects movement commands before initialization")
 TEST_CASE("Simulation accepts generic movement command submission")
 {
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
     const auto commandId = simulation.submitCommand(
         navalsim::movement::SetSpeedCommand{
-            vessel.id(),
+            unit.id(),
             navalsim::movement::Speed(25.0)
         }
     );
@@ -963,7 +1014,7 @@ TEST_CASE("Simulation accepts generic movement command submission")
     CHECK(commandId != 0);
     REQUIRE(simulation.advance(1.0) == 1);
 
-    CHECK(vessel.get<navalsim::movement::Speed>().metersPerSecond()
+    CHECK(unit.get<navalsim::movement::Speed>().metersPerSecond()
         == doctest::Approx(25.0));
 
     const auto results = simulation.takeCommandResults();
@@ -976,17 +1027,17 @@ TEST_CASE("Simulation accepts generic movement command submission")
 TEST_CASE("Simulation generic command results are consumed when retrieved")
 {
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
     simulation.submitCommand(
-        navalsim::movement::StopMovementCommand{vessel.id()}
+        navalsim::movement::StopMovementCommand{unit.id()}
     );
 
     REQUIRE(simulation.advance(1.0) == 1);
@@ -1001,18 +1052,18 @@ TEST_CASE("Simulation generic command results are consumed when retrieved")
 TEST_CASE("Movement compatibility methods share the generic command queue and results")
 {
     Simulation simulation;
-    flecs::entity vessel;
+    flecs::entity unit;
 
     REQUIRE(simulation.initialize(
-        [&vessel](World& world)
+        [&unit](World& world)
         {
-            vessel = createCommandTestVessel(world);
+            unit = createCommandTestUnit(world);
         }
     ));
 
     const auto movementCommandId = simulation.submitMovementCommand(
         navalsim::movement::SetSpeedCommand{
-            vessel.id(),
+            unit.id(),
             navalsim::movement::Speed(15.0)
         }
     );
@@ -1026,7 +1077,7 @@ TEST_CASE("Movement compatibility methods share the generic command queue and re
     CHECK(genericResults[0].status == navalsim::simulation::SimulationCommandStatus::Applied);
 
     const auto genericCommandId = simulation.submitCommand(
-        navalsim::movement::StopMovementCommand{vessel.id()}
+        navalsim::movement::StopMovementCommand{unit.id()}
     );
 
     REQUIRE(simulation.advance(1.0) == 1);
